@@ -22,6 +22,10 @@
 </head>
 <body>
 <canvas id="robotCanvas" width="1298" height="638"></canvas>
+<div style="position: absolute; top: 10px; right: 10px;">
+    <label for="relativeMovement">Relative Movement:</label>
+    <input type="checkbox" id="relativeMovement">
+</div>
 <script>
     // Constants
     const canvas = document.getElementById('robotCanvas');
@@ -39,10 +43,10 @@
         mass: 1, // Mass of the robot
         velocity: { x: 0, y: 0 }, // Initial velocity
         acceleration: 5, // Initial acceleration rate
-        maxSpeed: 9, // Maximum speed in m/s
+        maxSpeed: 6, // Maximum speed in m/s
         rotation: 0, // Initial rotation
-        forwardDirection: { x: 0, y: -1 }, // Initial forward direction (upwards)
-        frictionCoefficient: 0.1 // Friction coefficient
+        forwardDirection: { x: -1, y: 0 }, // Initial forward direction (upwards)
+        frictionCoefficient: 0.5 // Friction coefficient
     };
     
     // Convert inches to pixels
@@ -66,25 +70,43 @@
         robot.velocity.x *= 1 - robot.frictionCoefficient;
         robot.velocity.y *= 1 - robot.frictionCoefficient;
         
-        // Update velocity based on joystick input
-        const gamepads = navigator.getGamepads();
-        if (gamepads[0]) { // Make sure a gamepad is connected
-            const gamepad = gamepads[0];
-            const leftStickX = gamepad.axes[0]; // Left stick horizontal axis
-            const leftStickY = gamepad.axes[1]; // Left stick vertical axis
-            const rightStickX = gamepad.axes[2]; // Right stick horizontal axis
-            
-            // Control translation with left stick
-            robot.velocity.x += leftStickX * robot.acceleration;
-            robot.velocity.y += leftStickY * robot.acceleration;
-            
-            // Control rotation with right stick
-            robot.rotation += rightStickX * ROTATION_SPEED; // Adjust rotation
-        }
+      // Define deadzone threshold
+      const deadzoneThreshold = 0.1;
+
+      // Update velocity based on joystick input
+      const gamepads = navigator.getGamepads();
+      if (gamepads[0]) { // Make sure a gamepad is connected
+          const gamepad = gamepads[0];
+          const leftStickX = gamepad.axes[0]; // Left stick horizontal axis
+          const leftStickY = gamepad.axes[1]; // Left stick vertical axis
+          const rightStickX = gamepad.axes[2]; // Right stick horizontal axis
+
+          // Check if joystick input exceeds deadzone threshold
+          const leftStickMagnitude = Math.sqrt(leftStickX ** 2 + leftStickY ** 2);
         
-        // Update forward direction based on rotation
-        robot.forwardDirection.x = Math.cos(robot.rotation);
-        robot.forwardDirection.y = Math.sin(robot.rotation);
+          if (leftStickMagnitude > deadzoneThreshold) {
+                if (document.getElementById('relativeMovement').checked) {
+                    // Control translation relative to robot's orientation
+                    const forwardDirectionX = Math.cos(robot.rotation);
+                    const forwardDirectionY = Math.sin(robot.rotation);
+                    const sidewaysDirectionX = -Math.sin(robot.rotation);
+                    const sidewaysDirectionY = Math.cos(robot.rotation);
+                    robot.velocity.x += leftStickY * robot.acceleration * forwardDirectionX + leftStickX * robot.acceleration * sidewaysDirectionX;
+                    robot.velocity.y += leftStickY * robot.acceleration * forwardDirectionY + leftStickX * robot.acceleration * sidewaysDirectionY;
+
+                } else {
+                    // Control translation unilaterally
+                  robot.velocity.x += -leftStickY * robot.acceleration;
+                  robot.velocity.y += leftStickX * robot.acceleration;
+
+                }
+            }
+        // Control rotation with right stick
+        robot.rotation += rightStickX * ROTATION_SPEED; // Adjust rotation
+        }
+
+    
+            
         
         // Limit velocity to max speed
         const speed = Math.sqrt(robot.velocity.x ** 2 + robot.velocity.y ** 2);
@@ -111,20 +133,10 @@
         ctx.lineWidth = 2; // Set outline width
         ctx.fillRect(-robot.width / 2, -robot.height / 2, robot.width, robot.height); // Draw the robot
         ctx.strokeRect(-robot.width / 2, -robot.height / 2, robot.width, robot.height); // Draw the outline
-        ctx.restore(); // Restore the saved transformation matrix
         
-        // Draw front indicator with a red dot at the end
-        ctx.save(); // Save the current transformation matrix
-        ctx.translate(robot.x, robot.y); // Translate to the robot's position
-        ctx.rotate(robot.rotation); // Rotate the canvas
-        ctx.beginPath();
-        ctx.moveTo(0, 0); // Start at the robot's center
-        ctx.lineTo(0, -50); // Draw a line 50 pixels in front of the robot
-        ctx.strokeStyle = 'red'; // Set the stroke color to red
-        ctx.lineWidth = 2; // Set the stroke width
-        ctx.stroke(); // Stroke the line
-        ctx.beginPath(); // Start a new path for the dot
-        ctx.arc(0, -50, 5, 0, 2 * Math.PI); // Draw a red dot at the end of the line
+        // Draw front indicator with a red dot at the front
+        ctx.beginPath(); // Start a new path
+        ctx.arc(-robot.width * 0.5, 0 / 2, 5, 0, 2 * Math.PI); // Draw a red dot at the front
         ctx.fillStyle = 'red'; // Set the fill color to red
         ctx.fill(); // Fill the dot
         ctx.restore(); // Restore the saved transformation matrix
