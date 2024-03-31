@@ -104,7 +104,7 @@
                     const forwardDirectionY = Math.sin(robot.rotation);
                     const sidewaysDirectionX = -Math.sin(robot.rotation);
                     const sidewaysDirectionY = Math.cos(robot.rotation);
-                    robot.velocity.x += leftStickY * robot.acceleration * forwardDirectionX + leftStickX * robot.acceleration * sidewaysDirectionX;
+                    robot.velocity.x += leftStickY * robot.acceleration * forwardDirectionX + -leftStickX * robot.acceleration * sidewaysDirectionX;
                     robot.velocity.y += leftStickY * robot.acceleration * forwardDirectionY + leftStickX * robot.acceleration * sidewaysDirectionY;
 
                 } else {
