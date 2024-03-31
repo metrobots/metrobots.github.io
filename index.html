@@ -26,7 +26,8 @@
     // Constants
     const canvas = document.getElementById('robotCanvas');
     const ctx = canvas.getContext('2d');
-
+    const ROTATION_SPEED = Math.PI / 30; // Rotation speed constant (in radians per frame)
+    
     // Robot parameters
     let robot = {
         x: canvas.width / 2, // Initial x position
@@ -43,10 +44,10 @@
         forwardDirection: { x: 0, y: -1 }, // Initial forward direction (upwards)
         frictionCoefficient: 0.1 // Friction coefficient
     };
-
+    
     // Convert inches to pixels
     const inchesToPixels = (inches) => inches * 24;
-
+    
     // Keyboard input
     const keys = {};
     window.addEventListener("keydown", function (e) {
@@ -55,16 +56,16 @@
     window.addEventListener("keyup", function (e) {
         delete keys[e.key];
     });
-
+    
     // Update function
     function update() {
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+        
         // Apply friction
         robot.velocity.x *= 1 - robot.frictionCoefficient;
         robot.velocity.y *= 1 - robot.frictionCoefficient;
-
+        
         // Update velocity based on keyboard input
         if (keys["ArrowUp"]) { // Move forward
             robot.velocity.x += robot.forwardDirection.x * robot.acceleration;
@@ -85,14 +86,35 @@
             robot.velocity.y += strafeDirection.y * robot.acceleration;
         }
         if (keys["a"]) { // Rotate counterclockwise
-            robot.rotation -= Math.PI / 60; // Rotate by 1 degree
-            rotateForwardDirection(-Math.PI / 60); // Rotate forward direction
+            robot.rotation -= ROTATION_SPEED; // Rotate by defined rotation speed
+            rotateForwardDirection(-ROTATION_SPEED); // Rotate forward direction
         }
         if (keys["d"]) { // Rotate clockwise
-            robot.rotation += Math.PI / 60; // Rotate by 1 degree
-            rotateForwardDirection(Math.PI / 60); // Rotate forward direction
+            robot.rotation += ROTATION_SPEED; // Rotate by defined rotation speed
+            rotateForwardDirection(ROTATION_SPEED); // Rotate forward direction
         }
-
+        
+        // Update velocity based on joystick input
+        const gamepads = navigator.getGamepads();
+        if (gamepads[0]) { // Make sure a gamepad is connected
+            const gamepad = gamepads[0];
+            const leftStickX = gamepad.axes[0]; // Left stick horizontal axis
+            const leftStickY = gamepad.axes[1]; // Left stick vertical axis
+            const rightStickX = gamepad.axes[2]; // Right stick horizontal axis
+            const rightStickY = gamepad.axes[3]; // Right stick vertical axis
+            
+            // Control translation with left stick
+            robot.velocity.x += leftStickX * robot.acceleration;
+            robot.velocity.y += leftStickY * robot.acceleration;
+            
+            // Control rotation with right stick
+            robot.rotation += rightStickX * ROTATION_SPEED; // Adjust rotation
+            
+            // Update forward direction based on rotation
+            robot.forwardDirection.x = Math.cos(robot.rotation);
+            robot.forwardDirection.y = Math.sin(robot.rotation);
+        }
+        
         // Limit velocity to max speed
         const speed = Math.sqrt(robot.velocity.x ** 2 + robot.velocity.y ** 2);
         if (speed > robot.maxSpeed) {
@@ -100,15 +122,15 @@
             robot.velocity.x *= scale;
             robot.velocity.y *= scale;
         }
-
+        
         // Update position
         robot.x += robot.velocity.x;
         robot.y += robot.velocity.y;
-
+        
         // Ensure the robot stays within the canvas boundaries
         robot.x = Math.max(robot.width / 2, Math.min(canvas.width - robot.width / 2, robot.x));
         robot.y = Math.max(robot.height / 2, Math.min(canvas.height - robot.height / 2, robot.y));
-
+        
         // Draw robot
         ctx.save(); // Save the current transformation matrix
         ctx.translate(robot.x, robot.y); // Translate to the robot's position
@@ -119,7 +141,7 @@
         ctx.fillRect(-robot.width / 2, -robot.height / 2, robot.width, robot.height); // Draw the robot
         ctx.strokeRect(-robot.width / 2, -robot.height / 2, robot.width, robot.height); // Draw the outline
         ctx.restore(); // Restore the saved transformation matrix
-
+        
         // Draw front indicator with a red dot at the end
         ctx.save(); // Save the current transformation matrix
         ctx.translate(robot.x, robot.y); // Translate to the robot's position
@@ -135,11 +157,11 @@
         ctx.fillStyle = 'red'; // Set the fill color to red
         ctx.fill(); // Fill the dot
         ctx.restore(); // Restore the saved transformation matrix
-
+        
         // Request next frame
         requestAnimationFrame(update);
     }
-
+    
     // Function to rotate the forward direction vector
     function rotateForwardDirection(angle) {
         const newX = Math.cos(angle) * robot.forwardDirection.x - Math.sin(angle) * robot.forwardDirection.y;
@@ -147,7 +169,7 @@
         robot.forwardDirection.x = newX;
         robot.forwardDirection.y = newY;
     }
-
+    
     // Start the simulation
     update();
 </script>
