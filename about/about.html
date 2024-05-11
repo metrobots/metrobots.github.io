@@ -1,1 +1,147 @@
-//MAIN PAGE OF THE ABOUT SECTION
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About the Metrobots</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Space Mono', monospace;
+      background-color: #222;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 50px 20px;
+    }
+
+    .title {
+      font-size: 3rem;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .description {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .image-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .image {
+      background-color: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .image:hover {
+      transform: scale(1.1);
+    }
+
+    .image img {
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0.8;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .image:hover img {
+      opacity: 1;
+    }
+
+    .image-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .image:hover .image-text {
+      opacity: 1;
+    }
+
+    .home-button {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border-radius: 50%;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .home-button::before {
+      content: '\f015'; /* Font Awesome home icon */
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" class="home-button" id="homeButton"></a>
+  <div class="container">
+    <h1 class="title">About the Metrobots</h1>
+    <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+    <div class="image-container">
+      <div class="image" style="width: 200px; height: 300px;">
+        <img src="https://via.placeholder.com/200x300" alt="Placeholder Image">
+        <div class="image-text">Image 1</div>
+      </div>
+      <div class="image" style="width: 150px; height: 250px;">
+        <img src="https://via.placeholder.com/150x250" alt="Placeholder Image">
+        <div class="image-text">Image 2</div>
+      </div>
+      <div class="image" style="width: 250px; height: 200px;">
+        <img src="https://via.placeholder.com/250x200" alt="Placeholder Image">
+        <div class="image-text">Image 3</div>
+      </div>
+      <div class="image" style="width: 180px; height: 220px;">
+        <img src="https://via.placeholder.com/180x220" alt="Placeholder Image">
+        <div class="image-text">Image 4</div>
+      </div>
+      <div class="image" style="width: 220px; height: 180px;">
+        <img src="https://via.placeholder.com/220x180" alt="Placeholder Image">
+        <div class="image-text">Image 5</div>
+      </div>
+      <div class="image" style="width: 170px; height: 230px;">
+        <img src="https://via.placeholder.com/170x230" alt="Placeholder Image">
+        <div class="image-text">Image 6</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('homeButton').addEventListener('click', function() {
+      console.log('Home button clicked!');
+    });
+  </script>
+</body>
+</html>
