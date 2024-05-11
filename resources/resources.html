@@ -1,1 +1,144 @@
-MAIN PAGE OF THE RESOURCES SECTION
+//MAIN PAGE OF THE RESOURCES SECTION
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team 3324 Resources</title>
+  <style>
+    body {
+      font-family: 'Space Mono', monospace;
+      background-color: #222;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .title {
+      font-size: 3rem;
+      margin-bottom: 30px;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .button {
+      background-color: transparent;
+      color: white;
+      padding: 10px 20px;
+      margin: 5px;
+      border: 2px solid white;
+      border-radius: 5px;
+      font-family: 'Space Mono', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .button:focus {
+      outline: none;
+      box-shadow: 0 0 10px darkRed;
+    }
+
+    /* Animation */
+    .button:nth-child(1) {
+      animation: slideFadeIn 0.9s ease forwards 0.5s;
+    }
+
+    .button:nth-child(2) {
+      animation: slideFadeIn 0.9s ease forwards 0.6s;
+    }
+
+    .button:nth-child(3) {
+      animation: slideFadeIn 0.9s ease forwards 0.7s;
+    }
+
+    .button:nth-child(4) {
+      animation: slideFadeIn 0.9s ease forwards 0.8s;
+    }
+    
+    .button:nth-child(5) {
+      animation: slideFadeIn 0.9s ease forwards 0.9s;
+    }
+
+    @keyframes slideFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Instagram logo */
+    .instagram-logo {
+      background-image: url('https://mateo-johnson.github.io/assets/instagram-white-icon.png');
+      background-size: cover;
+      width: 30px; /* Adjust the size as needed */
+      height: 30px; /* Adjust the size as needed */
+      display: inline-block;
+      margin-right: 5px;
+    }
+    
+    /* Twitter logo */
+    .twitter-logo {
+      background-image: url('https://mateo-johnson.github.io/assets/twitter-512.png');
+      background-size: cover;
+      width: 30px; /* Adjust the size as needed */
+      height: 30px; /* Adjust the size as needed */
+      display: inline-block;
+      margin-right: 5px;
+    }
+    
+    /* GitHub logo */
+    .github-logo {
+      background-image: url('https://mateo-johnson.github.io/assets/github.png');
+      background-size: cover;
+      width: 30px; /* Adjust the size as needed */
+      height: 30px; /* Adjust the size as needed */
+      display: inline-block;
+      margin-right: 5px;
+    }
+
+    /* Remove underline from button text */
+    .text-no-decoration {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <center><h1 class="title">TEAM 3324 RESOURCES</h1></center>
+    <div class="button-container">
+      <a href="swervesim.html" class="button text-no-decoration">Swerve Simulator</a>
+      <a href="scouting.html" class="button text-no-decoration">Scouting App</a>
+      <a href="https://www.instagram.com/metrobots3324/" class="button text-no-decoration" target="_blank"><span class="instagram-logo"></span></a>
+      <a href="https://twitter.com/metrobots3324?lang=en" class="button text-no-decoration" target="_blank"><span class="twitter-logo"></span></a>
+      <a href="https://github.com/Mateo-Johnson/RobustSturdy3" class="button text-no-decoration" target="_blank"><span class="github-logo"></span></a>
+    </div>
+  </div>
+</body>
+</html>
+
