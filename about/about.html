@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team 3324 Resources</title>
+  <title>About the Metrobots</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
@@ -15,125 +15,85 @@
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 50px 20px;
     }
 
     .title {
       font-size: 3rem;
       margin-bottom: 30px;
+      text-align: center;
     }
 
-    .button-container {
+    .description {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .image-container {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .image {
+      background-color: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
       align-items: center;
+      transition: transform 0.3s ease-in-out;
     }
 
-    .button {
-      background-color: transparent;
-      color: white;
-      padding: 10px 20px;
-      margin: 5px;
-      border: 2px solid white;
-      border-radius: 5px;
-      font-family: 'Space Mono', monospace;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
+    .image:hover {
+      transform: scale(1.1);
+    }
+
+    .image img {
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0.8;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .image:hover img {
+      opacity: 1;
+    }
+
+    .image-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      text-align: center;
+      font-size: 1rem;
       opacity: 0;
-      transform: translateY(20px);
+      transition: opacity 0.3s ease-in-out;
     }
 
-    .button:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
-      transform: translateY(-3px);
+    .image:hover .image-text {
+      opacity: 1;
     }
 
-    .button:focus {
-      outline: none;
-      box-shadow: 0 0 10px darkRed;
-    }
-
-    /* Animation */
-    .button:nth-child(1) {
-      animation: slideFadeIn 0.9s ease forwards 0.5s;
-    }
-
-    .button:nth-child(2) {
-      animation: slideFadeIn 0.9s ease forwards 0.6s;
-    }
-
-    .button:nth-child(3) {
-      animation: slideFadeIn 0.9s ease forwards 0.7s;
-    }
-
-    .button:nth-child(4) {
-      animation: slideFadeIn 0.9s ease forwards 0.8s;
-    }
-    
-    .button:nth-child(5) {
-      animation: slideFadeIn 0.9s ease forwards 0.9s;
-    }
-
-    @keyframes slideFadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Instagram logo */
-    .instagram-logo {
-      background-image: url('https://mateo-johnson.github.io/assets/instagram-white-icon.png');
-      background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
-    }
-    
-    /* Twitter logo */
-    .twitter-logo {
-      background-image: url('https://mateo-johnson.github.io/assets/twitter-512.png');
-      background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
-    }
-    
-    /* GitHub logo */
-    .github-logo {
-      background-image: url('https://mateo-johnson.github.io/assets/github.png');
-      background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
-    }
-
-    /* Home button */
     .home-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
       width: 40px;
       height: 40px;
       background-color: #333;
       border-radius: 50%;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
     }
 
     .home-button::before {
@@ -146,25 +106,41 @@
   </style>
 </head>
 <body>
+  <a href="#" class="home-button" id="homeButton"></a>
   <div class="container">
-    <center><h1 class="title">TEAM 3324 RESOURCES</h1></center>
-    <div class="button-container">
-      <a href="resources/swervesim.html" class="button text-no-decoration">Swerve Simulator</a>
-      <a href="resources/scouting.html" class="button text-no-decoration">Scouting App</a>
-      <a href="https://www.instagram.com/metrobots3324/" class="button text-no-decoration" target="_blank"><span class="instagram-logo"></span></a>
-      <a href="https://twitter.com/metrobots3324?lang=en" class="button text-no-decoration" target="_blank"><span class="twitter-logo"></span></a>
-      <a href="https://github.com/Mateo-Johnson/RobustSturdy3" class="button text-no-decoration" target="_blank"><span class="github-logo"></span></a>
+    <h1 class="title">About the Metrobots</h1>
+    <p class="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+    <div class="image-container">
+      <div class="image" style="width: 200px; height: 300px;">
+        <img src="https://via.placeholder.com/200x300" alt="Placeholder Image">
+        <div class="image-text">Image 1</div>
+      </div>
+      <div class="image" style="width: 150px; height: 250px;">
+        <img src="https://via.placeholder.com/150x250" alt="Placeholder Image">
+        <div class="image-text">Image 2</div>
+      </div>
+      <div class="image" style="width: 250px; height: 200px;">
+        <img src="https://via.placeholder.com/250x200" alt="Placeholder Image">
+        <div class="image-text">Image 3</div>
+      </div>
+      <div class="image" style="width: 180px; height: 220px;">
+        <img src="https://via.placeholder.com/180x220" alt="Placeholder Image">
+        <div class="image-text">Image 4</div>
+      </div>
+      <div class="image" style="width: 220px; height: 180px;">
+        <img src="https://via.placeholder.com/220x180" alt="Placeholder Image">
+        <div class="image-text">Image 5</div>
+      </div>
+      <div class="image" style="width: 170px; height: 230px;">
+        <img src="https://via.placeholder.com/170x230" alt="Placeholder Image">
+        <div class="image-text">Image 6</div>
+      </div>
     </div>
   </div>
 
-  <!-- HTML for the home button -->
-  <a href="#" class="home-button" id="homeButton"></a>
-
-  <!-- JavaScript for click event on home button -->
   <script>
     document.getElementById('homeButton').addEventListener('click', function() {
       console.log('Home button clicked!');
-      // Replace console.log with any action you want the home button to perform
     });
   </script>
 </body>
