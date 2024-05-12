@@ -164,17 +164,26 @@
       color: white;
     }
 
-    /* Pictures */
-    .picture-container {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
+/* Rounded image containers */
+.picture-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
 
-    .picture {
-      width: 300px;
-      margin: 0 10px;
-    }
+.picture {
+  width: 300px;
+  margin: 0 10px;
+  border-radius: 10px; /* Rounded corners */
+  overflow: hidden; /* Hide overflowing content */
+  transition: transform 0.3s ease-in-out; /* Smooth transition */
+}
+
+/* Cool animation for hover on images */
+.picture:hover {
+  transform: scale(1.05); /* Scale up the image on hover */
+}
+
 
     /* Additional info */
     .info-container {
