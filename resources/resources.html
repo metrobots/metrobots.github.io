@@ -64,25 +64,28 @@
 
     /* Animation */
     .button:nth-child(1) {
-      animation: slideFadeIn 0.9s ease forwards 0.5s;
+      animation: slideFadeIn 0.9s ease forwards 0.3s;
     }
 
     .button:nth-child(2) {
-      animation: slideFadeIn 0.9s ease forwards 0.6s;
+      animation: slideFadeIn 0.9s ease forwards 0.4s;
     }
 
     .button:nth-child(3) {
-      animation: slideFadeIn 0.9s ease forwards 0.7s;
+      animation: slideFadeIn 0.9s ease forwards 0.5s;
     }
 
     .button:nth-child(4) {
-      animation: slideFadeIn 0.9s ease forwards 0.8s;
+      animation: slideFadeIn 0.9s ease forwards 0.6s;
     }
     
     .button:nth-child(5) {
-      animation: slideFadeIn 0.9s ease forwards 0.9s;
+      animation: slideFadeIn 0.9s ease forwards 0.7s;
     }
     .button:nth-child(6) {
+      animation: slideFadeIn 0.9s ease forwards 0.8s;
+    }
+        .button:nth-child(7) {
       animation: slideFadeIn 0.9s ease forwards 0.9s;
     }
 
@@ -136,6 +139,15 @@
       display: inline-block;
       margin-right: 5px;
     }
+    
+         .mail-logo {
+      background-image: url('https://mateo-johnson.github.io/assets/image.png');
+      background-size: cover;
+      width: 45px; /* Adjust the size as needed */
+      height: 30px; /* Adjust the size as needed */
+      display: inline-block;
+      margin-right: 5px;
+    }
 
     /* Home button */
     .home-button {
@@ -171,6 +183,8 @@
       <a href="https://twitter.com/metrobots3324?lang=en" class="button text-no-decoration" target="_blank"><span class="twitter-logo"></span></a>
       <a href="https://github.com/Mateo-Johnson/RobustSturdy3" class="button text-no-decoration" target="_blank"><span class="github-logo"></span></a>
       <a href="https://www.youtube.com/@TeamMetrobots/featured" class="button text-no-decoration" target="_blank"><span class="youtube-logo"></span></a>
+      <a href="mailto:metrobots3324@gmail.com" class="button text-no-decoration" target="_blank"><span class="mail-logo"></span></a>
+
     </div>
   </div>
 
@@ -178,7 +192,18 @@
   <a href="#" class="home-button" id="homeButton"></a>
 
   <!-- JavaScript for click event on home button -->
+  
   <script>
+    function openEmail() {
+    // Specify the email address
+    var email = "example@example.com";
+    
+    // Create the mailto link
+    var mailtoLink = "mailto:" + email;
+    
+    // Open the default email client
+    window.location.href = mailtoLink;
+}
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://mateo-johnson.github.io/index.html';
     });
