@@ -178,7 +178,6 @@
       </div>
     </div>
   </div>
-
   <!-- Home button -->
   <a href="#" class="home-button" id="homeButton"></a>
 
@@ -188,5 +187,27 @@
       window.location.href = 'https://mateo-johnson.github.io/index.html';
     });
   </script>
+  <!-- JavaScript for arrow buttons -->
+  <script>
+  const images = ["https://via.placeholder.com/800x400", "https://via.placeholder.com/800x401", "https://via.placeholder.com/800x400"]; // Add URLs of your images here
+  let currentIndex = 0;
+  const imageElement = document.querySelector('.outreach-image');
+  const leftArrow = document.querySelector('.left-arrow');
+  const rightArrow = document.querySelector('.right-arrow');
+
+  function showImage(index) {
+    imageElement.src = images[index];
+  }
+
+  leftArrow.addEventListener('click', () => {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    showImage(currentIndex);
+  });
+
+  rightArrow.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % images.length;
+    showImage(currentIndex);
+  });
+</script>
 </body>
 </html>
