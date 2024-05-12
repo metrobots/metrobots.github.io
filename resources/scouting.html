@@ -135,7 +135,6 @@
 <body>
 
 <form id="scoutingForm">
-  <!-- Page 1 -->
   <fieldset class="form-page active">
     <h2>Team Info</h2>
     <label for="teamNumber">Team Number:</label>
@@ -154,7 +153,6 @@
     </div>
   </fieldset>
 
-  <!-- Page 2 -->
   <fieldset class="form-page">
     <h2>Auto</h2>
     <label><input type="checkbox" name="Auto Move"> Did they move in auto?</label>
@@ -170,7 +168,6 @@
     </div>
   </fieldset>
 
-  <!-- Page 3 -->
   <fieldset class="form-page">
     <h2>Teleop</h2>
     <label for="notesScoredAmp">Amp Score: <span id="notesScoredAmpValue">0</span></label>
@@ -194,7 +191,6 @@
     </div>
   </fieldset>
 
-  <!-- Page 4 -->
   <fieldset class="form-page">
     <h2>Issues</h2>
     <label for="matchScore">Match Score:</label>
@@ -241,14 +237,14 @@
     for (const checkbox of scoutingForm.querySelectorAll('input[type="checkbox"]')) {
       formData.set(checkbox.name, checkbox.checked ? "Yes" : "No");
     }
-    // Set text inputs to "N/A" if empty
+
     const textInputs = scoutingForm.querySelectorAll('input[type="text"], textarea');
     textInputs.forEach(input => {
       if (input.value.trim() === '') {
         input.value = 'N/A';
       }
     });
-    // Reset sliders
+
     const sliders = document.querySelectorAll('input[type="range"]');
     sliders.forEach(slider => {
       slider.value = '0';
@@ -261,8 +257,8 @@
     .then(response => {
       if (response.ok) {
         alert('Form submitted successfully!');
-        scoutingForm.reset(); // Reset form after successful submission
-        currentPage = 0; // Reset current page to the first page
+        scoutingForm.reset(); 
+        currentPage = 0; 
         formPages.forEach((page, index) => {
           if (index === 0) {
             page.classList.add('active');
