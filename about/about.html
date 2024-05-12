@@ -82,6 +82,35 @@
       opacity: 1;
     }
 
+    .gallery-button {
+      display: block;
+      width: 200px;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .gallery-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .sponsors {
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .sponsor-logo {
+      width: 100px; /* Adjust as needed */
+      margin: 20px;
+    }
+
     .home-button {
       width: 40px;
       height: 40px;
@@ -102,17 +131,6 @@
       font-weight: 900;
       font-size: 1.5rem;
       color: white;
-    }
-
-    /* Sponsors Section Styles */
-    .sponsors {
-      margin-top: 50px;
-      text-align: center;
-    }
-
-    .sponsor-logo {
-      width: 100px; /* Adjust as needed */
-      margin: 20px;
     }
   </style>
 </head>
@@ -147,18 +165,27 @@
         <div class="image-text">Image 6</div>
       </div>
     </div>
-  </div>
+    
+    <!-- Gallery Button -->
+    <a href="gallery.html" class="gallery-button">View Gallery</a>
 
-  <!-- Sponsors Section -->
-  <div class="sponsors">
-    <h2>Sponsors</h2>
-    <div class="sponsor-logos">
-      <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12k_Kleki%20(1).png" alt="Battelle">
-      <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12m_Kleki.png" alt="The Ohio State University">
-      <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12o_Kleki.png" alt="The Metro Schools">
-      <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12s_Kleki.png" alt="Past Foundation">
+    
+    <!-- Sponsors Section -->
+    <div class="sponsors">
+      <h2>Sponsors</h2>
+      <div class="sponsor-logos">
+        <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12k_Kleki%20(1).png" alt="Battelle">
+        <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12m_Kleki.png" alt="The Ohio State University">
+        <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12o_Kleki.png" alt="The Metro Schools">
+        <img class="sponsor-logo" src="https://mateo-johnson.github.io/assets/2024_05_11_12s_Kleki.png" alt="Past Foundation">
+      </div>
     </div>
   </div>
+
+  <!-- HTML for the home button -->
+  <a href="#" class="home-button" id="homeButton"></a>
+
+  <!-- JavaScript for click event on home button -->
   <script>
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://mateo-johnson.github.io/index.html';
