@@ -65,15 +65,14 @@
       margin-top: 40px;
     }
 
-.info-box {
-  flex: 1;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  margin-right: 20px; /* Increased right margin for more separation */
-}
-
+    .info-box {
+      flex: 1;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      margin-right: 20px; /* Increased right margin for more separation */
+    }
 
     .info-title {
       font-size: 1.5rem;
@@ -106,6 +105,30 @@
 
     .right-arrow {
       right: 10px;
+    }
+
+    /* Home button */
+    .home-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 9999; /* Ensures it appears on top */
+    }
+
+    .home-button::before {
+      content: '\f015'; /* Font Awesome home icon */
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: white;
     }
   </style>
 </head>
@@ -156,26 +179,13 @@
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <!-- Home button -->
+  <a href="#" class="home-button" id="homeButton"></a>
+
+  <!-- JavaScript for click event on home button -->
   <script>
-    const images = ["https://via.placeholder.com/800x400", "https://via.placeholder.com/800x401", "https://via.placeholder.com/800x400"]; // Add URLs of your images here
-    let currentIndex = 0;
-    const imageElement = document.querySelector('.outreach-image');
-    const leftArrow = document.querySelector('.left-arrow');
-    const rightArrow = document.querySelector('.right-arrow');
-
-    function showImage(index) {
-      imageElement.src = images[index];
-    }
-
-    leftArrow.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      showImage(currentIndex);
-    });
-
-    rightArrow.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % images.length;
-      showImage(currentIndex);
+    document.getElementById('homeButton').addEventListener('click', function() {
+      window.location.href = 'https://mateo-johnson.github.io/index.html';
     });
   </script>
 </body>
