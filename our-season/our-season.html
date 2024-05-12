@@ -116,37 +116,35 @@
       }
     }
 
-    /* Instagram logo */
     .instagram-logo {
       background-image: url('https://mateo-johnson.github.io/assets/instagram-white-icon.png');
       background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
+      width: 30px;
+      height: 30px;
       display: inline-block;
       margin-right: 5px;
     }
     
-    /* Twitter logo */
+
     .twitter-logo {
       background-image: url('https://mateo-johnson.github.io/assets/twitter-512.png');
       background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
+      width: 30px; 
+      height: 30px;
       display: inline-block;
       margin-right: 5px;
     }
     
-    /* GitHub logo */
     .github-logo {
       background-image: url('https://mateo-johnson.github.io/assets/github.png');
       background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
+      width: 30px;
+      height: 30px;
       display: inline-block;
       margin-right: 5px;
     }
 
-    /* Home button */
+
     .home-button {
       position: fixed;
       top: 20px;
@@ -162,14 +160,13 @@
     }
 
     .home-button::before {
-      content: '\f015'; /* Font Awesome home icon */
+      content: '\f015';
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
       font-size: 1.5rem;
       color: white;
     }
 
-/* Rounded image containers */
 .picture-container {
   display: flex;
   justify-content: center;
@@ -179,18 +176,16 @@
 .picture {
   width: 300px;
   margin: 0 10px;
-  border-radius: 10px; /* Rounded corners */
-  overflow: hidden; /* Hide overflowing content */
-  transition: transform 0.3s ease-in-out; /* Smooth transition */
+  border-radius: 10px; 
+  overflow: hidden; 
+  transition: transform 0.3s ease-in-out;
 }
 
-/* Cool animation for hover on images */
+
 .picture:hover {
-  transform: scale(1.05); /* Scale up the image on hover */
+  transform: scale(1.05); 
 }
 
-
-    /* Additional info */
     .info-container {
       display: flex;
       flex-wrap: wrap;
@@ -281,7 +276,7 @@
           <tr>
             <td>24</td>
             <td>25</td>
-            <td>26</td> <!-- class="today" to make a date grayed out -->
+            <td>26</td> <!-- use class="today" to make a date grayed out -->
             <td>27</td>
             <td>28</td>
             <td>29</td>
@@ -291,14 +286,12 @@
       </table>
     </div>
 
-    <!-- Pictures -->
     <div class="picture-container">
       <img src="https://via.placeholder.com/300" alt="Placeholder" class="picture">
       <img src="https://via.placeholder.com/300" alt="Placeholder" class="picture">
       <img src="https://via.placeholder.com/300" alt="Placeholder" class="picture">
     </div>
 
-    <!-- Additional info -->
     <div class="info-container">
       <div class="info-box">
         <h2 class="info-title">Event Information</h2>
@@ -315,10 +308,8 @@
     </div>
   </div>
 
-  <!-- HTML for the home button -->
   <a href="#" class="home-button" id="homeButton"></a>
 
-  <!-- JavaScript for click event on home button -->
   <script>
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://mateo-johnson.github.io/index.html';
