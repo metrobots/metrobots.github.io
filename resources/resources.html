@@ -62,7 +62,6 @@
       box-shadow: 0 0 10px darkRed;
     }
 
-    /* Animation */
     .button:nth-child(1) {
       animation: slideFadeIn 0.9s ease forwards 0.3s;
     }
@@ -101,7 +100,6 @@
       }
     }
 
-    /* Instagram logo */
     .instagram-logo {
       background-image: url('https://mateo-johnson.github.io/assets/instagram-white-icon.png');
       background-size: cover;
@@ -111,7 +109,6 @@
       margin-right: 5px;
     }
     
-    /* Twitter logo */
     .twitter-logo {
       background-image: url('https://mateo-johnson.github.io/assets/twitter-512.png');
       background-size: cover;
@@ -121,7 +118,6 @@
       margin-right: 5px;
     }
     
-    /* GitHub logo */
     .github-logo {
       background-image: url('https://mateo-johnson.github.io/assets/github.png');
       background-size: cover;
@@ -149,7 +145,6 @@
       margin-right: 5px;
     }
 
-    /* Home button */
     .home-button {
       position: fixed;
       top: 20px;
@@ -188,22 +183,9 @@
     </div>
   </div>
 
-  <!-- HTML for the home button -->
   <a href="#" class="home-button" id="homeButton"></a>
-
-  <!-- JavaScript for click event on home button -->
   
   <script>
-    function openEmail() {
-    // Specify the email address
-    var email = "example@example.com";
-    
-    // Create the mailto link
-    var mailtoLink = "mailto:" + email;
-    
-    // Open the default email client
-    window.location.href = mailtoLink;
-}
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://mateo-johnson.github.io/index.html';
     });
