@@ -28,7 +28,6 @@
       text-align: center;
     }
 
-    /* Outreach section styles */
     .outreach-section {
       margin-bottom: 40px;
       position: relative;
@@ -44,7 +43,6 @@
       font-size: 1.2rem;
     }
 
-    /* Social media icons */
     .social-media-icons {
       display: flex;
       justify-content: center;
@@ -57,7 +55,6 @@
       font-size: 1.5rem;
     }
 
-    /* Additional info section */
     .info-section {
       display: flex;
       flex-wrap: wrap;
@@ -71,7 +68,7 @@
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
-      margin-right: 20px; /* Increased right margin for more separation */
+      margin-right: 20px;
     }
 
     .info-title {
@@ -83,7 +80,6 @@
       font-size: 1rem;
     }
 
-    /* Left and Right arrows */
     .arrow {
       position: absolute;
       top: 50%;
@@ -107,7 +103,6 @@
       right: 10px;
     }
 
-    /* Home button */
     .home-button {
       position: fixed;
       top: 20px;
@@ -120,11 +115,11 @@
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      z-index: 9999; /* Ensures it appears on top */
+      z-index: 9999; 
     }
 
     .home-button::before {
-      content: '\f015'; /* Font Awesome home icon */
+      content: '\f015'; 
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
       font-size: 1.5rem;
@@ -136,9 +131,7 @@
   <div class="container">
     <h1 class="title">Community Involvement</h1>
 
-    <!-- Outreach Section -->
     <div class="outreach-section">
-      <!-- Image container with arrows -->
       <div class="image-container">
         <img src="https://via.placeholder.com/800x400" alt="Community Outreach" class="outreach-image">
         <div class="arrow left-arrow"><i class="fas fa-arrow-left"></i></div>
@@ -146,7 +139,6 @@
       </div>
       <p class="outreach-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
 
-      <!-- Social Media Icons -->
       <div class="social-media-icons">
         <a href="https://www.instagram.com/metrobots3324/" class="text-no-decoration" target="_blank"><i class="fab fa-instagram"></i></a>
         <a href="https://twitter.com/metrobots3324?lang=en" class="text-no-decoration" target="_blank"><i class="fab fa-twitter"></i></a>
@@ -154,7 +146,6 @@
       </div>
     </div>
 
-    <!-- Additional Info Section -->
     <div class="info-section">
       <div class="info-box">
         <h2 class="info-title">Upcoming Events</h2>
@@ -178,16 +169,13 @@
       </div>
     </div>
   </div>
-  <!-- Home button -->
   <a href="#" class="home-button" id="homeButton"></a>
 
-  <!-- JavaScript for click event on home button -->
   <script>
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://mateo-johnson.github.io/index.html';
     });
   </script>
-  <!-- JavaScript for arrow buttons -->
   <script>
   const images = ["https://via.placeholder.com/800x400", "https://via.placeholder.com/800x401", "https://via.placeholder.com/800x400"]; // Add URLs of your images here
   let currentIndex = 0;
