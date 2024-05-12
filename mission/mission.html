@@ -1,1 +1,182 @@
-MAIN PAGE OF THE MISSION SECTION
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Outreach - Metrobots 3324</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Space Mono', monospace;
+      background-color: #222;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    .text-no-decoration {
+      text-decoration: none;
+    }
+
+    .container {
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 3rem;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Outreach section styles */
+    .outreach-section {
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .outreach-image {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .outreach-description {
+      font-size: 1.2rem;
+    }
+
+    /* Social media icons */
+    .social-media-icons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .social-media-icons a {
+      margin: 0 10px;
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    /* Additional info section */
+    .info-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+
+.info-box {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  margin-right: 20px; /* Increased right margin for more separation */
+}
+
+
+    .info-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .info-description {
+      font-size: 1rem;
+    }
+
+    /* Left and Right arrows */
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .left-arrow {
+      left: 10px;
+    }
+
+    .right-arrow {
+      right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="title">Community Outreach</h1>
+
+    <!-- Outreach Section -->
+    <div class="outreach-section">
+      <!-- Image container with arrows -->
+      <div class="image-container">
+        <img src="https://via.placeholder.com/800x400" alt="Community Outreach" class="outreach-image">
+        <div class="arrow left-arrow"><i class="fas fa-arrow-left"></i></div>
+        <div class="arrow right-arrow"><i class="fas fa-arrow-right"></i></div>
+      </div>
+      <p class="outreach-description">At Metrobots 3324, we are committed to making a positive impact in our community. Through various outreach programs, we strive to inspire and educate the next generation of innovators. From organizing STEM workshops at local schools to participating in community clean-up events, we believe in giving back and fostering a culture of collaboration and learning.</p>
+
+      <!-- Social Media Icons -->
+      <div class="social-media-icons">
+        <a href="https://www.instagram.com/metrobots3324/" class="text-no-decoration" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://twitter.com/metrobots3324?lang=en" class="text-no-decoration" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://github.com/Mateo-Johnson/RobustSturdy3" class="text-no-decoration" target="_blank"><i class="fab fa-github"></i></a>
+      </div>
+    </div>
+
+    <!-- Additional Info Section -->
+    <div class="info-section">
+      <div class="info-box">
+        <h2 class="info-title">Upcoming Events</h2>
+        <p class="info-description">Stay tuned for our upcoming community outreach events. Join us in making a difference!</p>
+      </div>
+      <div class="info-box">
+        <h2 class="info-title">Get Involved</h2>
+        <p class="info-description">Interested in volunteering or partnering with us for community outreach initiatives? Contact us to learn more.</p>
+      </div>
+      <div class="info-box">
+        <h2 class="info-title">Success Stories</h2>
+        <p class="info-description">Read about the impact of our community outreach efforts and success stories from those we've inspired.</p>
+      </div>
+      <div class="info-box">
+        <h2 class="info-title">Collaborations</h2>
+        <p class="info-description">Learn about our partnerships with local organizations and businesses to further our community outreach goals.</p>
+      </div>
+      <div class="info-box">
+        <h2 class="info-title">Volunteer Spotlight</h2>
+        <p class="info-description">Get to know some of our dedicated volunteers who are making a difference in the community.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+  <script>
+    const images = ["https://via.placeholder.com/800x400", "https://via.placeholder.com/800x401", "https://via.placeholder.com/800x400"]; // Add URLs of your images here
+    let currentIndex = 0;
+    const imageElement = document.querySelector('.outreach-image');
+    const leftArrow = document.querySelector('.left-arrow');
+    const rightArrow = document.querySelector('.right-arrow');
+
+    function showImage(index) {
+      imageElement.src = images[index];
+    }
+
+    leftArrow.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      showImage(currentIndex);
+    });
+
+    rightArrow.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % images.length;
+      showImage(currentIndex);
+    });
+  </script>
+</body>
+</html>
