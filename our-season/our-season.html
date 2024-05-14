@@ -169,17 +169,22 @@
 
 .picture-container {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   margin-bottom: 30px;
 }
 
 .picture {
-  width: 300px;
+  width: 200px; /* Set a fixed width for the images */
+  height: 200px; /* Set a fixed height for the images */
   margin: 0 10px;
-  border-radius: 10px; 
-  overflow: hidden; 
+  border-radius: 10px;
+  overflow: hidden;
   transition: transform 0.3s ease-in-out;
+  margin-bottom: 20px; /* Add margin to create space between images */
 }
+
+
 
 
 .picture:hover {
