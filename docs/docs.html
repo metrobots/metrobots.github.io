@@ -1,1 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3324 Docs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            animation: slideDown 1s ease-out;
+        }
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        nav {
+            background-color: #444;
+            padding: 10px;
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+            transition: transform 0.3s ease-in-out;
+            animation: rotateX 0.5s ease-out;
+        }
+        @keyframes rotateX {
+            0% {
+                transform: rotateX(-90deg);
+            }
+            100% {
+                transform: rotateX(0);
+            }
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        nav ul li a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #00bcd4; /* Changed to light blue color */
+            transform: scaleX(0);
+            transform-origin: bottom left;
+            transition: transform 0.3s ease;
+        }
+        nav ul li a:hover::before {
+            transform: scaleX(1);
+            transform-origin: bottom right;
+        }
+        nav ul li a:hover {
+            color: #00bcd4; /* Changed to light blue color */
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            animation: fadeInUp 1s ease-out;
+        }
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .container:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(50%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+      
+    </style>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const containers = document.querySelectorAll('.container');
+            containers.forEach(container => {
+                container.classList.add('visible');
+            });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <h1>3324 Documentation</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#code">Code (2024)</a></li>
+            <li><a href="#engineering">Swerve Sim</a></li>
+            <li><a href="#tools">Scouting</a></li>
+            <li><a href="#about">Docs Practices</a></li>
+        </ul>
+    </nav>
+    <div class="container" id="code">
+        <h2>Code (2024)</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+        <!-- Add code-related content here -->
+    </div>
+    <div class="container" id="engineering">
+        <h2>Swerve Sim</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+        <!-- Add engineering-related content here -->
+    </div>
+    <div class="container" id="tools">
+        <h2>Scouting</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+        <!-- Add online tools-related content here -->
+    </div>
+    <div class="container" id="about">
+        <h2>Docs Practices</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+        <!-- Add about us-related content here -->
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Space Mono', monospace;
+      background-color: #222;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
 
+    .text-no-decoration {
+    text-decoration: none;
+      }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .title {
+      font-size: 3rem;
+      margin-bottom: 30px;
+    }
+
+.calendar {
+  margin-top: 30px;
+  margin-bottom: 30px; /* Added margin to create separation */
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+
+    .calendar h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .calendar table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .calendar th,
+    .calendar td {
+      padding: 10px;
+      border: 1px solid white;
+    }
+
+    .calendar th {
+      background-color: rgba(255, 255, 255, 0.1);
+      font-weight: bold;
+    }
+
+    .calendar td {
+      color: white;
+    }
+
+    .calendar td.today {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .calendar td.other-month {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Additional styles */
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+
+    .button {
+      background-color: transparent;
+      color: white;
+      padding: 10px 20px;
+      margin: 5px;
+      border: 2px solid white;
+      border-radius: 5px;
+      font-family: 'Space Mono', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .button:focus {
+      outline: none;
+      box-shadow: 0 0 10px darkRed;
+    }
+
+    @keyframes slideFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+.picture-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.picture {
+  width: 300px;
+  margin: 0 10px;
+  border-radius: 10px; 
+  overflow: hidden; 
+  transition: transform 0.3s ease-in-out;
+}
+
+
+.picture:hover {
+  transform: scale(1.05); 
+}
+
+    .info-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .info-box {
+      width: 300px;
+      padding: 20px;
+      margin: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+
+    .info-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .info-description {
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#" class="home-button" id="homeButton"></a>
+
+  <script>
+    document.getElementById('homeButton').addEventListener('click', function() {
+      window.location.href = 'https://metrobots.github.io/index.html';
+    });
+  </script>
+</body>
+</html>
