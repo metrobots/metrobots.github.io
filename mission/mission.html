@@ -33,11 +33,18 @@
       position: relative;
     }
 
-    .outreach-image {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
+.outreach-image {
+  max-width: 100%;
+  max-height: 400px; /* Example height limit, adjust as needed */
+  overflow: hidden;
+  border-radius: 10px;
+  margin: 0 auto; /* Centering the image horizontally */
+  display: flex; /* Using flexbox */
+  justify-content: center; /* Centering the content horizontally */
+  align-items: center; /* Centering the content vertically */
+}
+
+
 
     .outreach-description {
       font-size: 1.2rem;
@@ -177,7 +184,7 @@
     });
   </script>
   <script>
-  const images = ["https://metrobots.github.io/assets/specific/5.jpeg", "https://metrobots.github.io/assets/specific/IMG_3333.jpg", "https://metrobots.github.io/assets/specific/IMG_8429.jpg"];
+  const images = ["https://metrobots.github.io/assets/specific/6.jpeg", "https://metrobots.github.io/assets/specific/5.jpeg", "https://metrobots.github.io/assets/specific/IMG_3333.jpg", "https://metrobots.github.io/assets/specific/IMG_8429.jpg"];
   let currentIndex = 0;
   const imageElement = document.querySelector('.outreach-image');
   const leftArrow = document.querySelector('.left-arrow');
