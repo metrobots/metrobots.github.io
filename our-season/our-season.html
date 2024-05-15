@@ -88,7 +88,7 @@
       padding: 5px;
       position: absolute;
       z-index: 1;
-      bottom: 125%; /* Position above the marker */
+      bottom: 125%;
       left: 50%;
       transform: translateX(-50%);
       width: max-content;
@@ -110,7 +110,6 @@
       visibility: visible;
     }
 
-    /* Additional styles */
     .button-container {
       display: flex;
       flex-wrap: wrap;
@@ -311,7 +310,6 @@
       window.location.href = 'https://metrobots.github.io/index.html';
     });
 
-    // Function to generate the calendar
     function generateCalendar(year, month, markers = []) {
       const calendarBody = document.getElementById('calendar-body');
       calendarBody.innerHTML = '';
@@ -375,7 +373,6 @@
       }
     }
 
-    // Initialize the calendar with the current date
     const now = new Date();
     generateCalendar(now.getFullYear(), now.getMonth(), [
       [5, "Event 1"],
