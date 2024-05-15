@@ -15,8 +15,8 @@
     }
 
     .text-no-decoration {
-    text-decoration: none;
-      }
+      text-decoration: none;
+    }
 
     .container {
       display: flex;
@@ -31,15 +31,14 @@
       margin-bottom: 30px;
     }
 
-.calendar {
-  margin-top: 30px;
-  margin-bottom: 30px; /* Added margin to create separation */
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
-  padding: 20px;
-}
-
+    .calendar {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      padding: 20px;
+    }
 
     .calendar h2 {
       font-size: 1.5rem;
@@ -55,6 +54,7 @@
     .calendar td {
       padding: 10px;
       border: 1px solid white;
+      position: relative;
     }
 
     .calendar th {
@@ -72,6 +72,42 @@
 
     .calendar td.other-month {
       color: rgba(255, 255, 255, 0.5);
+    }
+
+    .calendar td.marker {
+      background-color: rgba(255, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    .tooltip {
+      visibility: hidden;
+      background-color: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; /* Position above the marker */
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      max-width: 200px;
+    }
+
+    .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: rgba(0, 0, 0, 0.75) transparent transparent transparent;
+    }
+
+    .calendar td.marker:hover .tooltip {
+      visibility: visible;
     }
 
     /* Additional styles */
@@ -124,7 +160,6 @@
       display: inline-block;
       margin-right: 5px;
     }
-    
 
     .twitter-logo {
       background-image: url('https://metrobots.github.io/assets/twitter-512.png');
@@ -134,7 +169,7 @@
       display: inline-block;
       margin-right: 5px;
     }
-    
+
     .github-logo {
       background-image: url('https://metrobots.github.io/assets/github.png');
       background-size: cover;
@@ -143,7 +178,6 @@
       display: inline-block;
       margin-right: 5px;
     }
-
 
     .home-button {
       position: fixed;
@@ -167,29 +201,26 @@
       color: white;
     }
 
-.picture-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 30px;
-}
+    .picture-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
 
-.picture {
-  width: 200px; /* Set a fixed width for the images */
-  height: 200px; /* Set a fixed height for the images */
-  margin: 0 10px;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: transform 0.3s ease-in-out;
-  margin-bottom: 20px; /* Add margin to create space between images */
-}
+    .picture {
+      width: 200px;
+      height: 200px;
+      margin: 0 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s ease-in-out;
+      margin-bottom: 20px;
+    }
 
-
-
-
-.picture:hover {
-  transform: scale(1.05); 
-}
+    .picture:hover {
+      transform: scale(1.05); 
+    }
 
     .info-container {
       display: flex;
@@ -199,6 +230,7 @@
 
     .info-box {
       width: 300px;
+      height: auto;
       padding: 20px;
       margin: 10px;
       background-color: rgba(255, 255, 255, 0.1);
@@ -228,7 +260,7 @@
     <br>
 
     <div class="calendar">
-      <h2>May 2024</h2>
+      <h2 id="calendar-title"></h2>
       <table>
         <thead>
           <tr>
@@ -241,52 +273,7 @@
             <th>Sat</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td class="other-month">26</td>
-            <td class="other-month">27</td>
-            <td class="other-month">28</td>
-            <td class="other-month">29</td>
-            <td class="other-month">30</td>
-            <td>1</td>
-            <td>2</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-            <td>8</td>
-            <td>9</td>
-          </tr>
-          <tr>
-            <td>10</td>
-            <td>11</td>
-            <td>12</td>
-            <td>13</td>
-            <td>14</td>
-            <td>15</td>
-            <td>16</td>
-          </tr>
-          <tr>
-            <td>17</td>
-            <td>18</td>
-            <td>19</td>
-            <td>20</td>
-            <td>21</td>
-            <td>22</td>
-            <td>23</td>
-          </tr>
-          <tr>
-            <td>24</td>
-            <td>25</td>
-            <td>26</td> <!-- use class="today" to make a date grayed out -->
-            <td>27</td>
-            <td>28</td>
-            <td>29</td>
-            <td>30</td>
-          </tr>
+        <tbody id="calendar-body">
         </tbody>
       </table>
     </div>
@@ -303,16 +290,16 @@
 
     <div class="info-container">
       <div class="info-box">
-        <h2 class="info-title">Event Information</h2>
-        <p class="info-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dictum magna ut sapien lobortis aliquet.</p>
+        <h2 class="info-title">General Schedule</h2>
+        <p class="info-description">During the "Build Season", which lasts from Early January to Late March, the schedule is as follows. Monday: 2:30-6, Tuesday: 2:30-6, Wednesday: 2:30-8, Thursday: 2:30-6, Saturday: 10-4. This allows the team ample time to construct and test/drive the robot.</p>
       </div>
       <div class="info-box">
         <h2 class="info-title">Team Achievements</h2>
-        <p class="info-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dictum magna ut sapien lobortis aliquet.</p>
+        <p class="info-description">Team 3324 has won 7 Blue Banners, four of which signify Regional Wins, two of which signify Impact Award (Chairman's Award) placements, and one final one, signifying a Engineering Inspiration Award. The team has also won many smaller awards, such as Gracious Professionalism, and Team Spirit Awards, along with a Dean's List finalist, a Woodie Flowers finalist/Ohio Mentor of the Year.</p>
       </div>
       <div class="info-box">
         <h2 class="info-title">Upcoming Competitions</h2>
-        <p class="info-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dictum magna ut sapien lobortis aliquet.</p>
+        <p class="info-description">We don't know yet, but it is most likely to be some combination of the Pittsburgh, Buckeye and Miami Valley Regionals. Comp dates coming soon!!!!!</p>
       </div>
     </div>
   </div>
@@ -323,6 +310,78 @@
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://metrobots.github.io/index.html';
     });
+
+    // Function to generate the calendar
+    function generateCalendar(year, month, markers = []) {
+      const calendarBody = document.getElementById('calendar-body');
+      calendarBody.innerHTML = '';
+
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastMonthDays = new Date(year, month, 0).getDate();
+      const today = new Date();
+
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById('calendar-title').innerText = `${monthNames[month]} ${year}`;
+
+      let date = 1;
+      let nextMonthDate = 1;
+      let lastMonthStartDate = lastMonthDays - firstDay + 1;
+
+      function createMarker(day, text) {
+        const marker = document.createElement('div');
+        marker.classList.add('tooltip');
+        marker.innerText = text;
+        return marker;
+      }
+
+      for (let i = 0; i < 6; i++) {
+        const row = document.createElement('tr');
+
+        for (let j = 0; j < 7; j++) {
+          const cell = document.createElement('td');
+
+          if (i === 0 && j < firstDay) {
+            cell.classList.add('other-month');
+            cell.innerText = lastMonthStartDate++;
+          } else if (date > daysInMonth) {
+            cell.classList.add('other-month');
+            cell.innerText = nextMonthDate++;
+          } else {
+            cell.innerText = date;
+
+            if (
+              year === today.getFullYear() &&
+              month === today.getMonth() &&
+              date === today.getDate()
+            ) {
+              cell.classList.add('today');
+            }
+
+            const marker = markers.find(marker => marker[0] === date);
+            if (marker) {
+              cell.classList.add('marker');
+              const tooltip = createMarker(date, marker[1]);
+              cell.appendChild(tooltip);
+            }
+
+            date++;
+          }
+
+          row.appendChild(cell);
+        }
+
+        calendarBody.appendChild(row);
+      }
+    }
+
+    // Initialize the calendar with the current date
+    const now = new Date();
+    generateCalendar(now.getFullYear(), now.getMonth(), [
+      [5, "Event 1"],
+      [15, "Event 2"],
+      [25, "Event 3"]
+    ]);
   </script>
 </body>
 </html>
