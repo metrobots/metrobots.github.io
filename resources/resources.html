@@ -5,19 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resources</title>
 
-    <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
-    
+  <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://metrobots.github.io/assets/favicon/android-chrome-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="https://metrobots.github.io/assets/favicon/android-chrome-512x512.png">
+  <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
 
-    <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
-    
-
-    <link rel="icon" type="image/png" sizes="192x192" href="https://metrobots.github.io/assets/favicon/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href=“https://metrobots.github.io/assets/favicon/android-chrome-512x512.png">
-    
-
-    <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
-  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
@@ -29,8 +23,8 @@
     }
     
     .text-no-decoration {
-    text-decoration: none;
-      }
+      text-decoration: none;
+    }
 
     .container {
       display: flex;
@@ -63,6 +57,7 @@
       transition: all 0.3s ease-in-out;
       opacity: 0;
       transform: translateY(20px);
+      position: relative; /* Added for tooltip */
     }
 
     .button:hover {
@@ -95,10 +90,12 @@
     .button:nth-child(5) {
       animation: slideFadeIn 0.9s ease forwards 0.7s;
     }
+
     .button:nth-child(6) {
       animation: slideFadeIn 0.9s ease forwards 0.8s;
     }
-        .button:nth-child(7) {
+
+    .button:nth-child(7) {
       animation: slideFadeIn 0.9s ease forwards 0.9s;
     }
 
@@ -114,49 +111,59 @@
       }
     }
 
-    .instagram-logo {
-      background-image: url('https://metrobots.github.io/assets/instagram-white-icon.png');
+    .instagram-logo,
+    .twitter-logo,
+    .github-logo,
+    .youtube-logo,
+    .mail-logo {
       background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
+      width: 30px;
+      height: 30px;
       display: inline-block;
       margin-right: 5px;
+    }
+    
+    .instagram-logo {
+      background-image: url('https://metrobots.github.io/assets/instagram-white-icon.png');
     }
     
     .twitter-logo {
       background-image: url('https://metrobots.github.io/assets/twitter-512.png');
-      background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
     }
     
     .github-logo {
       background-image: url('https://metrobots.github.io/assets/github.png');
-      background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
     }
     
-     .youtube-logo {
+    .youtube-logo {
       background-image: url('https://metrobots.github.io/assets/youtube-app-white-icon.png');
-      background-size: cover;
-      width: 30px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
     }
     
-         .mail-logo {
+    .mail-logo {
       background-image: url('https://metrobots.github.io/assets/image-removebg-preview.png');
-      background-size: cover;
-      width: 33px; /* Adjust the size as needed */
-      height: 30px; /* Adjust the size as needed */
-      display: inline-block;
-      margin-right: 5px;
+      width: 33px;
+    }
+
+    .tooltip {
+      visibility: hidden;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      left: 120%; /* Increased the distance to position the tooltip further to the right */
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      width: 150px;
+    }
+
+    .button:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
     }
 
     .home-button {
@@ -192,16 +199,29 @@
       <a href="https://twitter.com/metrobots3324?lang=en" class="button text-no-decoration" target="_blank"><span class="twitter-logo"></span></a>
       <a href="https://github.com/Mateo-Johnson/RobustSturdy3" class="button text-no-decoration" target="_blank"><span class="github-logo"></span></a>
       <a href="https://www.youtube.com/@TeamMetrobots/featured" class="button text-no-decoration" target="_blank"><span class="youtube-logo"></span></a>
-      <a href="mailto:metrobots3324@gmail.com" class="button text-no-decoration" target="_blank"><span class="mail-logo"></span></a>
-
+      <a href="mailto:team3324metrobots@gmail.com" class="button text-no-decoration mail-button" target="_blank">
+        <span class="mail-logo"></span>
+        <span class="tooltip">Right-click to copy email</span>
+      </a>
     </div>
   </div>
 
   <a href="#" class="home-button" id="homeButton"></a>
-  
+
   <script>
     document.getElementById('homeButton').addEventListener('click', function() {
       window.location.href = 'https://metrobots.github.io/index.html';
+    });
+
+    // Copy email to clipboard on right-click
+    document.querySelector('.mail-button').addEventListener('contextmenu', function(event) {
+      event.preventDefault(); // Prevent the default context menu
+      const email = 'team3324metrobots@gmail.com';
+      navigator.clipboard.writeText(email).then(() => {
+        alert('Email address copied to clipboard');
+      }).catch(err => {
+        console.error('Could not copy text: ', err);
+      });
     });
   </script>
 </body>
