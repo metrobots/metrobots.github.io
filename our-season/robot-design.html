@@ -94,6 +94,27 @@
             position: fixed;
             width: 100%;
             bottom: 0;
+        }    
+        .home-button {
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          width: 40px;
+          height: 40px;
+          background-color: #333;
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+        }
+
+        .home-button::before {
+          content: '\f015'; 
+          font-family: 'Font Awesome 6 Free';
+          font-weight: 900;
+          font-size: 1.5rem;
+          color: white;
         }
     </style>
 </head>
@@ -147,5 +168,13 @@
         <h2>Controls</h2>
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed dictum magna ut sapien lobortis aliquet.</p>
     </div>
+
+      <a href="#" class="home-button" id="homeButton"></a>
+  
+  <script>
+    document.getElementById('homeButton').addEventListener('click', function() {
+      window.location.href = 'https://metrobots.github.io/index.html';
+    });
+  </script>
 </body>
 </html>
