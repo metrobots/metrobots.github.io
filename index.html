@@ -10,76 +10,297 @@
   <meta name="keywords" content="Metrobots, FIRST Robotics, Team 3324, Robotics">
 
   <title>Metrobots 3324</title>
-  
-    <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
-    
 
-    <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
-    
+  <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
 
-    <link rel="icon" type="image/png" sizes="192x192" href="https://metrobots.github.io/assets/favicon/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href=“https://metrobots.github.io/assets/favicon/android-chrome-512x512.png">
-    
+  <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://metrobots.github.io/assets/favicon/android-chrome-192x192.png">
 
-    <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
-  
+  <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
+
   <style>
+    @import url("https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+    *,
+    *::after,
+    *::before {
+      box-sizing: border-box;
+    }
+
+    :root {
+      font-size: 12px;
+      --color-text: #292828;
+      --color-bg: #ddd;
+      --color-link: #000;
+      --color-link-hover: #000;
+      --page-padding: 1rem;
+      --angle: -15deg;
+      --trans-content: -35vh;
+    }
+
     body {
-      display: grid;
-      place-items: center;
-      height: 100vh;
       margin: 0;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+      font-family: "Poppins", sans-serif;
+      text-transform: uppercase;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    h2 {
+      z-index: -1;
+    }
+
+    .noscroll {
+      height: 100dvh;
+      width: 100%;
+      overflow: hidden;
+      position: fixed;
+      top: 0;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--color-link);
+      outline: none;
+      cursor: pointer;
+    }
+
+    a:hover {
+      text-decoration: underline;
+      color: var(--color-link-hover);
+      outline: none;
+    }
+
+    a:focus {
+      outline: none;
+      background: lightgrey;
+    }
+
+    a:focus:not(:focus-visible) {
+      background: transparent;
+    }
+
+    a:focus-visible {
+      outline: 2px solid red;
+      background: transparent;
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
       position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
     }
 
-    h1 {
-      font-family: 'Space Mono', monospace;
-      font-size: clamp(3rem, 10vw, 10rem);
-      color: white;
-      padding: 0rem clamp(1rem, 2vw, 3rem);
-      border-radius: clamp(0.4rem, 0.75vw, 1rem);
-      z-index: 1;
-    }
-
-    h1:hover {
-      background-color: darkRed;
-      color: white;
-    }
-
-    .background-video-container {
+    .intro::after {
+      content: "";
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 0;
+      background: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true),
+        radial-gradient(circle, #315f316e 0%, transparent 100%);
+      background-size: 250px, 100%;
       pointer-events: none;
+    }
+
+    .intro--open {
+      height: 80vh;
+    }
+
+    .grid {
+      gap: 1rem;
+      flex: none;
+      position: relative;
+      width: 200vw;
+      height: 200vh;
+      display: grid;
+      grid-template-rows: repeat(5, 1fr);
+      grid-template-columns: 100%;
+      transform: rotate(var(--angle));
+      transform-origin: center center;
+    }
+
+    .row {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(7, 1fr);
+      will-change: transform, filter;
+    }
+
+    .row__item {
+      position: relative;
+    }
+
+    .row__item-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
-      opacity: 0;
-      animation: fadeIn 3s forwards;
+      border-radius: 10px;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-    }
-
-    .background-video {
+    .row__item-img {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: 50% 50%;
       position: absolute;
-      top: 47%;
+      top: 0;
+      left: 0;
+    }
+
+    .row__item-img--large {
+      width: 100vw;
+      height: 100vh;
+      top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(1.25);
-      min-width: 100%;
-      min-height: 100%;
-      width: auto;
-      height: auto;
+      margin: -50vh 0 0 -50vw;
+      background-position: 50% 70%;
+      will-change: transform, filter;
+    }
+
+    .enter {
+      color: rgba(255, 255, 255, 1);
+      position: absolute;
+      text-transform: uppercase;
+      padding: 1.75rem 4rem;
+      font-weight: 600;
+      z-index: 100;
+      font-family: "Poppins", sans-serif;
+      font-size: 1.5rem;
+      background: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true),
+        radial-gradient(circle, transparent 0%, transparent 100%);
+      background-size: 250px, 100%;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .enter::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 3rem;
+      transition: all 0.3s;
+      z-index: -1;
+    }
+    
+    .enter:focus::before,
+    .enter:hover::before {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .fullview {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .fullview .row__item-inner {
+      border-radius: 0px;
+    }
+
+    .content {
+      padding: var(--page-padding);
+      position: relative;
+      z-index: 2;
+    }
+
+    .content::before {
+      content: "";
+      position: absolute;
+      border-radius: 10px 10px 0 0;
+      height: calc(100% + (-1) * var(--trans-content));
+      width: 100%;
+      top: 0;
+      left: 0;
       z-index: 0;
+      background: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true),
+        radial-gradient(at top, #FFFFFF 0%, #ddd 100%);
+      background-size: 250px, 100%;
+    }
+
+    .content>* {
+      position: relative;
+    }
+
+    .content__nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+    }
+
+    .content__header h2 {
+      font-size: 2rem;
+      font-family: "Anton", sans-serif;
+      font-style: normal;
+      font-weight: 400;
+      margin: 6rem 0 10vh;
+      line-height: 0.9;
+    }
+
+    .content__text {
+      text-wrap: balance;
+      display: flex;
+      flex-direction: column;
+      gap: 10vh;
+      padding: 0 5vw;
+    }
+
+    .content__text p {
+      max-width: 700px;
+      font-size: 1.5rem;
+      line-height: 1.4;
+      margin: 0;
+      margin-left: auto;
+    }
+
+    .content__text p.highlight {
+      max-width: 1000px;
+      font-size: 2rem;
+      font-family: "Poppins", sans-serif;
+      font-weight: 300;
+    }
+
+    .content__footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20vh;
+      transform: translateY(calc(-1 * var(--trans-content)));
+    }
+
+    @media screen and (min-width: 53em) {
+      body {
+        --page-padding: 2rem 3rem;
+      }
+
+      .content__header h2 {
+        font-size: clamp(2rem, 20vh, 16rem);
+      }
+
+      .content__text p.highlight {
+        font-size: clamp(2rem, 7vh, 4rem);
+      }
     }
 
     .video-overlay {
@@ -88,210 +309,638 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(139, 0, 0, 0.7);
+      background-color: rgba(15, 45, 85, 1);
       z-index: 1;
+      opacity: 0.8;
     }
 
-    .meta-link {
-      align-items: center;
-      backdrop-filter: blur(3px);
-      background-color: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      bottom: 10px;
-      box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
-      display: inline-flex;
-      gap: 5px;
-      left: 10px;
-      padding: 10px 20px;
-      position: fixed;
-      text-decoration: none;
-      transition: background-color 400ms, border-color 400ms;
-      z-index: 10000;
-    }
-
-    .meta-link:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .meta-link>i,
-    .meta-link>span {
-      height: 20px;
-      line-height: 20px;
-    }
-
-    .meta-link>span {
-      color: white;
-      font-family: "Rubik", sans-serif;
-      font-weight: 500;
-    }
-
-    .button-container {
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      justify-content: center;
-      z-index: 2;
-      pointer-events: none;
-    }
-
-    .button-container.show {
-      pointer-events: auto;
-    }
-
-
-    .always-buttons {
-      position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .always-buttons .button {
-      background-color: transparent;
-      color: white;
-      padding: 10px 20px;
-      margin: 5px;
-      border: 2px solid white;
-      border-radius: 5px;
-      font-family: 'Space Mono', monospace;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-      opacity: 0;
-      transform: translateY(20px);
-    }
-
-    .always-buttons .button:nth-child(1) {
-      animation: slideFadeIn 0.9s ease forwards 0.6s;
-    }
-
-    .always-buttons .button:nth-child(2) {
-      animation: slideFadeIn 0.9s ease forwards 0.7s;
-    }
-
-    .always-buttons .button:nth-child(3) {
-      animation: slideFadeIn 0.9s ease forwards 0.8s;
-    }
-
-    .always-buttons .button:nth-child(4) {
-      animation: slideFadeIn 0.9s ease forwards 0.9s;
-    }
-
-    @keyframes slideFadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .always-buttons .button:hover {
-      background-color: rgba(255, 255, 255, 0.1);
-      color: white;
-      transform: translateY(-3px) !important;
-      transition: transform 0.3s ease, background-color 0.3s ease;
-    }
-
-    .always-buttons .button:focus {
-      outline: none;
-      box-shadow: 0 0 10px darkRed;
-    }
-
-.silly {
+.button-container {
   position: absolute;
-  top: 81%;
-  left: 0;
-  display: block;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: right;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.button-container.show {
+  pointer-events: auto;
+}
+
+.always-buttons {
+  position: relative;
+  margin: 0 auto; 
+  display: flex;
+  flex-direction: column;
+  left: 37.5%;
+  top: -60px; 
+}
+
+.always-buttons .button {
+  background-color: transparent;
+  color: black;
+  padding: 10px 20px;
+  margin: 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+  font-family: 'Telefon Black', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
   opacity: 0;
+  transform: translateY(20px);
+  align: center;
 }
 
-.silly .button {
-  background-color: transparent !important;
-  color: white !important;
-  padding: 10px 20px !important;
-  margin: 5px !important;
-  border: 2px solid white;
-  border-radius: 5px !important;
-  font-family: 'Space Mono', monospace !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease-in-out !important;
+.always-buttons .button:nth-child(1) {
+  animation: slideFadeIn 0.9s ease forwards 0.6s;
 }
 
-.silly .button:hover {
+.always-buttons .button:nth-child(2) {
+  animation: slideFadeIn 0.9s ease forwards 0.7s;
+}
+
+.always-buttons .button:nth-child(3) {
+  animation: slideFadeIn 0.9s ease forwards 0.8s;
+}
+
+.always-buttons .button:nth-child(4) {
+  animation: slideFadeIn 0.9s ease forwards 0.9s;
+}
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.always-buttons .button:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: black;
   transform: translateY(-3px) !important;
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.silly .button:focus {
+.always-buttons .button:focus {
   outline: none;
   box-shadow: 0 0 10px darkRed;
 }
 
-    .slide-out {
-      animation: slideOut 0.5s forwards;
-    }
 
-    .slide-in {
-      animation: slideIn 0.5s forwards;
-    }
-
-    @keyframes slideOut {
-      0% {
-        transform: translateX(0);
-        opacity: 0;
-      }
-
-      100% {
-        transform: translateX(-100%);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideIn {
-      0% {
-        transform: translateX(-100%);
-        opacity: 0;
-      }
-
-      100% {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
   </style>
+  
 </head>
+<body class="noscroll">
+  <div class="video-overlay"></div>
+  <main>
+    <section class="intro">
+      <div class="grid">
+        <div class="row">
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/20180930_171320.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/IMG_9597.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/IMG_9602.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2906.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2951.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2964.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2966.jpg)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_9934.PNG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a0.png)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a1.png
+)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a2.png)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a3.png)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://cdna.artstation.com/p/assets/images/images/063/380/096/large/still-xvii-dwarves-environment-4.jpg?1685402835)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a4.png)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a5.png)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/a6.png)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
 
-<body>
-  <div class="background-video-container">
-    <iframe class="background-video" id="youtubeVideo" frameborder="0" allowfullscreen loop loading="lazy"></iframe>
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/dc3c791a-c336-4cff-923e-fe9323eb93d3.jpg
+)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/1.jpeg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/5.jpeg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/6.jpeg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/7.jpeg)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_0248.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_3088.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_3537.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2802.jpg
+)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2896.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_3198.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_3333.jpg)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2880.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2785.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2784.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2745.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_2739.jpg)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/robots/IMG_0669.JPG)"></div>
+            </div>
+          </div>
+          <div class="row__item">
+            <div class="row__item-inner">
+              <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/IMG_9762.JPG)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fullview"></div>
+      <div class="enter"><span>Explore</span></div>
+    </section>
+    <section class="content">
+      <div class="content__header">
+        <h2>Metrobots</h2>
+      </div>
+      <div class="content__text">
+        <p class="right">The most <strong>extraordinary</strong> aspect of a team is not just in the <strong>victories</strong>, but in the relentless pursuit of <strong>improvement</strong>, learning from every setback, and striving towards a common goal. In robotics, every failure is just another step toward <strong>success</strong>.
+        <p class="highlight">quick links</p>
 
-    <div class="video-overlay"></div>
-  </div>
-  <h1 data-value="METROBOTS">TEAM 3324</h1>
-
-  <div class="always-buttons">
+        
+          <div class="always-buttons">
     <div class="button"><b><center>About Us</center></b></div>
     <div class="button"><b>Our Season</b></div>
     <div class="button"><b><center>Our Community</center></b></div>
     <div class="button"><b><center>Resources </center></b></div>
   </div>
-
+        
+      </div>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/Flip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+  
   <script>
-    document.querySelector('.always-buttons .button:nth-child(1)').addEventListener('click', function() {
+    gsap.registerPlugin(Flip);
+    const body = document.body;
+    const content = document.querySelector(".content");
+    const enterButton = document.querySelector(".enter");
+    const fullview = document.querySelector(".fullview");
+    const grid = document.querySelector(".grid");
+    const gridRows = grid.querySelectorAll(".row");
+    // Cache window size and update on resize
+    let winsize = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+    window.addEventListener("resize", () => {
+      winsize = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+    });
+    let mousepos = {
+      x: winsize.width / 2,
+      y: winsize.height / 2
+    };
+    const config = {
+      translateX: true,
+      skewX: false,
+      contrast: true,
+      scale: false,
+      brightness: true
+    };
+    const numRows = gridRows.length;
+    const middleRowIndex = Math.floor(numRows / 2);
+    const middleRow = gridRows[middleRowIndex];
+    const middleRowItems = middleRow.querySelectorAll(".row__item");
+    const numRowItems = middleRowItems.length;
+    const middleRowItemIndex = Math.floor(numRowItems / 2);
+    const middleRowItemInner = middleRowItems[middleRowItemIndex].querySelector(
+      ".row__item-inner"
+    );
+    const middleRowItemInnerImage = middleRowItemInner.querySelector(
+      ".row__item-img"
+    );
+    middleRowItemInnerImage.classList.add("row__item-img--large");
+    const baseAmt = 0.1;
+    const minAmt = 0.05;
+    const maxAmt = 0.1;
+    let renderedStyles = Array.from({
+      length: numRows
+    }, (v, index) => {
+      const distanceFromMiddle = Math.abs(index - middleRowIndex);
+      const amt = Math.max(baseAmt - distanceFromMiddle * 0.03, minAmt);
+      const scaleAmt = Math.min(baseAmt + distanceFromMiddle * 0.03, maxAmt);
+      let style = {
+        amt,
+        scaleAmt
+      };
+      if (config.translateX) {
+        style.translateX = {
+          previous: 0,
+          current: 0
+        };
+      }
+      if (config.skewX) {
+        style.skewX = {
+          previous: 0,
+          current: 0
+        };
+      }
+      if (config.contrast) {
+        style.contrast = {
+          previous: 100,
+          current: 100
+        };
+      }
+      if (config.scale) {
+        style.scale = {
+          previous: 1,
+          current: 1
+        };
+      }
+      if (config.brightness) {
+        style.brightness = {
+          previous: 100,
+          current: 100
+        };
+      }
+      return style;
+    });
+    let requestId;
+    const getMousePos = (ev) => {
+      let posx = 0;
+      let posy = 0;
+      if (!ev) ev = window.event;
+      if (ev.pageX || ev.pageY) {
+        posx = ev.pageX;
+        posy = ev.pageY;
+      } else if (ev.clientX || ev.clientY) {
+        posx =
+          ev.clientX +
+          document.body.scrollLeft +
+          document.documentElement.scrollLeft;
+        posy =
+          ev.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+      }
+      return {
+        x: posx,
+        y: posy
+      };
+    };
+    const updateMousePosition = (ev) => {
+      const pos = getMousePos(ev);
+      mousepos.x = pos.x;
+      mousepos.y = pos.y;
+    };
+    const lerp = (a, b, n) => (1 - n) * a + n * b;
+    const calculateMappedX = () => {
+      return (((mousepos.x / winsize.width) * 2 - 1) * 40 * winsize.width) / 100;
+    };
+    const calculateMappedSkew = () => {
+      return ((mousepos.x / winsize.width) * 2 - 1) * 3;
+    };
+    const calculateMappedContrast = () => {
+      const centerContrast = 100;
+      const edgeContrast = 330;
+      const t = Math.abs((mousepos.x / winsize.width) * 2 - 1);
+      const factor = Math.pow(t, 2);
+      return centerContrast - factor * (centerContrast - edgeContrast);
+    };
+    const calculateMappedScale = () => {
+      const centerScale = 1;
+      const edgeScale = 0.95;
+      return (
+        centerScale -
+        Math.abs((mousepos.x / winsize.width) * 2 - 1) * (centerScale - edgeScale)
+      );
+    };
+    const calculateMappedBrightness = () => {
+      const centerBrightness = 100;
+      const edgeBrightness = 15;
+      const t = Math.abs((mousepos.x / winsize.width) * 2 - 1);
+      const factor = Math.pow(t, 2);
+      return centerBrightness - factor * (centerBrightness - edgeBrightness);
+    };
+    const getCSSVariableValue = (element, variableName) => {
+      return getComputedStyle(element).getPropertyValue(variableName).trim();
+    };
+    const render = () => {
+      const mappedValues = {
+        translateX: calculateMappedX(),
+        skewX: calculateMappedSkew(),
+        contrast: calculateMappedContrast(),
+        scale: calculateMappedScale(),
+        brightness: calculateMappedBrightness()
+      };
+      gridRows.forEach((row, index) => {
+        const style = renderedStyles[index];
+        for (let prop in config) {
+          if (config[prop]) {
+            style[prop].current = mappedValues[prop];
+            const amt = prop === "scale" ? style.scaleAmt : style.amt;
+            style[prop].previous = lerp(
+              style[prop].previous,
+              style[prop].current,
+              amt
+            );
+          }
+        }
+        let gsapSettings = {};
+        if (config.translateX) gsapSettings.x = style.translateX.previous;
+        if (config.skewX) gsapSettings.skewX = style.skewX.previous;
+        if (config.scale) gsapSettings.scale = style.scale.previous;
+        if (config.contrast)
+          gsapSettings.filter = `contrast(${style.contrast.previous}%)`;
+        if (config.brightness)
+          gsapSettings.filter = `${
+        gsapSettings.filter ? gsapSettings.filter + " " : ""
+      }brightness(${style.brightness.previous}%)`;
+        gsap.set(row, gsapSettings);
+      });
+      requestId = requestAnimationFrame(render);
+    };
+    const startRendering = () => {
+      if (!requestId) {
+        render();
+      }
+    };
+    const stopRendering = () => {
+      if (requestId) {
+        cancelAnimationFrame(requestId);
+        requestId = undefined;
+      }
+    };
+    const enterFullview = () => {
+      const flipstate = Flip.getState(middleRowItemInner);
+      fullview.appendChild(middleRowItemInner);
+      const transContent = getCSSVariableValue(content, "--trans-content");
+      const tl = gsap.timeline();
+      tl.add(
+          Flip.from(flipstate, {
+            duration: 0.9,
+            ease: "power4",
+            absolute: true,
+            onComplete: stopRendering
+          })
+        )
+        .to(
+          grid, {
+            duration: 0.9,
+            ease: "power4",
+            opacity: 0.01
+          },
+          0
+        )
+        .to(
+          middleRowItemInnerImage, {
+            scale: 1.2,
+            duration: 3,
+            ease: "sine"
+          },
+          "<-=0.45"
+        )
+        .to(content, {
+          y: transContent,
+          duration: 0.9,
+          ease: "power4"
+        });
+      enterButton.classList.add("hidden");
+      body.classList.remove("noscroll");
+    };
+    const init = () => {
+      startRendering();
+      enterButton.addEventListener("click", enterFullview);
+      enterButton.addEventListener("touchstart", enterFullview);
+    };
+    window.addEventListener("mousemove", updateMousePosition);
+    window.addEventListener("touchmove", (ev) => {
+      const touch = ev.touches[0];
+      updateMousePosition(touch);
+    });
+    const initSmoothScrolling = () => {
+      const lenis = new Lenis({
+        lerp: 0.15
+      });
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+    };
+    initSmoothScrolling();
+    init();
+    
+        class TextScramble {
+      constructor(el) {
+        this.el = el;
+        this.chars = '!<>-_\\/[]{}—=+*^?#________';
+        this.update = this.update.bind(this);
+      }
+      setText(newText) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise((resolve) => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const from = oldText[i] || '';
+          const to = newText[i] || '';
+          const start = Math.floor(Math.random() * 40);
+          const end = start + Math.floor(Math.random() * 40);
+          this.queue.push({
+            from,
+            to,
+            start,
+            end
+          });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          let {
+            from,
+            to,
+            start,
+            end,
+            char
+          } = this.queue[i];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) {
+              char = this.randomChar();
+              this.queue[i].char = char;
+            }
+            output += `<span class="dud">${char}</span>`;
+          } else {
+            output += from;
+          }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) {
+          this.resolve();
+        } else {
+          this.frameRequest = requestAnimationFrame(this.update);
+          this.frame++;
+        }
+      }
+      randomChar() {
+        return this.chars[Math.floor(Math.random() * this.chars.length)];
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const el = document.querySelector('h2');
+      const fx = new TextScramble(el);
+      el.addEventListener('mouseenter', () => {
+        fx.setText('METROBOTS');
+      });
+    });
+    
+   document.querySelector('.always-buttons .button:nth-child(1)').addEventListener('click', function() {
       window.location.href = "about/about.html";
     });
 
@@ -305,51 +954,9 @@
 
     document.querySelector('.always-buttons .button:nth-child(4)').addEventListener('click', function() {
       window.location.href = "resources/resources.html";
-    });
-
-    const letters = "∑∫√∆∞≠≈≤≥±×÷∝∴∵∇∂≡∼≅∩∪⊂⊃⊆⊇∅∈∉∋←→↑↓↔↖↗↘↙⇐⇒⇑⇓⇔↤↥↦↧⇄⇅⇆⇇⇈⇉⇊⇰⇱⇲⇳⇴⇵⇶⇷⇸⇹⇺⇻⇼⇽⇾⇿∝ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$€£¥₹¢.,?!:;-/\@#$%&*+=<>ɑɒæɐaɑɒbʙβɓcçɕdðɖɗʤʣdzdʑɱeɘəɚɛɜɝɞɟɠɡɢʛɦɧhɥɨɪɪjɟʄɨʝɟkʞlɭʎʟɬɮʟɺɫɬɭmɱɯɰŋɳɲɴɶɷɵɸʘɹɺɻɼɽɾɸʁɹɻɽʀʁɾɸsʃʂtθʈʧʦʨtʃtʂtɕʈtɕʈʋuʊʌʍwɯɰʷxɣχʁɥʎʟʒʑʐʝʎʟβɵʉɪɪʏʊʊ";
-    const youtubeLinks = [
-      "https://www.youtube.com/embed/3KtxX7LDcuQ?autoplay=1&loop=1000&mute=1&playlist=3KtxX7LDcuQ&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_2?autoplay=1&loop=1000&mute=1&playlist=NpmZqjq6XOk&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=UAJ4ri4wFbs&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=WeH5BYzY87Q&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=CGivBFyF8Ug&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=5Y8rrHjDAV4&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=VPQ9QdmkgdM&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=XljNNMhltS8&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=3B1TMGdccOY&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=ZPYKY2GIuAA&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=oirnxmxF3R4&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=cn81Fup2Nm4&start=5",
-      "https://www.youtube.com/embed/VIDEO_ID_3?autoplay=1&loop=1000&mute=1&playlist=PC3MpMCt7yk&start=5"
-    ];
-
-    const randomIndex = Math.floor(Math.random() * youtubeLinks.length);
-    const randomYouTubeLink = youtubeLinks[randomIndex];
-    document.getElementById("youtubeVideo").src = randomYouTubeLink;
-
-    let interval = null;
-    document.querySelector("h1").onmouseover = event => {
-      let iteration = 0;
-      clearInterval(interval);
-      interval = setInterval(() => {
-        event.target.innerText = event.target.innerText
-          .split("")
-          .map((letter, index) => {
-            if (index < iteration) {
-              return event.target.dataset.value[index];
-            }
-            return letters[Math.floor(Math.random() * 26)]
-          })
-          .join("");
-        if (iteration >= event.target.dataset.value.length) {
-          clearInterval(interval);
-          document.querySelector('.button-container').classList.add('show');
-        }
-        iteration += 1 / 3;
-      }, 30);
-    }
+    }); 
+    
   </script>
 </body>
-
 </html>
+
