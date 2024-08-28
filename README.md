@@ -1,0 +1,1 @@
+Welcome to the official website of the Metrobots FRC Team! This repository contains the code and assets for our team's website, designed to provide an online hub for our team members, sponsors, and the community.
