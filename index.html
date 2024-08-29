@@ -9,7 +9,7 @@
   <meta name="description" content="Metrobots 3324 - FIRST Robotics Team">
   <meta name="keywords" content="Metrobots, FIRST Robotics, Team 3324, Robotics">
 
-  <title>The Metrobots</title>
+  <title>Metrobots 3324</title>
 
   <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
@@ -543,7 +543,8 @@
             </div>
           </div>
           <div class="row__item">
-            <div class="row__item-inner">
+            <div 
+                 class="row__item-inner">
               <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_3537.jpg)"></div>
             </div>
           </div>
@@ -608,7 +609,7 @@
         </div>
       </div>
       <div class="fullview"></div>
-      <div class="enter"><span>Explore</span></div>
+      <div class="enter"><span id="welcome-text">Welcome</span></div>
     </section>
     <section class="content">
       <div class="content__header">
@@ -646,6 +647,79 @@
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
   
   <script>
+    
+    const welcomeMessages = [
+    "Welcome",
+    "Welcome",
+    "Welcome",
+    "Welcome",
+    "Welcome",
+    "Bienvenue",
+    "Bienvenido",
+    "Willkommen",
+    "Benvenuto",
+    "歡迎",
+    "ようこそ",
+    "Добро пожаловать",
+    "Welkom",
+    "환영합니다",
+    "أهلاً وسهلاً",
+    "ברוך הבא",
+    "ברוכה הבאה",
+    "स्वागत है",
+    "ยินดีต้อนรับ",
+    "Chào mừng",
+    "Karibu",
+    "Hoş geldiniz",
+    "Καλώς ήρθατε",
+    "Tervetuloa",
+    "Üdvözöljük"
+];
+
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+shuffleArray(welcomeMessages);
+
+let currentIndex = 0;
+const welcomeText = document.getElementById('welcome-text');
+
+function scrambleToNextWord() {
+    const currentWord = welcomeMessages[currentIndex];
+    currentIndex = (currentIndex + 1) % welcomeMessages.length;
+    const nextWord = welcomeMessages[currentIndex];
+
+    let scrambleIndex = 0;
+    const scrambleInterval = setInterval(() => {
+        let scrambledText = nextWord.split('');
+        
+        for (let i = 0; i < scrambleIndex; i++) {
+            if (i < currentWord.length) {
+                scrambledText[i] = nextWord[i];
+            }
+        }
+
+        for (let i = scrambleIndex; i < nextWord.length; i++) {
+            scrambledText[i] = String.fromCharCode(33 + Math.random() * 94);
+        }
+
+        welcomeText.textContent = scrambledText.join('');
+
+        if (scrambleIndex++ >= nextWord.length) {
+            clearInterval(scrambleInterval);
+            setTimeout(scrambleToNextWord, 2000);
+        }
+    }, 50);
+}
+
+scrambleToNextWord();
+
+    
     gsap.registerPlugin(Flip);
     const body = document.body;
     const content = document.querySelector(".content");
@@ -969,19 +1043,19 @@
     });
     
    document.querySelector('.always-buttons .button:nth-child(1)').addEventListener('click', function() {
-      window.location.href = "about/";
+      window.location.href = "about/about.html";
     });
 
     document.querySelector('.always-buttons .button:nth-child(2)').addEventListener('click', function() {
-      window.location.href = "our-season/";
+      window.location.href = "our-season/our-season.html";
     });
 
     document.querySelector('.always-buttons .button:nth-child(3)').addEventListener('click', function() {
-      window.location.href = "mission/";
+      window.location.href = "mission/mission.html";
     });
 
     document.querySelector('.always-buttons .button:nth-child(4)').addEventListener('click', function() {
-      window.location.href = "resources/";
+      window.location.href = "resources/resources.html";
     }); 
     
   </script>
