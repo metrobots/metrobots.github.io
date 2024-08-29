@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery</title>
+
+    <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
+    
+
+    <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+    
+
+    <link rel="icon" type="image/png" sizes="192x192" href="https://metrobots.github.io/assets/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href=“https://metrobots.github.io/assets/favicon/android-chrome-512x512.png">
+    
+
+    <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #222;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 50px 20px;
+    }
+
+    .title {
+      font-size: 3rem;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-auto-rows: 250px;
+      gap: 20px;
+    }
+
+    .gallery-item {
+      background-color: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      animation: slideIn 1s ease-out both;
+    }
+
+    .gallery-item:hover {
+      transform: scale(1.05);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.8;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .gallery-item:hover img {
+      opacity: 1;
+    }
+
+    .image-text {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+      text-align: center;
+      font-size: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .gallery-item:hover .image-text {
+      opacity: 1;
+    }
+
+    .image-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .home-button {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border-radius: 50%;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .home-button::before {
+      content: '\f015';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: white;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="home-button" id="homeButton"></a>
+  <div class="container">
+    <h1 class="title">Gallery</h1>
+    <div class="gallery">
+      
+      <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/20180930_171320.jpg" alt="Image 1" loading="lazy">
+        <div class="image-label">Image 1</div>
+        <div class="image-text">Description for Image 1</div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9598.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 2</div>
+        <div class="image-text">Description for Image 2</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9601.JPG" alt="Image 3" loading="lazy">
+        <div class="image-label">Image 2</div>
+        <div class="image-text">Description for Image 3</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9602.JPG" alt="Image 4" loading="lazy">
+        <div class="image-label">Image 4</div>
+        <div class="image-text">Description for Image 4</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9724.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 5</div>
+        <div class="image-text">Description for Image 5</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9727.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 6</div>
+        <div class="image-text">Description for Image 6</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9737.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 7</div>
+        <div class="image-text">Description for Image 7</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9748.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 8</div>
+        <div class="image-text">Description for Image 8</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/IMG_9760.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 9</div>
+        <div class="image-text">Description for Image 9</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/1.jpeg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 10</div>
+        <div class="image-text">Description for Image 10</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/2.jpeg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 11</div>
+        <div class="image-text">Description for Image 11</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/3.jpeg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 12</div>
+        <div class="image-text">Description for Image 12</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/4.jpeg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 13</div>
+        <div class="image-text">Description for Image 13</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/7.jpeg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 14</div>
+        <div class="image-text">Description for Image 14</div>
+      </div>
+      
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_0225.jpg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 15</div>
+        <div class="image-text">Description for Image 15</div>
+      </div>
+
+            <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_0287.jpg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 16</div>
+        <div class="image-text">Description for Image 16</div>
+      </div>
+                  <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_1041.jpg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 17</div>
+        <div class="image-text">Description for Image 17</div>
+      </div>
+      
+                  <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_2321.jpg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 18</div>
+        <div class="image-text">Description for Image 18</div>
+      </div>
+      
+                  <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_3088.jpg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 19</div>
+        <div class="image-text">Description for Image 19</div>
+      </div>
+                        <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_3198.jpg" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 20</div>
+        <div class="image-text">Description for Image 20</div>
+      </div>
+      
+                        <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_9765.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 21</div>
+        <div class="image-text">Description for Image 21</div>
+      </div>
+      
+                        <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_9769.JPG" alt="Image 2">
+        <div class="image-label">Image 22</div>
+        <div class="image-text">Description for Image 22</div>
+      </div>
+      
+                        <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/awhkfjan.png" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 23</div>
+        <div class="image-text">Description for Image 23</div>
+      </div>
+      
+                              <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/IMG_9775.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 24</div>
+        <div class="image-text">Description for Image 24</div>
+      </div>
+      
+                              <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/kickoffIMG_0959.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 25</div>
+        <div class="image-text">Description for Image 25</div>
+      </div>
+      
+                              <div class="gallery-item">
+        <img src="https://metrobots.github.io/assets/specific/kickoffpostIMG_0960.JPG" alt="Image 2" loading="lazy">
+        <div class="image-label">Image 26</div>
+        <div class="image-text">Description for Image 26</div>
+      </div>
+      
+
+    </div>
+  </div>
+
+  <a href="https://metrobots.github.io" class="home-button" id="homeButton"></a>
+  <script>
+    document.getElementById('homeButton').addEventListener('click', function() {
+      window.location.href = 'https://metrobots.github.io';
+    });
+  </script>
+</body>
+</html>
