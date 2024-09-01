@@ -19,8 +19,8 @@
   <style>
     body {
       font-family: "Poppins", sans-serif;
-      background-color: #222;
-      color: white;
+       background-image: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true), radial-gradient(at center top, rgb(255, 255, 255) 0%, rgb(221, 221, 221) 100%);
+      color: #2c2c2c;
       margin: 0;
       padding: 0;
     }
@@ -50,10 +50,10 @@
 
     .button {
       background-color: transparent;
-      color: white;
+      color: #2c2c2c;
       padding: 10px 20px;
       margin: 5px;
-      border: 2px solid white;
+      border: 2px solid #2c2c2c;
       border-radius: 5px;
       font-family: 'Space Mono', monospace;
       cursor: pointer;
@@ -64,7 +64,7 @@
     }
 
     .button:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: #2c2c2c;
       color: white;
       transform: translateY(-3px);
     }
@@ -127,22 +127,44 @@
     }
     
     .instagram-logo {
-      background-image: url('https://metrobots.github.io/assets/instagram-white-icon.png');
+      background-image: url('https://metrobots.github.io/assets/logos/4.png');
     }
     
     .twitter-logo {
-      background-image: url('https://metrobots.github.io/assets/twitter-512.png');
+      background-image: url('https://metrobots.github.io/assets/logos/3.png');
     }
     
     .github-logo {
-      background-image: url('https://metrobots.github.io/assets/github.png');
+      background-image: url('https://metrobots.github.io/assets/logos/1.png');
     }
     
     .youtube-logo {
-      background-image: url('https://metrobots.github.io/assets/youtube-app-white-icon.png');
+      background-image: url('https://metrobots.github.io/assets/logos/2.png');
     }
     
     .mail-logo {
+      background-image: url('https://metrobots.github.io/assets/logos/5.png');
+      width: 33px;
+    }
+    
+    
+        .instagram-logo:hover {
+      background-image: url('https://metrobots.github.io/assets/instagram-white-icon.png');
+    }
+    
+    .twitter-logo:hover {
+      background-image: url('https://metrobots.github.io/assets/twitter-512.png');
+    }
+    
+    .github-logo:hover {
+      background-image: url('https://metrobots.github.io/assets/github.png');
+    }
+    
+    .youtube-logo:hover {
+      background-image: url('https://metrobots.github.io/assets/youtube-app-white-icon.png');
+    }
+    
+    .mail-logo:hover {
       background-image: url('https://metrobots.github.io/assets/image-removebg-preview.png');
       width: 33px;
     }
@@ -216,9 +238,8 @@
       window.location.href = 'https://metrobots.github.io';
     });
 
-    // Copy email to clipboard on right-click
     document.querySelector('.mail-button').addEventListener('contextmenu', function(event) {
-      event.preventDefault(); // Prevent the default context menu
+      event.preventDefault();
       const email = 'team3324metrobots@gmail.com';
       navigator.clipboard.writeText(email).then(() => {
         
