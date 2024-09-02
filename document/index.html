@@ -11,7 +11,7 @@
             flex-direction: column;
             align-items: center;
             margin: 20px;
-            background-color: #f4f4f9; 
+            background-color: #f4f4f9;
         }
         form {
             display: flex;
@@ -19,24 +19,24 @@
             align-items: center;
             width: 100%;
             max-width: 500px;
-            background-color: white; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
             margin: 20px 0;
         }
         input, select, textarea {
             width: 100%;
             margin: 10px 0;
-            padding: 12px; 
+            padding: 12px;
             font-size: 1rem;
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         button {
-            padding: 12px 20px; 
+            padding: 12px 20px;
             font-size: 1rem;
-            background-color: #007bff; 
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
@@ -44,7 +44,16 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0056b3; 
+            background-color: #0056b3;
+        }
+        .error-message, .info-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .info-message {
+            color: #007bff; /* Use a different color for informational messages */
         }
     </style>
 </head>
@@ -62,12 +71,57 @@
         <textarea id="imageSummary" placeholder="Image Summary" required></textarea>
         <input type="file" id="imageUploader" accept="image/*" required>
         <button type="submit">Submit</button>
+        <div id="infoMessage" class="info-message"></div>
+        <div id="errorMessage" class="error-message"></div>
     </form>
+
+    <canvas id="canvas" style="display:none;"></canvas>
 
     <script>
         function generateUniqueID() {
             const now = new Date();
             return now.toISOString().replace(/[-:.]/g, '');
+        }
+
+        function resizeImage(file, callback) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                img.onload = function () {
+                    let width = img.width;
+                    let height = img.height;
+                    const maxWidth = 800;
+                    const maxHeight = 600;
+                    
+                    // Calculate new dimensions
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                    if (height > maxHeight) {
+                        width = Math.round((width * maxHeight) / height);
+                        height = maxHeight;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Adjust quality to compress the image
+                    canvas.toBlob(function (blob) {
+                        if (blob.size > 35 * 1024) {
+                            resizeImage(file, callback); // Retry resizing with adjustments
+                        } else {
+                            callback(blob);
+                        }
+                    }, 'image/jpeg', 0.85); // Adjust quality if needed
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         document.getElementById('submissionForm').addEventListener('submit', function (e) {
@@ -77,34 +131,81 @@
             const subgroup = document.getElementById('subgroup').value;
             const imageSummary = document.getElementById('imageSummary').value;
             const file = document.getElementById('imageUploader').files[0];
-            const reader = new FileReader();
+            const errorMessage = document.getElementById('errorMessage');
+            const infoMessage = document.getElementById('infoMessage');
 
-            const submissionID = generateUniqueID();
+            errorMessage.innerHTML = ''; // Clear previous error message
+            infoMessage.innerHTML = 'Image downsizing, please wait...'; // Show processing message
 
-            reader.onload = function () {
-                const base64String = reader.result;
+            if (file.size > 35 * 1024) { // If file size is above 35 KB
+                resizeImage(file, function (resizedBlob) {
+                    const reader = new FileReader();
+                    reader.onload = function () {
+                        const base64String = reader.result;
+                        const submissionID = generateUniqueID();
 
-                const formData = new FormData();
-                formData.append('submissionString', [
-                    submissionID,
-                    name,
-                    subgroup,
-                    imageSummary,
-                    base64String
-                ].join('|'));
+                        const formData = new FormData();
+                        formData.append('submissionString', [
+                            submissionID,
+                            name,
+                            subgroup,
+                            imageSummary,
+                            base64String
+                        ].join('|'));
 
-                console.log('Submission String:', formData.get('submissionString'));
-                fetch('https://hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text()) 
-                .then(result => console.log('Success:', result))
-                .catch(error => console.error('Error:', error));
+                        console.log('Submission String:', formData.get('submissionString'));
+                        fetch('https://hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.text())
+                        .then(result => {
+                            console.log('Success:', result);
+                            document.getElementById('submissionForm').reset();
+                            infoMessage.innerHTML = ''; // Clear processing message
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            errorMessage.innerHTML = 'An error occurred while submitting the form. Please try again.';
+                            infoMessage.innerHTML = ''; // Clear processing message
+                        });
+                    };
+                    reader.readAsDataURL(resizedBlob);
+                });
+            } else {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const base64String = reader.result;
+                    const submissionID = generateUniqueID();
 
-                document.getElementById('submissionForm').reset();
-            };
-            reader.readAsDataURL(file);
+                    const formData = new FormData();
+                    formData.append('submissionString', [
+                        submissionID,
+                        name,
+                        subgroup,
+                        imageSummary,
+                        base64String
+                    ].join('|'));
+
+                    console.log('Submission String:', formData.get('submissionString'));
+                    fetch('https://hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        console.log('Success:', result);
+                        document.getElementById('submissionForm').reset();
+                        infoMessage.innerHTML = ''; // Clear processing message
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        errorMessage.innerHTML = 'An error occurred while submitting the form. Please try again.';
+                        infoMessage.innerHTML = ''; // Clear processing message
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 
