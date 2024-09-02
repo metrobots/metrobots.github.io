@@ -1,203 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docs</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
-      <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
-      <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
-      <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
-      <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-      <meta name="msapplication-TileColor" content="#333333">
-      <meta name="theme-color" content="#ffffff">
-    
-
-    
-    <style>
-        body {
-            font-family: "Poppins", sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f2f2f2;
-        }
-        header {
-            background-color: #222;
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            animation: slideDown 1s ease-out;
-        }
-        @keyframes slideDown {
-            0% {
-                transform: translateY(-100%);
-            }
-            100% {
-                transform: translateY(0);
-            }
-        }
-        nav {
-            background-color: #444;
-            padding: 10px;
-            animation: fadeIn 1s ease-out;
-        }
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            text-align: center;
-        }
-        nav ul li {
-            display: inline;
-            margin-right: 20px;
-            transition: transform 0.3s ease-in-out;
-            animation: rotateX 0.5s ease-out;
-        }
-        @keyframes rotateX {
-            0% {
-                transform: rotateX(-90deg);
-            }
-            100% {
-                transform: rotateX(0);
-            }
-        }
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s;
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-        nav ul li a::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #00bcd4;
-            transform: scaleX(0);
-            transform-origin: bottom left;
-            transition: transform 0.3s ease;
-        }
-        nav ul li a:hover::before {
-            transform: scaleX(1);
-            transform-origin: bottom right;
-        }
-        nav ul li a:hover {
-            color: #00bcd4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            animation: fadeInUp 1s ease-out;
-        }
-        .container.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .container:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transform: translateY(-5px);
-        }
-        @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(50%);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        h2 {
-            color: #333;
-        }
-        p {
-            color: #666;
-        }
-      
-    </style>
-    <script>
-        window.addEventListener('DOMContentLoaded', (event) => {
-            const containers = document.querySelectorAll('.container');
-            containers.forEach(container => {
-                container.classList.add('visible');
-            });
-        });
-    </script>
-</head>
-<body>
-    <header>
-        <h1>3324 Documentation</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="#code">Code (2024)</a></li>
-            <li><a href="#engineering">Swerve Sim</a></li>
-            <li><a href="#tools">Scouting</a></li>
-            <li><a href="#doc">Documentation Practices</a></li>
-            <li><a href="#swerve">Swerve</a></li>
-        </ul>
-    </nav>
-    <div class="container" id="code">
-        <h2>Code (2024)</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
-
-    </div>
-    <div class="container" id="engineering">
-        <h2>Swerve Sim</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
-  
-    </div>
-    <div class="container" id="tools">
-        <h2>Scouting</h2>
-      <p><b>Match Scouting:</b>
-        The <a href="https://metrobots.github.io/resources/scouting">2024 Match Scouting Form</a> is used to supplement the Match Sim program. This is a program created by our Mateo Johnson, to allow for match scouting so that people can have something to do at competitions, and allowing for a surplus of info to be collected. This form changes from year to year, but this form has questions such as: "How many points were scored in Auto", "Did the robot have any technical issues?", and other questions such as that. This was meant to provide more detailed information, and levels of information that simply simulating matches could not.
-
-<br><br><b>Team/Match Sim:</b><br>
-  The <a href="https://3324-scouting.github.io/">Match Sim</a> can be used to evaluate individual teams, alliances of 3 teams, or full "matches" of 3v3 teams. It takes data from the most recent season, and displays it in a variety of aggregated and non-aggregated forms.<br> For single team evaluations, it displays a middle number, known as the "Performance Number", surrounded by a ring, which can change from red to green based on how well the team has performed. When clicked, the performance number/circle will toggle a more detailed menu, which includes stats such as win/loss ratios, average match scores ± standard deviation, and world/area rankings.<br> For full alliance evaluations, the tool will again return the performance circle, and the toggle will have all of the same data, excluding the rankings.<br> When a full "match" is entered, there will be no performance circle, but instead, there will simply be text that says "Point Diff" (Point Differential), accompanied by an amount of points, colored the color of the winning alliance. All "matches" for this function must be entered in the format of Red - Blue. When the "Point Diff" number is clicked on, a more detailed menu will expand. This menu contains estimated scores from Auto, Teleop and Endgame periods of the match, along with a graph representing each alliance's scoring during these sections.<br><b>Input Formats (Match Sim):</b> For inputs into the Match Sim program, the format is as follows. Single Team: <b>####</b> (Note that ### teams are simply ###, not 0###). Alliance of teams: <b>####, ####, ####</b> Full Match Sims: <b>####, ####, #### - ####, ####, ####</b>
-</p>
-    </div>
-  
-    <div class="container" id="doc">
-        <h2>Documentation Practices</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
-
-  </div>
-  
-      <div class="container" id="swerve">
-        <h2>Swerve</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
-
-  </div>
-  
-  
-  <!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docs</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
+  <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#333333">
+  <meta name="theme-color" content="#ffffff">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+    }
+
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      animation: slideDown 1s ease-out;
+    }
+
+    @keyframes slideDown {
+      0% {
+        transform: translateY(-100%);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    nav {
+      background-color: #444;
+      padding: 10px;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+    }
+
+    nav ul li {
+      display: inline;
+      margin-right: 20px;
+      transition: transform 0.3s ease-in-out;
+      animation: rotateX 0.5s ease-out;
+    }
+
+    @keyframes rotateX {
+      0% {
+        transform: rotateX(-90deg);
+      }
+
+      100% {
+        transform: rotateX(0);
+      }
+    }
+
+    nav ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    nav ul li a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #00bcd4;
+      transform: scaleX(0);
+      transform-origin: bottom left;
+      transition: transform 0.3s ease;
+    }
+
+    nav ul li a:hover::before {
+      transform: scaleX(1);
+      transform-origin: bottom right;
+    }
+
+    nav ul li a:hover {
+      color: #00bcd4;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .container.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .container:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transform: translateY(-5px);
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(50%);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    p {
+      color: #666;
+    }
+
     body {
       font-family: 'Space Mono', monospace;
       background-color: #222;
@@ -207,8 +165,8 @@
     }
 
     .text-no-decoration {
-    text-decoration: none;
-      }
+      text-decoration: none;
+    }
 
     .container {
       display: flex;
@@ -223,15 +181,14 @@
       margin-bottom: 30px;
     }
 
-.calendar {
-  margin-top: 30px;
-  margin-bottom: 30px; 
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 5px;
-  padding: 20px;
-}
-
+    .calendar {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      padding: 20px;
+    }
 
     .calendar h2 {
       font-size: 1.5rem;
@@ -265,7 +222,6 @@
     .calendar td.other-month {
       color: rgba(255, 255, 255, 0.5);
     }
-
 
     .button-container {
       display: flex;
@@ -308,24 +264,23 @@
       }
     }
 
-.picture-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-}
+    .picture-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
 
-.picture {
-  width: 300px;
-  margin: 0 10px;
-  border-radius: 10px; 
-  overflow: hidden; 
-  transition: transform 0.3s ease-in-out;
-}
+    .picture {
+      width: 300px;
+      margin: 0 10px;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s ease-in-out;
+    }
 
-
-.picture:hover {
-  transform: scale(1.05); 
-}
+    .picture:hover {
+      transform: scale(1.05);
+    }
 
     .info-container {
       display: flex;
@@ -350,8 +305,60 @@
       font-size: 1rem;
     }
   </style>
+  <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+      const containers = document.querySelectorAll('.container');
+      containers.forEach(container => {
+        container.classList.add('visible');
+      });
+    });
+  </script>
 </head>
+
 <body>
+  <header>
+    <h1>3324 Documentation</h1>
+  </header>
+  <nav>
+    <ul>
+      <li><a href="#code">Code (2024)</a></li>
+      <li><a href="#engineering">Swerve Sim</a></li>
+      <li><a href="#tools">Scouting</a></li>
+      <li><a href="#doc">Documentation Practices</a></li>
+      <li><a href="#swerve">Swerve</a></li>
+    </ul>
+  </nav>
+  <div class="container" id="code">
+    <h2>Code (2024)</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+
+  </div>
+  <div class="container" id="engineering">
+    <h2>Swerve Sim</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+
+  </div>
+  <div class="container" id="tools">
+    <h2>Scouting</h2>
+    <p><b>Match Scouting:</b>
+      The <a href="https://metrobots.github.io/resources/scouting">2024 Match Scouting Form</a> is used to supplement the Match Sim program. This is a program created by our Mateo Johnson, to allow for match scouting so that people can have something to do at competitions, and allowing for a surplus of info to be collected. This form changes from year to year, but this form has questions such as: "How many points were scored in Auto", "Did the robot have any technical issues?", and other questions such as that. This was meant to provide more detailed information, and levels of information that simply simulating matches could not.
+
+      <br><br><b>Team/Match Sim:</b><br>
+      The <a href="https://3324-scouting.github.io/">Match Sim</a> can be used to evaluate individual teams, alliances of 3 teams, or full "matches" of 3v3 teams. It takes data from the most recent season, and displays it in a variety of aggregated and non-aggregated forms.<br> For single team evaluations, it displays a middle number, known as the "Performance Number", surrounded by a ring, which can change from red to green based on how well the team has performed. When clicked, the performance number/circle will toggle a more detailed menu, which includes stats such as win/loss ratios, average match scores ± standard deviation, and world/area rankings.<br> For full alliance evaluations, the tool will again return the performance circle, and the toggle will have all of the same data, excluding the rankings.<br> When a full "match" is entered, there will be no performance circle, but instead, there will simply be text that says "Point Diff" (Point Differential), accompanied by an amount of points, colored the color of the winning alliance. All "matches" for this function must be entered in the format of Red - Blue. When the "Point Diff" number is clicked on, a more detailed menu will expand. This menu contains estimated scores from Auto, Teleop and Endgame periods of the match, along with a graph representing each alliance's scoring during these sections.<br><b>Input Formats (Match Sim):</b> For inputs into the Match Sim program, the format is as follows. Single Team: <b>####</b> (Note that ### teams are simply ###, not 0###). Alliance of teams: <b>####, ####, ####</b> Full Match Sims: <b>####, ####, #### - ####, ####, ####</b>
+    </p>
+  </div>
+
+  <div class="container" id="doc">
+    <h2>Documentation Practices</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+
+  </div>
+
+  <div class="container" id="swerve">
+    <h2>Swerve</h2>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada justo sed orci consequat malesuada. Phasellus pretium felis sit amet nunc fermentum posuere.</p>
+
+  </div>
 
   <a href="#" class="home-button" id="homeButton"></a>
 
@@ -361,4 +368,5 @@
     });
   </script>
 </body>
+
 </html>
