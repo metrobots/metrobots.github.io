@@ -84,25 +84,21 @@
             reader.onload = function () {
                 const base64String = reader.result;
 
-                const submissionString = [
+                const formData = new FormData();
+                formData.append('submissionString', [
                     submissionID,
                     name,
                     subgroup,
                     imageSummary,
                     base64String
-                ].join('|');
+                ].join('|'));
 
-                console.log('Submission String:', submissionString);
-                fetch('https://cors-anywhere.herokuapp.com/hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
+                console.log('Submission String:', formData.get('submissionString'));
+                fetch('https://hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        submissionString: submissionString 
-                    })
+                    body: formData
                 })
-                .then(response => response.json())
+                .then(response => response.text()) 
                 .then(result => console.log('Success:', result))
                 .catch(error => console.error('Error:', error));
 
