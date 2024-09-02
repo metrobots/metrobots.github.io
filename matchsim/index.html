@@ -6,14 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Match Simulator</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
-      <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
-      <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
-      <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
-      <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-      <meta name="msapplication-TileColor" content="#333333">
-      <meta name="theme-color" content="#ffffff">
-    
+  <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
+  <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#333333">
+  <meta name="theme-color" content="#ffffff">
 
   <style>
     body {
@@ -144,9 +143,7 @@
 
     .dark-mode body {
       background-color: #000 !important;
-      /* Black background color in dark mode */
       color: #fff !important;
-      /* Change text color to white in dark mode */
     }
 
     .blue {
@@ -162,13 +159,10 @@
       o
     }
 
-    /* Dark mode styles */
     .dark-mode .score-text {
       fill: white !important;
-      /* Change text color to white in dark mode */
     }
 
-    /* Add styles for the dark mode toggle button */
     .dark-mode-toggle {
       position: absolute !important;
       top: 10px !important;
@@ -179,10 +173,8 @@
       border-radius: 50% !important;
       cursor: pointer !important;
       transition: transform 0.5s, background-color 0.5s !important;
-      /* Smooth transition effect for rotation and background color */
     }
 
-    /* Style for the dark mode indicator dot */
     .dark-mode-toggle::after {
       content: "" !important;
       display: block !important;
@@ -195,69 +187,51 @@
       left: 50% !important;
       transform: translate(-50%, -50%) !important;
       transition: transform 0.5s, background-color 0.5s !important;
-      /* Smooth transition effect for rotation and background color */
     }
 
-    /* Dark mode styles for the toggle button */
     .dark-mode .dark-mode-toggle {
       background-color: #333 !important;
       transform: rotate(180deg) scale(1.2) !important;
-      /* Rotate and scale the button in dark mode */
     }
 
-    /* Dark mode styles for the indicator dot */
     .dark-mode .dark-mode-toggle::after {
       background-color: #fff !important;
       transform: rotate(180deg) scale(1.2) !important;
-      /* Rotate and scale the indicator dot in dark mode */
     }
 
-    /* Dark mode styles for the container */
     .dark-mode .container {
       background-color: #333 !important;
       color: #fff !important;
-      /* Change text color to white in dark mode */
     }
 
-    /* Dark mode styles for the input field */
     .dark-mode input[type="text"] {
       background-color: #444 !important;
-      /* Darker background for input field */
       color: #fff !important;
-      /* White text color */
       border-color: #666 !important;
-      /* Darker border color */
     }
 
-    /* Dark mode styles for the toggle button */
     .dark-mode .dark-mode-toggle {
       background-color: #ccc !important;
     }
 
-    /* Dark mode styles for the performance number */
     .dark-mode .team-data {
       fill: white !important;
     }
 
-    /* Dark mode styles for the indicator dot */
     .dark-mode .dark-mode-toggle::after {
       background-color: #000 !important;
     }
 
     .dark-mode .statistic-container {
       background-color: #444 !important;
-      /* Darker background */
       color: #fff !important;
-      /* White text color */
       border-color: #666 !important;
-      /* Darker border color */
     }
 
     .green-mode .team-data {
       fill: green;
     }
 
-    /* Add styles for the dark mode toggle button */
     .dark-mode-toggle {
       position: absolutev;
       top: 10px !important;
@@ -269,7 +243,6 @@
       cursor: pointer !important;
     }
 
-    /* Style for the dark mode indicator dot */
     .dark-mode-toggle::after {
       content: "" !important;
       display: block !important;
@@ -283,38 +256,40 @@
       transform: translate(-50%, -50%) !important;
     }
 
-    /* Dark mode styles for the toggle button */
     .dark-mode .dark-mode-toggle {
       background-color: #333 !important;
     }
 
-    /* Dark mode styles for the indicator dot */
     .dark-mode .dark-mode-toggle::after {
       background-color: #fff !important;
     }
+
     .taClass {
       color: black;
     }
+
     .atClass {
       color: black;
     }
+
     .tatClass {
       color: black;
     }
-    .docs-button {
-    position: fixed; /* Fixed positioning */
-    bottom: 20px; /* Distance from the bottom */
-    left: 20px; /* Distance from the left */
-    background-color: #007bff; /* Button background color */
-    color: #fff; /* Text color */
-    padding: 10px 20px; /* Padding for the button */
-    border-radius: 5px; /* Rounded corners */
-    text-decoration: none; /* Remove underline from link */
-}
 
-.docs-button:hover {
-    background-color: #0056b3; /* Change background color on hover */
-}
+    .docs-button {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #007bff;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    .docs-button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 
@@ -332,10 +307,8 @@
 
   <script>
     function getTeamData() {
-      
       checkInputFormat();
       var teamNumbers = document.getElementById('teamNumbers').value.split(',').map(num => num.trim());
-      
       Promise.all(teamNumbers.map(teamNumber => {
           return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
             .then(response => {
@@ -353,9 +326,8 @@
           } else {
             var aggregatedData = aggregateTeamData(teamDataArray);
             displayAggregatedData(aggregatedData, teamDataArray);
-            // Check if there are 6 teams before showing the circle
             if (teamNumbers.length === 6) {
-              animateCircle(aggregatedData.compositeScore); // Start the circle animation with color based on performance
+              animateCircle(aggregatedData.compositeScore);
             }
           }
         })
@@ -365,12 +337,10 @@
     }
 
     function calculateTeamPerformance(data) {
-      // Placeholder maximum possible statistics
       var maximumPossibleMatchScore = 130;
       var maximumPossibleTeleopScore = 95;
       var maximumPossibleAutoScore = 20;
       var maximumPossibleEndgameScore = 15;
-      // Extract relevant statistics
       var winLossRatio = data.record.season.winrate;
       var overallRank = data.epa.ranks.total.rank;
       var totalNumberOfTeams = data.epa.ranks.total.team_count;
@@ -379,22 +349,18 @@
       var rankingInArea = data.epa.ranks.state.rank;
       var averageAutoScore = data.epa.breakdown.auto_points.mean;
       var averageEndgameScore = data.epa.breakdown.endgame_points.mean;
-      // Extract standard deviations
       var sdMatchScore = data.epa.breakdown.total_points.sd;
       var sdTeleopScore = data.epa.breakdown.teleop_points.sd;
       var sdAutoScore = data.epa.breakdown.auto_points.sd;
       var sdEndgameScore = data.epa.breakdown.endgame_points.sd;
-      // Normalize each statistic to a scale of 0 to 1
-      var normalizedWinLossRatio = winLossRatio; // Assuming winLossRatio is already normalized
-      var normalizedOverallRank = 1 - (overallRank - 1) / totalNumberOfTeams; // Assuming lower rank is better
+      var normalizedWinLossRatio = winLossRatio;
+      var normalizedOverallRank = 1 - (overallRank - 1) / totalNumberOfTeams;
       var normalizedAverageMatchScore = averageMatchScore / maximumPossibleMatchScore;
       var normalizedAverageTeleopScore = averageTeleopScore / maximumPossibleTeleopScore;
       var normalizedAverageAutoScore = averageAutoScore / maximumPossibleAutoScore;
       var normalizedEndgameScore = averageEndgameScore / maximumPossibleEndgameScore;
-      var normalizedRankingInArea = 1 - (rankingInArea - 1) / totalNumberOfTeams; // Assuming lower rank is better
-      // Assign equal weights to each statistic
-      var weight = 1 / 7; // Total number of statistics
-      // Calculate the composite score
+      var normalizedRankingInArea = 1 - (rankingInArea - 1) / totalNumberOfTeams;
+      var weight = 1 / 7;
       var compositeScore = (normalizedWinLossRatio + normalizedOverallRank + normalizedAverageMatchScore + normalizedAverageTeleopScore + normalizedAverageAutoScore + normalizedEndgameScore + normalizedRankingInArea) * weight;
       return compositeScore;
     }
@@ -411,7 +377,6 @@
     }
 
     function displaySingleTeamData(data, performance) {
-      
       var teamData = document.getElementById('team-data');
       fetchTeamColors(data.team);
       teamData.innerHTML = `
@@ -431,7 +396,7 @@
                     ${data.state ? `<p>Ranking in Area: <b>${data.epa.ranks.state.rank}</b> / ${data.epa.ranks.state.team_count} ${data.state}</p>` : ''}
                 </div>
             `;
-      animateCircle(performance); // Start the circle animation with color based on performance
+      animateCircle(performance);
     }
 
     function displayAggregatedData(aggregatedData, teamDataArray) {
@@ -443,11 +408,11 @@
       var totalAverageTeleopScore = 0;
       var totalAverageAutoScore = 0;
       var totalEndgameScore = 0;
-      var totalSDMatchScore = 0; // Initialize total standard deviations
+      var totalSDMatchScore = 0;
       var totalSDTeleopScore = 0;
       var totalSDAutoScore = 0;
       var totalSDEndgameScore = 0;
-      var teamNames = ''; // Initialize an empty string to store team names
+      var teamNames = '';
       teamDataArray.forEach(data => {
         totalWinLossRatio += data.record.season.winrate;
         totalOverallRank += data.epa.ranks.total.rank;
@@ -455,15 +420,12 @@
         totalAverageTeleopScore += data.epa.breakdown.teleop_points.mean;
         totalAverageAutoScore += data.epa.breakdown.auto_points.mean;
         totalEndgameScore += data.epa.breakdown.endgame_points.mean;
-        // Accumulate standard deviations
         totalSDMatchScore += data.epa.breakdown.total_points.sd;
         totalSDTeleopScore += data.epa.breakdown.teleop_points.sd;
         totalSDAutoScore += data.epa.breakdown.auto_points.sd;
         totalSDEndgameScore += data.epa.breakdown.endgame_points.sd;
-        // Append team name to the list
         teamNames += `${data.name}, `;
       });
-      // Remove the trailing comma and space
       teamNames = teamNames.slice(0, -2);
       var averageWinLossRatio = totalWinLossRatio / teamDataArray.length;
       var averageOverallRank = totalOverallRank / teamDataArray.length;
@@ -471,7 +433,6 @@
       var averageAverageTeleopScore = totalAverageTeleopScore;
       var averageAverageAutoScore = totalAverageAutoScore;
       var averageEndgameScore = totalEndgameScore;
-      // Calculate average standard deviations
       var averageSDMatchScore = totalSDMatchScore / teamDataArray.length;
       var averageSDTeleopScore = totalSDTeleopScore / teamDataArray.length;
       var averageSDAutoScore = totalSDAutoScore / teamDataArray.length;
@@ -492,16 +453,16 @@
             <p>Est. Average Endgame Score: <b>${averageEndgameScore.toFixed(2)}</b> ± ${averageSDEndgameScore.toFixed(2)}</p>
         </div>
     `;
-      animateCircle(compositeScore); // Start the circle animation with color based on performance
+      animateCircle(compositeScore);
     }
 
     function animateCircle(performance) {
       var circle = document.querySelector('.circle');
-      circle.style.animation = 'none'; // Reset animation
-      circle.getBoundingClientRect(); // Trigger reflow to restart animation
-      circle.style.animation = 'drawCircle 1s ease forwards'; // Start animation
-      var color = getColorForPerformance(performance); // Get color based on performance
-      circle.style.stroke = color; // Set stroke color
+      circle.style.animation = 'none';
+      circle.getBoundingClientRect();
+      circle.style.animation = 'drawCircle 1s ease forwards';
+      var color = getColorForPerformance(performance);
+      circle.style.stroke = color;
     }
 
     function toggleTeamData() {
@@ -510,14 +471,12 @@
     }
 
     function getColorForPerformance(performance) {
-      var hue = performance * 120; // Convert performance to hue (0 to 120)
+      var hue = performance * 120;
       var color;
       if (performance <= 0.5) {
-        // Red to yellow transition
-        color = "hsl(" + hue + ",100%,50%)"; // Red to yellow
+        color = "hsl(" + hue + ",100%,50%)";
       } else {
-        // Yellow to green transition
-        color = "hsl(" + hue + ",100%,50%)"; // Yellow to green
+        color = "hsl(" + hue + ",100%,50%)";
       }
       return color;
     }
@@ -527,11 +486,8 @@
       var regex = /^\s*(\d{1,4}(,\s?\d{1,4})* - \d{1,4}(,\s?\d{1,4})*)?\s*$/;
       if (regex.test(teamNumbersInput)) {
         console.log('Input matches the desired format:', teamNumbersInput);
-        // Call the function to fetch and process team data
         fetchAndProcessTeamData(teamNumbersInput);
-        // Split the input into two groups: before and after the hyphen
         var [group1, group2] = teamNumbersInput.split(' - ');
-        // Split each group into individual team numbers
         var teamNumbers1 = group1.split(',').map(num => num.trim());
         var teamNumbers2 = group2.split(',').map(num => num.trim());
         var teamDataElement = document.getElementById('team-data');
@@ -540,10 +496,9 @@
         teamDataHTML += '<span class="black"> - </span> ';
         teamDataHTML += '<span class="blue"> 🟦🟦 </span> ';
         teamDataElement.innerHTML = teamDataHTML;
-        // Delay the removal of the coloring
         setTimeout(() => {
           removeColoring();
-        }, 1); // Adjust the duration as needed (in milliseconds)
+        }, 1);
       } else {
         console.log('Input does not match the desired format.');
       }
@@ -557,12 +512,9 @@
     }
 
     function fetchAndProcessTeamData(teamNumbersInput) {
-      // Split the input into two groups: before and after the hyphen
       var [group1, group2] = teamNumbersInput.split(' - ');
-      // Split each group into individual team numbers
       var teamNumbers1 = group1.split(',').map(num => num.trim());
       var teamNumbers2 = group2.split(',').map(num => num.trim());
-      // Fetch data for each team in both groups
       Promise.all([...teamNumbers1, ...teamNumbers2].map(teamNumber => {
           return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
             .then(response => {
@@ -573,10 +525,8 @@
             });
         }))
         .then(teamDataArray => {
-          // Sum the points for the specified teams
           var totalPoints1 = teamDataArray.slice(0, 3).reduce((sum, data) => sum + data.epa.breakdown.total_points.mean, 0);
           var totalPoints2 = teamDataArray.slice(3, 6).reduce((sum, data) => sum + data.epa.breakdown.total_points.mean, 0);
-          // Display the summed points for each group
           displaySummedPoints(totalPoints1, totalPoints2, teamDataArray);
         })
         .catch(error => {
@@ -594,9 +544,7 @@
       var sd1 = Math.sqrt(Math.pow(teamDataArray[0].epa.breakdown.auto_points.sd, 2) + Math.pow(teamDataArray[1].epa.breakdown.teleop_points.sd, 2) + Math.pow(teamDataArray[2].epa.breakdown.endgame_points.sd, 2));
       var sd2 = Math.sqrt(Math.pow(teamDataArray[3].epa.breakdown.auto_points.sd, 2) + Math.pow(teamDataArray[4].epa.breakdown.teleop_points.sd, 2) + Math.pow(teamDataArray[5].epa.breakdown.endgame_points.sd, 2));
       teamData.innerHTML = '<h2>Point Diff:</h2>';
-      // Create a table element
       var table = document.createElement('table');
-      // Create table rows and cells for each data point
       if (pd1 > 0) {
         var row1 = table.insertRow();
         var cell1_1 = row1.insertCell(0);
@@ -605,7 +553,7 @@
         cell1_2.id = 'pointDiffCellA1';
         cell1_2.className = 'point-diff-cell';
         cell1_2.innerHTML = `<span style="color: #F91A48;"><b>${pd1.toFixed(2)} ± ${sd1.toFixed(2)}</b></span>`;
-        cell1_2.style.cursor = 'pointer'; // Add this line to change the cursor to a pointer
+        cell1_2.style.cursor = 'pointer';
         cell1_2.addEventListener('click', function() {
           console.log('Clicked Point Diff (A1)');
           toggleCombinedScores(teamDataArray.slice(0, 3), teamDataArray.slice(3, 6));
@@ -619,13 +567,12 @@
         cell2_2.id = 'pointDiffCellA2';
         cell2_2.className = 'point-diff-cell';
         cell2_2.innerHTML = `<span style="color: #087cfc;"><b>${pd2.toFixed(2)} ± ${sd2.toFixed(2)}</b></span>`;
-        cell2_2.style.cursor = 'pointer'; // Add this line to change the cursor to a pointer
+        cell2_2.style.cursor = 'pointer';
         cell2_2.addEventListener('click', function() {
           console.log('Clicked Point Diff (A2)');
           toggleCombinedScores(teamDataArray.slice(0, 3), teamDataArray.slice(3, 6));
         });
       }
-      // Append the table to the teamData div
       teamData.appendChild(table);
     }
 
@@ -644,30 +591,25 @@
       clearColors();
       var teamData = document.getElementById('team-data');
       var combinedScores = document.getElementById('combined-scores');
-      // If combinedScores already exists, remove it
       if (combinedScores) {
         combinedScores.remove();
       }
-      // Create a div element for combined scores
       combinedScores = document.createElement('div');
       combinedScores.id = 'combined-scores';
       combinedScores.innerHTML = '<h2>Match Breakdown</h2>';
-      // Calculate total scores and standard deviations for each alliance
       var totalPointsAuto1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.auto_points.mean, 0);
       var totalPointsTeleop1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.teleop_points.mean, 0);
       var totalPointsEndgame1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.endgame_points.mean, 0);
-      var totalSDAuto1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0)); // Correcting the standard deviation calculation
-      var totalSDTeleop1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0)); // Correcting the standard deviation calculation
-      var totalSDEndgame1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0)); // Correcting the standard deviation calculation
+      var totalSDAuto1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0));
+      var totalSDTeleop1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0));
+      var totalSDEndgame1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0));
       var totalPointsAuto2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.auto_points.mean, 0);
       var totalPointsTeleop2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.teleop_points.mean, 0);
       var totalPointsEndgame2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.endgame_points.mean, 0);
-      var totalSDAuto2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0)); // Correcting the standard deviation calculation
-      var totalSDTeleop2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0)); // Correcting the standard deviation calculation
-      var totalSDEndgame2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0)); // Correcting the standard deviation calculation
-      // Create a table element for combined scores
+      var totalSDAuto2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0));
+      var totalSDTeleop2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0));
+      var totalSDEndgame2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0));
       var table = document.createElement('table');
-      // Create table rows and cells for each alliance
       table.innerHTML += `
         <tr>
             <th>Alliance</th>
@@ -688,9 +630,7 @@
             <td><b>${totalPointsEndgame2.toFixed(2)}</b> ± ${totalSDEndgame2.toFixed(2)}</td>
         </tr>
     `;
-      // Append the table to the combined scores div
       combinedScores.appendChild(table);
-      // Create datasets for the combined scores
       var datasets = [{
         label: 'Red Alliance',
         borderColor: 'rgba(249, 26, 72, 1)',
@@ -700,11 +640,9 @@
         borderColor: 'rgba(8,124,252, 1)',
         data: [totalPointsAuto2, totalPointsTeleop2, totalPointsEndgame2]
       }];
-      // Create a div for the chart
       var chartContainer = document.createElement('div');
       chartContainer.classList.add('chart-container');
       combinedScores.appendChild(chartContainer);
-      // Create Chart.js instance for the combined scores chart
       var combinedChartCanvas = document.createElement('canvas');
       combinedChartCanvas.id = 'combined-chart';
       chartContainer.appendChild(combinedChartCanvas);
@@ -731,7 +669,7 @@
           },
           plugins: {
             tooltip: {
-              mode: 'nearest', // Set tooltip mode to nearest for interpolation
+              mode: 'nearest',
               callbacks: {
                 label: function(context) {
                   var label = context.dataset.label || '';
@@ -742,11 +680,9 @@
                     label += context.parsed.y.toFixed(2);
                   }
                   if (context.dataset.label === 'Red Alliance') {
-                    // Get the corresponding y-value for the Blue Alliance
                     var blueAllianceValue = datasets[1].data[context.dataIndex].toFixed(2);
                     label += ' - (' + blueAllianceValue + ')';
                   } else {
-                    // Get the corresponding y-value for the Red Alliance
                     var redAllianceValue = datasets[0].data[context.dataIndex].toFixed(2);
                     label += ' - (' + redAllianceValue + ')';
                   }
@@ -757,7 +693,6 @@
           }
         }
       });
-      // Append the combined scores div to the teamData div
       teamData.appendChild(combinedScores);
     }
 
@@ -771,93 +706,70 @@
     }
 
     function toggleDarkMode() {
-      // Toggle dark mode class on the body
-      
       document.body.classList.toggle('dark-mode');
     }
-function fetchTeamColors(teamNumber) {
 
-    // Make a GET request to the API endpoint
-    fetch(`https://api.statbotics.io/v3/team/${teamNumber}`)
+    function fetchTeamColors(teamNumber) {
+      fetch(`https://api.statbotics.io/v3/team/${teamNumber}`)
         .then(response => response.json())
         .then(data => {
-            // Extract primary and secondary colors from the API response
-            const primaryColor = data.colors.primary;
-            const secondaryColor = data.colors.secondary;
-            const container = document.querySelector('.container');
-            const taClass = document.querySelector('.taClass'); 
-            const atClass = document.querySelector('.atClass');
-            const tatClass = document.querySelector('.team-data');
-
-            // Set transition property for body, container, and taClass elements
-            document.body.style.transition = 'background-color 1s ease';
-            if (container) {
-                container.style.transition = 'background-color 1s ease';
-            }
-
-            // Change the background color of the body with a fade effect
-            document.body.style.backgroundColor = primaryColor;
-
-            // If container exists, change its background color with a fade effect
-            if (container) {
-                container.style.backgroundColor = secondaryColor;
-                const secondaryColorBrightness = getColorBrightness(secondaryColor);
-                if (secondaryColorBrightness <= 50) {
-                    if (taClass) { // Changed from teamData to taClass
-                        taClass.style.color = 'white';
-                        atClass.style.color = 'white';
-                        tatClass.style.fill = 'white';
-                        console.log("Text color set to white because the background is dark enough.");
-                    }
-                } else {
-                    if (taClass) { // Changed from teamData to taClass
-                        taClass.style.color = 'black';
-                        atClass.style.color = 'black';
-                        tatClass.style.fill = 'black';
-                        console.log("Text color set to black because the background is light.");
-                    }
-                }
+          const primaryColor = data.colors.primary;
+          const secondaryColor = data.colors.secondary;
+          const container = document.querySelector('.container');
+          const taClass = document.querySelector('.taClass');
+          const atClass = document.querySelector('.atClass');
+          const tatClass = document.querySelector('.team-data');
+          document.body.style.transition = 'background-color 1s ease';
+          if (container) {
+            container.style.transition = 'background-color 1s ease';
+          }
+          document.body.style.backgroundColor = primaryColor;
+          if (container) {
+            container.style.backgroundColor = secondaryColor;
+            const secondaryColorBrightness = getColorBrightness(secondaryColor);
+            if (secondaryColorBrightness <= 50) {
+              if (taClass) {
+                taClass.style.color = 'white';
+                atClass.style.color = 'white';
+                tatClass.style.fill = 'white';
+                console.log("Text color set to white because the background is dark enough.");
+              }
             } else {
-                console.error('Container element not found.');
+              if (taClass) {
+                taClass.style.color = 'black';
+                atClass.style.color = 'black';
+                tatClass.style.fill = 'black';
+                console.log("Text color set to black because the background is light.");
+              }
             }
+          } else {
+            console.error('Container element not found.');
+          }
         })
         .catch(error => {
-            console.error('Error fetching team colors:', error);
+          console.error('Error fetching team colors:', error);
         });
-}
+    }
 
+    function getColorBrightness(color) {
+      const hex = color.replace('#', '');
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      return (r * 0.299 + g * 0.587 + b * 0.114);
+    }
 
-// Function to calculate color brightness
-function getColorBrightness(color) {
-    // Convert hex color to RGB
-    const hex = color.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    // Calculate color brightness using the relative luminance formula
-    return (r * 0.299 + g * 0.587 + b * 0.114);
-}
-
-// Function to clear previous colors
-function clearColors() {
-    // Reset body background color
-    document.body.style.backgroundColor = '';
-
-    // Reset container background color
-    const container = document.querySelector('.container');
-    if (container) {
+    function clearColors() {
+      document.body.style.backgroundColor = '';
+      const container = document.querySelector('.container');
+      if (container) {
         container.style.backgroundColor = '';
-    }
-
-    // Reset teamData text color
-    const teamData = document.querySelector('.team-data');
-    if (teamData) {
+      }
+      const teamData = document.querySelector('.team-data');
+      if (teamData) {
         teamData.style.fill = '';
+      }
     }
-}
-
-
-
   </script>
 </body>
 
