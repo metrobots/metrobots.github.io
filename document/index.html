@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            background-color: #f4f4f9; 
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            background-color: white; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            padding: 20px;
+            margin: 20px 0;
+        }
+        input, select, textarea {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px; 
+            font-size: 1rem;
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+        }
+        button {
+            padding: 12px 20px; 
+            font-size: 1rem;
+            background-color: #007bff; 
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3; 
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Documentation Form</h2>
+    <form id="submissionForm">
+        <input type="text" id="name" placeholder="Your Name" required>
+        <select id="subgroup" required>
+            <option value="" disabled selected>Select Subgroup</option>
+            <option value="Programming">Programming</option>
+            <option value="Electrical">Electrical</option>
+            <option value="Mechanical">Mechanical</option>
+        </select>
+        <textarea id="imageSummary" placeholder="Image Summary" required></textarea>
+        <input type="file" id="imageUploader" accept="image/*" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function generateUniqueID() {
+            const now = new Date();
+            return now.toISOString().replace(/[-:.]/g, '');
+        }
+
+        document.getElementById('submissionForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const subgroup = document.getElementById('subgroup').value;
+            const imageSummary = document.getElementById('imageSummary').value;
+            const file = document.getElementById('imageUploader').files[0];
+            const reader = new FileReader();
+
+            const submissionID = generateUniqueID();
+
+            reader.onload = function () {
+                const base64String = reader.result;
+
+                const submissionString = [
+                    submissionID,
+                    name,
+                    subgroup,
+                    imageSummary,
+                    base64String
+                ].join('|');
+
+                console.log('Submission String:', submissionString);
+
+                fetch('https://cors-anywhere.herokuapp.com/https://hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        submissionString: submissionString 
+                    })
+                })
+                .then(response => response.json())
+                .then(result => console.log('Success:', result))
+                .catch(error => console.error('Error:', error));
+
+                document.getElementById('submissionForm').reset();
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+
+</body>
+</html>
