@@ -32,6 +32,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+      
         .tab {
             flex: 1;
             padding: 15px;
@@ -235,7 +236,7 @@
             const grouped = {};
 
             items.forEach(item => {
-                const hourKey = new Date(item.timestamp).toISOString().slice(0, 13); // Format YYYY-MM-DDTHH
+                const hourKey = new Date(item.timestamp).toISOString().slice(0, 13); 
                 if (!grouped[hourKey]) {
                     grouped[hourKey] = [];
                 }
