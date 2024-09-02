@@ -53,7 +53,7 @@
             text-align: center;
         }
         .info-message {
-            color: #007bff; /* Use a different color for informational messages */
+            color: #007bff; 
         }
     </style>
 </head>
@@ -101,21 +101,20 @@
 
                     function checkSizeAndResize() {
                         canvas.toBlob(function (blob) {
-                            if (blob.size > 35 * 1024) { // 35 KB threshold
-                                // Halve the dimensions
+                            if (blob.size > 40 * 1024) { 
                                 width = Math.floor(width / 2);
                                 height = Math.floor(height / 2);
                                 canvas.width = width;
                                 canvas.height = height;
                                 ctx.drawImage(img, 0, 0, width, height);
-                                checkSizeAndResize(); // Repeat until size is acceptable
+                                checkSizeAndResize(); 
                             } else {
                                 callback(blob);
                             }
-                        }, 'image/jpeg', 0.85); // Adjust quality if needed
+                        }, 'image/jpeg', 0.85); 
                     }
 
-                    checkSizeAndResize(); // Start the resizing process
+                    checkSizeAndResize(); 
                 };
                 img.src = event.target.result;
             };
@@ -132,8 +131,8 @@
             const errorMessage = document.getElementById('errorMessage');
             const infoMessage = document.getElementById('infoMessage');
 
-            errorMessage.innerHTML = ''; // Clear previous error message
-            infoMessage.innerHTML = 'Image downsizing, please wait...'; // Show processing message
+            errorMessage.innerHTML = ''; 
+            infoMessage.innerHTML = 'Image downsizing, please wait...'; 
 
             resizeImage(file, function (resizedBlob) {
                 const reader = new FileReader();
@@ -159,12 +158,15 @@
                     .then(result => {
                         console.log('Success:', result);
                         document.getElementById('submissionForm').reset();
-                        infoMessage.innerHTML = ''; // Clear processing message
+                        infoMessage.innerHTML = 'Submitted!'; 
+                        setTimeout(() => {
+                            infoMessage.innerHTML = '';
+                        }, 3000);
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         errorMessage.innerHTML = 'An error occurred while submitting the form. Please try again.';
-                        infoMessage.innerHTML = ''; // Clear processing message
+                        infoMessage.innerHTML = ''; 
                     });
                 };
                 reader.readAsDataURL(resizedBlob);
