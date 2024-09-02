@@ -93,31 +93,29 @@
                 img.onload = function () {
                     let width = img.width;
                     let height = img.height;
-                    const maxWidth = 800;
-                    const maxHeight = 600;
-                    
-                    // Calculate new dimensions
-                    if (width > maxWidth) {
-                        height = Math.round((height * maxWidth) / width);
-                        width = maxWidth;
-                    }
-                    if (height > maxHeight) {
-                        width = Math.round((width * maxHeight) / height);
-                        height = maxHeight;
-                    }
 
+                    // Initial drawing
                     canvas.width = width;
                     canvas.height = height;
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Adjust quality to compress the image
-                    canvas.toBlob(function (blob) {
-                        if (blob.size > 35 * 1024) {
-                            resizeImage(file, callback); // Retry resizing with adjustments
-                        } else {
-                            callback(blob);
-                        }
-                    }, 'image/jpeg', 0.85); // Adjust quality if needed
+                    function checkSizeAndResize() {
+                        canvas.toBlob(function (blob) {
+                            if (blob.size > 35 * 1024) { // 35 KB threshold
+                                // Halve the dimensions
+                                width = Math.floor(width / 2);
+                                height = Math.floor(height / 2);
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx.drawImage(img, 0, 0, width, height);
+                                checkSizeAndResize(); // Repeat until size is acceptable
+                            } else {
+                                callback(blob);
+                            }
+                        }, 'image/jpeg', 0.85); // Adjust quality if needed
+                    }
+
+                    checkSizeAndResize(); // Start the resizing process
                 };
                 img.src = event.target.result;
             };
@@ -137,42 +135,7 @@
             errorMessage.innerHTML = ''; // Clear previous error message
             infoMessage.innerHTML = 'Image downsizing, please wait...'; // Show processing message
 
-            if (file.size > 35 * 1024) { // If file size is above 35 KB
-                resizeImage(file, function (resizedBlob) {
-                    const reader = new FileReader();
-                    reader.onload = function () {
-                        const base64String = reader.result;
-                        const submissionID = generateUniqueID();
-
-                        const formData = new FormData();
-                        formData.append('submissionString', [
-                            submissionID,
-                            name,
-                            subgroup,
-                            imageSummary,
-                            base64String
-                        ].join('|'));
-
-                        console.log('Submission String:', formData.get('submissionString'));
-                        fetch('https://hooks.zapier.com/hooks/catch/19421684/2t86za0/', {
-                            method: 'POST',
-                            body: formData
-                        })
-                        .then(response => response.text())
-                        .then(result => {
-                            console.log('Success:', result);
-                            document.getElementById('submissionForm').reset();
-                            infoMessage.innerHTML = ''; // Clear processing message
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            errorMessage.innerHTML = 'An error occurred while submitting the form. Please try again.';
-                            infoMessage.innerHTML = ''; // Clear processing message
-                        });
-                    };
-                    reader.readAsDataURL(resizedBlob);
-                });
-            } else {
+            resizeImage(file, function (resizedBlob) {
                 const reader = new FileReader();
                 reader.onload = function () {
                     const base64String = reader.result;
@@ -204,8 +167,8 @@
                         infoMessage.innerHTML = ''; // Clear processing message
                     });
                 };
-                reader.readAsDataURL(file);
-            }
+                reader.readAsDataURL(resizedBlob);
+            });
         });
     </script>
 
