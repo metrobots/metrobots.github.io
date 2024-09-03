@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Metrobots 3324 - Leadership">
+  <meta name="keywords" content="Metrobots, FIRST Robotics, Team 3324, Leadership">
+  <title>Our Leadership</title>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
+  <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#333333">
+  <meta name="theme-color" content="#ffffff">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-image: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true), radial-gradient(at center top, rgb(240, 240, 240) 0%, rgb(200, 200, 200) 100%);
+      color: #2c2c2c;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 50px 20px;
+    }
+
+    .title {
+      font-size: 3.5rem;
+      margin-bottom: 40px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .leadership-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .leader-card {
+      background-color: #333;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .leader-card:hover {
+      transform: scale(1.05);
+    }
+
+    .leader-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+
+    .leader-content {
+      padding: 20px;
+      background-color: #444;
+      color: white;
+      text-align: center;
+    }
+
+    .leader-name {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .leader-role {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #ddd;
+    }
+
+    .leader-description {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .gallery-button {
+      display: block;
+      width: 200px;
+      margin: 40px auto;
+      padding: 10px 20px;
+      background-color: transparent;
+      color: #2c2c2c;
+      border: 2px solid #2c2c2c;
+      border-radius: 5px;
+      font-size: 1.2rem;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .gallery-button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .home-button {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border-radius: 50%;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .home-button::before {
+      content: '\f015';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <a href="#" class="home-button" id="homeButton"></a>
+  <div class="container">
+    <h1 class="title">Our Leadership</h1>
+
+    <div class="leadership-container">
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader1.jpg" alt="Leader 1" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Mateo Johnson</h2>
+          <p class="leader-role">Engineering Project Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader2.jpg" alt="Leader 2" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Krowe Rake</h2>
+          <p class="leader-role">Administrative Project Co-Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader3.jpg" alt="Leader 3" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Sai Lavanya Prem Kumar</h2>
+          <p class="leader-role">Administrative Project Co-Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader4.jpg" alt="Leader 4" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Omar Martinez Vargas</h2>
+          <p class="leader-role">Mechanical Co-Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader5.jpg" alt="Leader 5" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Olive Sigler</h2>
+          <p class="leader-role">Mechanical Co-Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+      
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader4.jpg" alt="Leader 6" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Shani Dukat</h2>
+          <p class="leader-role">Electrical Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader5.jpg" alt="Leader 7" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Glenn Busch</h2>
+          <p class="leader-role">Electrical Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+      
+      <div class="leader-card">
+        <img src="https://metrobots.github.io/assets/specific/leader5.jpg" alt="Leader 8" class="leader-image" loading="lazy">
+        <div class="leader-content">
+          <h2 class="leader-name">Benny Spanos</h2>
+          <p class="leader-role">Programming Manager</p>
+          <p class="leader-description">placeholder</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <a href="https://metrobots.github.io" class="home-button" id="homeButton"></a>
+  <script>
+    document.getElementById('homeButton').addEventListener('click', function() {
+      window.location.href = 'https://metrobots.github.io';
+    });
+  </script>
+</body>
+</html>
