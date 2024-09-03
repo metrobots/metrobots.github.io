@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Parser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-section {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        input, button {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        .output {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .add-button {
+            margin-top: 10px;
+            background-color: #0275d8;
+        }
+        .add-button:hover {
+            background-color: #025aa5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Schedule Parser</h1>
+        <div id="formContainer">
+            <div class="form-section">
+                <div class="form-row">
+                    <input type="text" class="dateInput" placeholder="Enter date(s), e.g., 4, 11, 18">
+                    <input type="text" class="eventNameInput" placeholder="Enter event name">
+                    <input type="text" class="timeInput" placeholder="Enter time (optional)">
+                </div>
+            </div>
+        </div>
+        <button class="add-button" onclick="addSection()">Add Another Event</button>
+        <button onclick="parseSchedule()">Parse Schedule</button>
+        <div id="output" class="output"></div>
+    </div>
+
+    <script>
+        function addSection() {
+            const formContainer = document.getElementById('formContainer');
+            const newSection = document.createElement('div');
+            newSection.className = 'form-section';
+            newSection.innerHTML = `
+                <div class="form-row">
+                    <input type="text" class="dateInput" placeholder="Enter date(s), e.g., 4, 11, 18">
+                    <input type="text" class="eventNameInput" placeholder="Enter event name">
+                    <input type="text" class="timeInput" placeholder="Enter time (optional)">
+                </div>
+            `;
+            formContainer.appendChild(newSection);
+        }
+
+        function parseSchedule() {
+            const dateInputs = document.querySelectorAll('.dateInput');
+            const eventNameInputs = document.querySelectorAll('.eventNameInput');
+            const timeInputs = document.querySelectorAll('.timeInput');
+
+            let outputArray = [];
+
+            dateInputs.forEach((dateInput, index) => {
+                const dates = dateInput.value.split(',').map(date => date.trim());
+                const eventName = eventNameInputs[index].value;
+                const time = timeInputs[index].value;
+
+                dates.forEach(date => {
+                    const eventDetail = time ? `${eventName} (${time})` : eventName;
+                    outputArray.push([parseInt(date), eventDetail]);
+                });
+            });
+
+            outputArray.sort((a, b) => a[0] - b[0]);
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `<pre>${JSON.stringify(outputArray, null, 2)}</pre>`;
+        }
+    </script>
+
+</body>
+</html>
