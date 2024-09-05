@@ -43,5 +43,5 @@ Mateo Johnson (Metrobots 3324)
     * swervesim / (The page that contains our 2D swerve simulator (controller only))
       * `index.html`
     * `index.html`
-  * `README.md` (#YOU ARE HERE#)
+  * `README.md` (**YOU ARE HERE**)
   * `index.html` (The homepage)
