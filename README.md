@@ -20,6 +20,7 @@
     * `index.html`
   * **matchsim** / (This is a third unlinked page that leads to the [match sim](https://metrobots.github.io/matchsim))
     * `index.html`
+    * `teams.js` (THIS IS THE ONYL FULL JS FILE IN THE ENTIRE PROJECT, IT CONTAINS ALL TEAMS INFO, 1-10,000)
   * **mission** / (The page that talks about our community involvement)
     * `index.html`
   * **our-season** / (The page that gives our calendar for the current season, along with competition info)
