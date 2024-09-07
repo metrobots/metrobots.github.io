@@ -43,7 +43,7 @@
 
     button {
       padding: 10px 20px;
-      background-color: #007bff;
+      background-color: black;
       color: white;
       border: none;
       cursor: pointer;
@@ -51,8 +51,8 @@
       transition: background-color 0.3s;
     }
 
-    button:hover {
-      background-color: #0056b3;
+    .dark-mode .button {
+      background-color: white;
     }
 
     #team-data {
@@ -65,6 +65,7 @@
       padding: 10px;
       border-radius: 10px;
       margin-top: 10px;
+      display: none;
     }
 
     .combined-scores {
@@ -280,7 +281,7 @@
       position: fixed;
       bottom: 20px;
       left: 20px;
-      background-color: #007bff;
+      background-color: black;
       color: #fff;
       padding: 10px 20px;
       border-radius: 5px;
@@ -288,7 +289,11 @@
     }
 
     .docs-button:hover {
-      background-color: #0056b3;
+      background-color: dimgray;
+    }
+
+    .dark-mode .button {
+      background-color: white;
     }
   </style>
 </head>
@@ -299,42 +304,170 @@
   <div class="container">
     <h2 class="taClass">3324 - Team Analysis</h2>
     <input type="text" id="teamNumbers" placeholder="####...">
+    <datalist id="suggestions"></datalist>
     <button onclick="getTeamData()">Search</button>
     <div class="dark-mode-toggle" onclick="toggleDarkMode()"></div>
-    <a href="https://metrobots.github.io/docs/docs.html" class="docs-button">Docs</a>
+    <a href="https://metrobots.github.io/docs/" class="docs-button">Docs</a>
     <div id="team-data"></div>
   </div>
-
+<script src="https://mateo-johnson.github.io/teams.js"></script>
   <script>
-    function getTeamData() {
-      checkInputFormat();
-      var teamNumbers = document.getElementById('teamNumbers').value.split(',').map(num => num.trim());
-      Promise.all(teamNumbers.map(teamNumber => {
-          return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Failed to fetch team data. Status: ' + response.status);
-              }
-              return response.json();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('teamNumbers').addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); 
+                    getTeamData(); 
+                }
             });
-        }))
-        .then(teamDataArray => {
-          if (teamDataArray.length === 1) {
-            var teamData = teamDataArray[0];
-            var teamPerformance = calculateTeamPerformance(teamData);
-            displaySingleTeamData(teamData, teamPerformance);
-          } else {
-            var aggregatedData = aggregateTeamData(teamDataArray);
-            displayAggregatedData(aggregatedData, teamDataArray);
-            if (teamNumbers.length === 6) {
-              animateCircle(aggregatedData.compositeScore);
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching team data:', error.message);
         });
-    }
+    
+        let suggestionIndex = 0;
+        let cyclingSuggestions = null;
+
+        async function getTeamData() {
+            stopSuggestionCycle();
+            checkInputFormat();
+
+            const inputField = document.getElementById('teamNumbers');
+            const input = inputField.value.split(',').map(num => num.trim());
+            const teamNumbers = [];
+
+            for (let item of input) {
+                if (!isNaN(item) && item) {
+                    teamNumbers.push(item);
+                } else {
+                    const team = teams.find(team => team.teamName.toLowerCase() === item.toLowerCase());
+
+                    if (team) {
+                        teamNumbers.push(team.teamNumber);
+                    } else {
+                        const suggestions = getTeamNameSuggestions(item);
+                        if (suggestions.length > 0) {
+                            console.warn(`No exact team name found for: "${item}". Suggestions: ${suggestions.join(', ')}`);
+                            startSuggestionCycle(inputField, suggestions);
+                        } else {
+                            console.warn(`No team number found or suggestions for name: "${item}"`);
+                        }
+                    }
+                }
+            }
+
+            if (teamNumbers.length > 0) {
+                const searchID = generateSearchID(teamNumbers);
+                window.history.replaceState({}, '', `?search=${searchID}`);
+                
+                try {
+                    const teamDataArray = await Promise.all(teamNumbers.map(teamNumber => {
+                        return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to fetch team data. Status: ' + response.status);
+                            }
+                            return response.json();
+                        });
+                    }));
+
+                    if (teamDataArray.length === 1) {
+                        const teamData = teamDataArray[0];
+                        const teamPerformance = calculateTeamPerformance(teamData);
+                        displaySingleTeamData(teamData, teamPerformance);
+                    } else {
+                        const aggregatedData = aggregateTeamData(teamDataArray);
+                        displayAggregatedData(aggregatedData, teamDataArray);
+                        if (teamNumbers.length === 6) {
+                            animateCircle(aggregatedData.compositeScore);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching team data:', error.message);
+                }
+            }
+        }
+
+        function startSuggestionCycle(inputField, suggestions) {
+            stopSuggestionCycle(); 
+            suggestionIndex = 0;
+
+            cyclingSuggestions = setInterval(() => {
+                inputField.value = suggestions[suggestionIndex];
+                suggestionIndex = (suggestionIndex + 1) % suggestions.length;
+            }, 1000); 
+        }
+
+        function stopSuggestionCycle() {
+            if (cyclingSuggestions) {
+                clearInterval(cyclingSuggestions);
+                cyclingSuggestions = null;
+            }
+        }
+    
+        function getLevenshteinDistance(a, b) {
+            const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+
+            for (let i = 0; i <= a.length; i++) {
+                matrix[i][0] = i;
+            }
+
+            for (let j = 0; j <= b.length; j++) {
+                matrix[0][j] = j;
+            }
+
+            for (let i = 1; i <= a.length; i++) {
+                for (let j = 1; j <= b.length; j++) {
+                    const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j] + 1,
+                        matrix[i - 1][j - 1] + indicator
+                    );
+                }
+            }
+
+            return matrix[a.length][b.length];
+        }
+
+        function getTeamNameSuggestions(inputName) {
+            const maxDistance = 3;
+            const keyword = inputName.toLowerCase();
+            const suggestions = teams
+                .map(team => ({
+                    teamName: team.teamName,
+                    distance: getLevenshteinDistance(team.teamName.toLowerCase(), inputName.toLowerCase())
+                }))
+                .filter(item => item.distance <= maxDistance || item.teamName.toLowerCase().includes(keyword))
+                .sort((a, b) => {
+                    const aHasKeyword = a.teamName.toLowerCase().includes(keyword);
+                    const bHasKeyword = b.teamName.toLowerCase().includes(keyword);
+                    if (aHasKeyword && !bHasKeyword) return -1;
+                    if (!aHasKeyword && bHasKeyword) return 1;
+                    return a.distance - b.distance;
+                })
+                .slice(0, 5)
+                .map(item => item.teamName);
+
+            return suggestions;
+        }
+
+        function generateSearchID(teamNumbers) {
+            return btoa(teamNumbers.join(','));
+        }
+
+        function loadSearchFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchID = urlParams.get('search');
+            if (searchID) {
+                const teamNumbers = atob(searchID).split(',');
+                document.getElementById('teamNumbers').value = teamNumbers.join(', ');
+                getTeamData();
+            }
+        }
+
+        window.onload = loadSearchFromURL;
+    
+    document.getElementById('teamNumbers').addEventListener('input', () => {
+    stopSuggestionCycle();
+});
 
     function calculateTeamPerformance(data) {
       var maximumPossibleMatchScore = 130;
