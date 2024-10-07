@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comps Ranking</title>
+  <style>
+    * {
+      border: 0;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      --hue: 223;
+      --bg: hsl(var(--hue), 10%, 90%);
+      --fg: hsl(var(--hue), 10%, 10%);
+      --primary: hsl(var(--hue), 90%, 50%);
+      --trans-dur: 0.3s;
+      --trans-timing: cubic-bezier(0.65, 0, 0.35, 1);
+      font-size: calc(14px + (30 - 14) * (100vw - 280px) / (3840 - 280));
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font: 1em/1.5 sans-serif;
+      height: 100vh;
+      transition:
+        background-color var(--trans-dur),
+        color var(--trans-dur);
+    }
+    h1 {
+      color: var(--fg);
+      margin-bottom: 20px;
+    }
+    .input-container {
+      margin: 20px;
+    }
+    input[type="number"] {
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    table {
+      width: 80%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background-color: #fff;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      background-color: #333;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      color: white; /* Set table text color to white */
+    }
+    th {
+      background-color: #2b2b2b; /* Darker background for header */
+    }
+    .loading {
+      display: none;
+      margin: 20px;
+      text-align: center;
+    }
+    .pl {
+      width: 8em;
+      height: 8em;
+      position: relative;
+      margin: auto;
+    }
+    .pl:before,
+    .pl:after {
+      animation: pl-before 2.5s var(--trans-timing) infinite;
+      background-color: currentColor;
+      content: "";
+      display: block;
+      position: absolute;
+      top: 75%;
+      left: 50%;
+      width: 25%;
+      height: 25%;
+      transform-origin: 100% 100%;
+    }
+    .pl:after {
+      animation-name: pl-after;
+    }
+
+    @keyframes pl-before {
+      from {
+        transform: rotate(0) translate(-100%, -100%) rotate(-90deg);
+      }
+      20% {
+        transform: rotate(0) translate(-100%, -100%) rotate(90deg);
+      }
+      40% {
+        transform: rotate(0) translate(-300%, -100%) rotate(90deg);
+      }
+      60% {
+        transform: rotate(90deg) translate(-300%, -100%) rotate(-90deg);
+      }
+      80% {
+        transform: rotate(90deg) translate(-100%, -100%) rotate(-90deg);
+      }
+      to {
+        transform: rotate(90deg) translate(-100%, 100%) rotate(90deg);
+      }
+    }
+    @keyframes pl-after {
+      from,
+      20% {
+        transform: rotate(0) scale(1, 1);
+      }
+      40% {
+        transform: rotate(0) scale(3, 1);
+      }
+      60% {
+        transform: rotate(90deg) scale(3, 1);
+      }
+      80% {
+        transform: rotate(90deg) scale(1, 1);
+      }
+      to {
+        transform: rotate(90deg) scale(1, 1) translate(0, 200%);
+      }
+    }
+    /* Dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: hsl(var(--hue), 10%, 10%);
+        --fg: hsl(var(--hue), 10%, 90%);
+      }
+    }
+    .button {
+}
+  </style>
+</head>
+<body>
+
+  <h1>Comps Ranking</h1>
+  <div class="input-container">
+    <input type="number" id="yearInput" placeholder="Enter a year" min="2000" max="2024">
+    <button onclick="fetchAndRankCompetitions()">Get Rankings</button>
+  </div>
+
+  <table id="competitionTable">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Competition</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="loading" class="loading">
+    <div class="pl"></div>Loading... (1-2 Minutes)
+  </div>
+
+  <script>
+    async function fetchAndRankCompetitions() {
+      const year = document.getElementById("yearInput").value;
+      if (!year) {
+        alert("Please enter a valid year.");
+        return;
+      }
+
+      // Show loading spinner
+      const loadingDiv = document.getElementById("loading");
+      loadingDiv.style.display = "block";
+
+      try {
+        // Fetch all events for the given year
+        const response = await fetch(`https://api.statbotics.io/v2/events/year/${year}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Network response was not ok. Status: ${response.status} - ${errorText}`);
+        }
+
+        const competitions = await response.json();
+        const rankedCompetitions = [];
+
+        // Fetch additional data for each competition
+        for (const competition of competitions) {
+          const eventId = competition.key;
+          const metricsSum = sumMetrics(competition);
+
+          // Fetch match data for this event
+          const matchData = await fetchMatchData(eventId);
+          const averageMatchScore = calculateAverageMatchScore(matchData);
+          const teamPerformanceScore = await fetchTeamPerformance(eventId);
+
+          rankedCompetitions.push({
+            name: competition.name,
+            value: metricsSum + averageMatchScore + teamPerformanceScore, // Composite value for ranking
+          });
+        }
+
+        // Sort competitions based on the calculated value
+        rankedCompetitions.sort((a, b) => b.value - a.value); // Descending order
+
+        // Display the sorted results in the table
+        const tableBody = document.querySelector("#competitionTable tbody");
+        tableBody.innerHTML = ""; // Clear existing content
+        rankedCompetitions.forEach((comp, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${comp.name}</td>
+            <td>${comp.value.toFixed(2)}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        alert(`Failed to retrieve competition data. Error: ${error.message}`);
+      } finally {
+        // Hide loading spinner
+        loadingDiv.style.display = "none";
+      }
+    }
+
+    async function fetchMatchData(eventId) {
+      try {
+        const response = await fetch(`https://api.statbotics.io/v2/matches/event/${eventId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch match data for event: ${eventId}`);
+        }
+        const matchData = await response.json();
+        return matchData || []; // Return match data
+      } catch (error) {
+        console.error("Error fetching match data:", error);
+        return [];
+      }
+    }
+
+    async function fetchTeamPerformance(eventId) {
+      const teams = await fetchTeamData(eventId);
+      const matches = await fetchMatchData(eventId);
+      return calculatePerformanceScore(teams, matches);
+    }
+
+    async function fetchTeamData(eventId) {
+      try {
+        const response = await fetch(`https://api.statbotics.io/v2/event/${eventId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch team data for event: ${eventId}`);
+        }
+        const eventData = await response.json();
+        return eventData.teams || []; // Return teams participating in the event
+      } catch (error) {
+        console.error("Error fetching team data:", error);
+        return [];
+      }
+    }
+
+    function sumMetrics(competition) {
+      return (
+        (competition.epa_mean || 0) +
+        (competition.epa_top8 || 0) +
+        (competition.epa_top24 || 0) +
+        (competition.qual_matches || 0) -
+        (competition.epa_sd || 0) // Subtracting SD to indicate easier competition as lower is better
+      );
+    }
+
+    function calculateAverageMatchScore(matches) {
+      if (!matches.length) return 0;
+
+      let totalScore = 0;
+      matches.forEach(match => {
+        totalScore += match.red_score + match.blue_score; // Summing up scores of both alliances
+      });
+      return totalScore / matches.length; // Average score per match
+    }
+
+    function calculatePerformanceScore(teams, matches) {
+      if (!teams.length || !matches.length) return 0;
+
+      let totalEPA = 0;
+      teams.forEach(team => {
+        matches.forEach(match => {
+          // Check if the team participated in the match and add EPA scores
+          if (match.red_1 === team || match.red_2 === team || match.red_3 === team) {
+            totalEPA += match.red_epa_sum || 0;
+          } else if (match.blue_1 === team || match.blue_2 === team || match.blue_3 === team) {
+            totalEPA += match.blue_epa_sum || 0;
+          }
+        });
+      });
+
+      return totalEPA / teams.length; // Average EPA for the teams
+    }
+  </script>
+
+</body>
+</html>
