@@ -187,7 +187,6 @@ async function search() {
     return;
   }
 
-  // Hide the table and overall difficulty score initially
   document.getElementById("competitionTable").style.display = "none";
   document.getElementById("difficultyScore").style.display = "none";
 
@@ -238,10 +237,9 @@ async function search() {
       tableBody.appendChild(row);
     });
 
-    // Show the overall difficulty score
     document.getElementById("difficultyScore").innerText = `Overall Difficulty: ${maxScore.toFixed(2)}`;
     document.getElementById("difficultyScore").style.display = "block";
-    document.getElementById("competitionTable").style.display = "table"; // Show the table
+    document.getElementById("competitionTable").style.display = "table"; 
 
   } catch (error) {
     console.error("Error fetching data:", error);
