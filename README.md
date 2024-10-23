@@ -1,6 +1,6 @@
 Welcome to the official website of FRC team 3324, the Metrobots! This repository houses the complete codebase and asset library that powers our team’s online presence. This website serves as a comprehensive digital platform designed to connect and engage with our diverse audiences, including team members, mentors, sponsors, alumni, and our broader community.
 
-This website was fully created with GitHub Pages, using Codepen.io for quicker prototyping. I enjoy putting all of the code within the HTML, because it makes my coding mentors mad. This means there are no `.js` (except for one list) or CSS styling files; everything is contained within `<script>` and `<style>` tags. If you find any inconsistencies or have a fun change to implement, feel free to contribute! Have a great time exploring!
+This website was fully created with GitHub Pages, using Codepen.io for quicker prototyping. I enjoy putting all of the code within the HTML, because it makes my coding mentors upset. This means there are no `.js` (except for one list) or CSS styling files; everything is contained within `<script>` and `<style>` tags. If you find any inconsistencies or have a fun change to implement, feel free to contribute! Have a great time exploring!
 
 All the best,  
 Mateo Johnson (Metrobots 3324)
