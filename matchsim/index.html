@@ -372,7 +372,7 @@
                         const teamData = teamDataArray[0];
                         const teamPerformance = calculateTeamPerformance(teamData);
                         displaySingleTeamData(teamData, teamPerformance);
-                    } else {
+                    } else if (teamDataArray.length === 3) {
                         const aggregatedData = aggregateTeamData(teamDataArray);
                         displayAggregatedData(aggregatedData, teamDataArray);
                         if (teamNumbers.length === 6) {
@@ -534,6 +534,7 @@
 
     function displayAggregatedData(aggregatedData, teamDataArray) {
       clearColors();
+      console.log("aggregate");
       var teamData = document.getElementById('team-data');
       var totalWinLossRatio = 0;
       var totalOverallRank = 0;
@@ -615,27 +616,36 @@
     }
 
     function checkInputFormat() {
-      var teamNumbersInput = document.getElementById('teamNumbers').value;
-      var regex = /^\s*(\d{1,4}(,\s?\d{1,4})* - \d{1,4}(,\s?\d{1,4})*)?\s*$/;
-      if (regex.test(teamNumbersInput)) {
-        console.log('Input matches the desired format:', teamNumbersInput);
-        fetchAndProcessTeamData(teamNumbersInput);
-        var [group1, group2] = teamNumbersInput.split(' - ');
-        var teamNumbers1 = group1.split(',').map(num => num.trim());
-        var teamNumbers2 = group2.split(',').map(num => num.trim());
-        var teamDataElement = document.getElementById('team-data');
-        var teamDataHTML = '';
-        teamDataHTML += '<span class="red"> 🟥🟥 </span> ';
-        teamDataHTML += '<span class="black"> - </span> ';
-        teamDataHTML += '<span class="blue"> 🟦🟦 </span> ';
-        teamDataElement.innerHTML = teamDataHTML;
-        setTimeout(() => {
-          removeColoring();
-        }, 1);
-      } else {
-        console.log('Input does not match the desired format.');
-      }
+  var teamNumbersInput = document.getElementById('teamNumbers').value;
+  
+  if (teamNumbersInput.includes('-')) {
+
+    var [group1, group2] = teamNumbersInput.split('-').map(g => g.trim());
+    
+    var teamNumbers1 = group1.split(',').map(num => num.trim());
+    var teamNumbers2 = group2.split(',').map(num => num.trim());
+    
+    
+    if (teamNumbers1.length === 3 && teamNumbers2.length === 3) {
+  
+      fetchAndProcessTeamData(teamNumbersInput);
+      displayAllianceIndicators();
+      return true;
     }
+  }
+  
+  getTeamData();
+  return false;
+}
+
+function displayAllianceIndicators() {
+  var teamDataElement = document.getElementById('team-data');
+  var teamDataHTML = '';
+  teamDataHTML += '<span class="red"> 🟥 Red Alliance </span>';
+  teamDataHTML += '<span class="black"> vs </span>';
+  teamDataHTML += '<span class="blue"> Blue Alliance 🟦 </span>';
+  teamDataElement.innerHTML = teamDataHTML;
+}
 
     function removeColoring() {
       var coloredNumbers = document.querySelectorAll('.red, .blue');
@@ -645,27 +655,87 @@
     }
 
     function fetchAndProcessTeamData(teamNumbersInput) {
-      var [group1, group2] = teamNumbersInput.split(' - ');
-      var teamNumbers1 = group1.split(',').map(num => num.trim());
-      var teamNumbers2 = group2.split(',').map(num => num.trim());
-      Promise.all([...teamNumbers1, ...teamNumbers2].map(teamNumber => {
-          return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Failed to fetch team data. Status: ' + response.status);
-              }
-              return response.json();
-            });
-        }))
-        .then(teamDataArray => {
-          var totalPoints1 = teamDataArray.slice(0, 3).reduce((sum, data) => sum + data.epa.breakdown.total_points.mean, 0);
-          var totalPoints2 = teamDataArray.slice(3, 6).reduce((sum, data) => sum + data.epa.breakdown.total_points.mean, 0);
-          displaySummedPoints(totalPoints1, totalPoints2, teamDataArray);
-        })
-        .catch(error => {
-          console.error('Error fetching or processing team data:', error);
-        });
-    }
+  var [group1, group2] = teamNumbersInput.split('-').map(g => g.trim());
+  var teamNumbers1 = group1.split(',').map(num => num.trim());
+  var teamNumbers2 = group2.split(',').map(num => num.trim());
+
+  Promise.all([...teamNumbers1, ...teamNumbers2].map(teamNumber => {
+    return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch team data. Status: ' + response.status);
+        }
+        return response.json();
+      });
+  }))
+  .then(teamDataArray => {
+    var alliance1Data = teamDataArray.slice(0, 3);
+    var alliance2Data = teamDataArray.slice(3, 6);
+    
+    var alliance1Scores = calculateAllianceScores(alliance1Data);
+    var alliance2Scores = calculateAllianceScores(alliance2Data);
+    
+    displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data, alliance2Data);
+  })
+  .catch(error => {
+    console.error('Error fetching or processing team data:', error);
+  });
+}
+
+function calculateAllianceScores(allianceData) {
+  return {
+    auto: allianceData.reduce((sum, data) => sum + data.epa.breakdown.auto_points.mean, 0),
+    teleop: allianceData.reduce((sum, data) => sum + data.epa.breakdown.teleop_points.mean, 0),
+    endgame: allianceData.reduce((sum, data) => sum + data.epa.breakdown.endgame_points.mean, 0),
+    sdAuto: Math.sqrt(allianceData.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0)),
+    sdTeleop: Math.sqrt(allianceData.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0)),
+    sdEndgame: Math.sqrt(allianceData.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0))
+  };
+}
+
+function displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data, alliance2Data) {
+  var teamData = document.getElementById('team-data');
+  
+  // Calculate total scores
+  var totalScore1 = alliance1Scores.auto + alliance1Scores.teleop + alliance1Scores.endgame;
+  var totalScore2 = alliance2Scores.auto + alliance2Scores.teleop + alliance2Scores.endgame;
+  var totalSD1 = Math.sqrt(Math.pow(alliance1Scores.sdAuto, 2) + Math.pow(alliance1Scores.sdTeleop, 2) + Math.pow(alliance1Scores.sdEndgame, 2));
+  var totalSD2 = Math.sqrt(Math.pow(alliance2Scores.sdAuto, 2) + Math.pow(alliance2Scores.sdTeleop, 2) + Math.pow(alliance2Scores.sdEndgame, 2));
+
+  var pointDiff = Math.abs(totalScore1 - totalScore2);
+  var favoredAlliance = totalScore1 > totalScore2 ? 'Red' : 'Blue';
+  var pointDiffColor = totalScore1 > totalScore2 ? '#F91A48' : '#087cfc';
+
+  // Create point differential display
+  var pointDiffHTML = `
+    <h2>Predicted Score:</h2>
+    <div class="combined-scores">
+      <table>
+        <tr>
+          <th>Alliance</th>
+          <th>Predicted Score</th>
+          <th>Point Differential</th>
+        </tr>
+        <tr>
+          <td style="color: #F91A48">Red Alliance</td>
+          <td>${totalScore1.toFixed(2)} ± ${totalSD1.toFixed(2)}</td>
+          <td rowspan="2" style="color: ${pointDiffColor}">
+            <b>${pointDiff.toFixed(2)}</b><br>
+            <small>(${favoredAlliance} favored)</small>
+          </td>
+        </tr>
+        <tr>
+          <td style="color: #087cfc">Blue Alliance</td>
+          <td>${totalScore2.toFixed(2)} ± ${totalSD2.toFixed(2)}</td>
+        </tr>
+      </table>
+    </div>`;
+
+  teamData.innerHTML = pointDiffHTML;
+
+  displayCombinedScores(alliance1Data, alliance2Data);
+  console.log("matchsim")
+}
 
     function displaySummedPoints(totalPoints1, totalPoints2, teamDataArray) {
       clearColors();
