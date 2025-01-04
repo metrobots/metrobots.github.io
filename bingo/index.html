@@ -20,7 +20,6 @@
   <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
   <meta name="msapplication-TileColor" content="#333333">
   <meta name="theme-color" content="#ffffff">
-
   <style>
     :root {
       --primary: #6366f1;
@@ -104,17 +103,29 @@
       margin: 0 auto;
       width: 100%;
       max-width: 600px;
+      overflow: hidden;
     }
 
     .bingo-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: clamp(0.15rem, 1vw, 0.5rem);
       aspect-ratio: 1/1;
+      width: 100%;
     }
 
     .bingo-cell {
-      aspect-ratio: 1;
+      position: relative;
+      width: 100%;
+      padding-top: 100%;
+    }
+
+    .bingo-cell-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -132,16 +143,16 @@
       user-select: none;
     }
 
-    .bingo-cell:active {
+    .bingo-cell-content:active {
       transform: scale(0.98);
     }
 
-    .bingo-cell.marked {
+    .bingo-cell.marked .bingo-cell-content {
       background: var(--primary);
       color: white;
     }
 
-    .bingo-cell.free {
+    .bingo-cell.free .bingo-cell-content {
       background: var(--primary-dark);
       color: white;
     }
@@ -173,7 +184,7 @@
     }
 
     @media (hover: hover) {
-      .bingo-cell:hover {
+      .bingo-cell-content:hover {
         transform: scale(1.02);
       }
     }
@@ -260,14 +271,17 @@
             this.card.push(number);
             const cell = document.createElement('div');
             cell.className = 'bingo-cell';
+            const content = document.createElement('div');
+            content.className = 'bingo-cell-content';
+            content.textContent = number;
             if (number === 'FREE') {
               cell.classList.add('free', 'marked');
             }
-            cell.textContent = number;
-            this.grid.appendChild(cell);
             if (this.savedState && this.savedState[row * 5 + col] === 'marked') {
               cell.classList.add('marked');
             }
+            cell.appendChild(content);
+            this.grid.appendChild(cell);
             cell.addEventListener('click', () => this.toggleCell(cell, row, col));
           }
         }
@@ -281,14 +295,16 @@
         return shuffled.slice(0, count);
       }
       toggleCell(cell, row, col) {
-        if (cell.textContent !== 'FREE') {
+        if (!cell.classList.contains('free')) {
           cell.classList.toggle('marked');
           this.saveGridState();
           this.checkWin();
         }
       }
       saveGridState() {
-        const gridState = Array.from(this.grid.children).map(cell => cell.classList.contains('marked') ? 'marked' : 'unmarked');
+        const gridState = Array.from(this.grid.children).map(cell =>
+          cell.classList.contains('marked') ? 'marked' : 'unmarked'
+        );
         localStorage.setItem('bingoGridState', JSON.stringify(gridState));
       }
       loadSavedCard() {
@@ -299,12 +315,15 @@
         }
       }
       checkWin() {
+        // Check rows
         for (let i = 0; i < 5; i++) {
           if (this.checkLine(i * 5, 1, 5)) return true;
         }
+        // Check columns
         for (let i = 0; i < 5; i++) {
           if (this.checkLine(i, 5, 5)) return true;
         }
+        // Check diagonals
         if (this.checkLine(0, 6, 5)) return true;
         if (this.checkLine(4, 4, 5)) return true;
         return false;
@@ -327,7 +346,16 @@
     }
     const game = new BingoGame();
     game.setResponses([
-      'horrific joke', 'funny looking piece', 'encryption password is in 1337', 'dozer in game animation', 'dean kamen is wearing denim', 'something falls on dozer', 'stream goes down', 'dean kamen segway', 'illegal animated robots', 'frc song parody', 'new FIRST sponsor', 'horrific acting', 'cant open game manual', 'TRON reference', 'pre-recorded to live', '"APPLY APPLY APPLY"', 'horrific pun', 'no safety glasses', 'we will get to the game in a minute', 'coopertition reference', 'woodie flowers tribute <3', 'safety animation winner', 'knockoff mario', 'multiple horrific puns', 'field component drawings wrong', 'game code leaked early', 'space force commercial', 'irrelevant graphics', 'game has crowd interaction', 'student interviews', 'random celeb', 'mark rober', 'someone gets wrong manual password', 'pick and place game', 'shooter game', 'HAAS ad', 'shoutout to FLL/FTC', 'password is gibberish, 2025, reefscape', 'blair in jersey', 'canned laughs', 'game has no endgame', '"We are about to reveal it, but first"', 'field is called "reef"', 'balls', 'frisbee', 'weird object', 'dean kamen isnt wearing denim', 'stupid game', 'lowkey good game', 'someone falls asleep'
+      'horrific joke', 'funny looking piece', 'encryption password is in 1337', 'dozer in game animation', 'dean kamen is wearing denim',
+      'something falls on dozer', 'stream goes down', 'dean kamen segway', 'illegal animated robots', 'frc song parody',
+      'new FIRST sponsor', 'horrific acting', 'cant open game manual', 'TRON reference', 'pre-recorded to live',
+      '"APPLY APPLY APPLY"', 'horrific pun', 'no safety glasses', 'we will get to the game in a minute', 'coopertition reference',
+      'woodie flowers tribute <3', 'safety animation winner', 'knockoff mario', 'multiple horrific puns', 'field component drawings wrong',
+      'game code leaked early', 'space force commercial', 'irrelevant graphics', 'game has crowd interaction', 'student interviews',
+      'random celeb', 'mark rober', 'someone gets wrong manual password', 'pick and place game', 'shooter game',
+      'HAAS ad', 'shoutout to FLL/FTC', 'password is gibberish, 2025, reefscape', 'blair in jersey', 'canned laughs',
+      'game has no endgame', '"We are about to reveal it, but first"', 'field is called "reef"', 'balls', 'frisbee',
+      'weird object', 'dean kamen isnt wearing denim', 'stupid game', 'lowkey good game', 'someone falls asleep'
     ]);
   </script>
 </body>
