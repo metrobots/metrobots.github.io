@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FRC Kickoff Bingo</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --background: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            padding: 0 1rem;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: clamp(0.875rem, 3vw, 1.2rem);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .bingo-card {
+            background: var(--card);
+            border-radius: 0.75rem;
+            padding: clamp(0.5rem, 2vw, 1.5rem);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .bingo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: clamp(0.15rem, 1vw, 0.5rem);
+            aspect-ratio: 1/1;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: clamp(0.65rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            background: var(--background);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            padding: 0.25rem;
+            word-break: break-word;
+            hyphens: auto;
+            line-height: 1.2;
+            user-select: none;
+        }
+
+        .bingo-cell:active {
+            transform: scale(0.98);
+        }
+
+        .bingo-cell.marked {
+            background: var(--primary);
+            color: white;
+        }
+
+        .bingo-cell.free {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        .win-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: clamp(2rem, 8vw, 3rem);
+            animation: fadeIn 0.5s ease;
+            z-index: 1000;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (hover: hover) {
+            .bingo-cell:hover {
+                transform: scale(1.02);
+            }
+        }
+
+        @media (max-width: 350px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .bingo-card {
+                padding: 0.375rem;
+            }
+
+            .controls {
+                margin-bottom: 1rem;
+            }
+
+            button {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FRC Kickoff Bingo</h1>
+            <p>FRC Season 2025</p>
+        </header>
+
+        <div class="controls">
+            <button id="newCard">New Card</button>
+        </div>
+
+        <div class="bingo-card">
+            <div class="bingo-grid" id="bingoGrid"></div>
+        </div>
+    </div>
+
+    <div class="win-overlay" id="winOverlay">
+        BINGO!
+    </div>
+
+    <script>
+        class BingoGame {
+            constructor() {
+                this.grid = document.getElementById('bingoGrid');
+                this.winOverlay = document.getElementById('winOverlay');
+                this.card = [];
+                this.responses = [];
+                this.bindEvents();
+                this.generateCard();
+            }
+
+            bindEvents() {
+                document.getElementById('newCard').addEventListener('click', () => this.generateCard());
+                this.winOverlay.addEventListener('click', () => {
+                    this.winOverlay.style.display = 'none';
+                });
+            }
+
+            setResponses(responses) {
+                if (Array.isArray(responses) && responses.length >= 24) {
+                    this.responses = responses;
+                    this.generateCard();
+                } else {
+                    console.error('Please provide an array with at least 24 responses!');
+                }
+            }
+
+            generateCard() {
+                this.grid.innerHTML = '';
+                this.card = [];
+                this.winOverlay.style.display = 'none';
+
+                const selectedResponses = this.pickRandomItems(this.responses, 24);
+                let responseIndex = 0;
+
+                for (let row = 0; row < 5; row++) {
+                    for (let col = 0; col < 5; col++) {
+                        let number;
+                        if (row === 2 && col === 2) {
+                            number = 'FREE';
+                        } else {
+                            number = selectedResponses[responseIndex];
+                            responseIndex++;
+                        }
+
+                        this.card.push(number);
+                        
+                        const cell = document.createElement('div');
+                        cell.className = 'bingo-cell';
+                        if (number === 'FREE') {
+                            cell.classList.add('free', 'marked');
+                        }
+                        cell.textContent = number;
+                        cell.addEventListener('click', () => this.toggleCell(cell));
+                        this.grid.appendChild(cell);
+                    }
+                }
+            }
+
+            pickRandomItems(arr, count) {
+                const shuffled = arr.slice();
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled.slice(0, count);
+            }
+
+            toggleCell(cell) {
+                if (cell.textContent !== 'FREE') {
+                    cell.classList.toggle('marked');
+                    this.checkWin();
+                }
+            }
+
+            checkWin() {
+                for (let i = 0; i < 5; i++) {
+                    if (this.checkLine(i * 5, 1, 5)) return true;
+                }
+
+                for (let i = 0; i < 5; i++) {
+                    if (this.checkLine(i, 5, 5)) return true;
+                }
+
+                if (this.checkLine(0, 6, 5)) return true;
+                if (this.checkLine(4, 4, 5)) return true;
+
+                return false;
+            }
+
+            checkLine(start, step, count) {
+                const cells = this.grid.children;
+                let marked = 0;
+                for (let i = 0; i < count; i++) {
+                    if (cells[start + (i * step)].classList.contains('marked')) {
+                        marked++;
+                    }
+                }
+                if (marked === count) {
+                    this.winOverlay.style.display = 'flex';
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        const game = new BingoGame();
+        game.setResponses([
+            'horrific joke', 'funny looking piece', 'encryption password is in 1337', 'dozer in game animation', 'dean kamen is wearing denim', 'something falls on dozer', 'stream goes down', 'dean kamen segway', 'illegal animated robots', 'frc song parody', 'new FIRST sponsor', 'horrific acting', 'cant open game manual', 'TRON reference', 'pre-recorded to live', '"APPLY APPLY APPLY"', 'horrific pun', 'no safety glasses', 'we will get to the game in a minute', 'coopertition reference', 'woodie flowers tribute <3', 'safety animation winner', 'knockoff mario', 'multiple horrific puns', 'field component drawings wrong', 'game code leaked early', 'space force commercial', 'irrelevant graphics', 'game has crowd interaction', 'student interviews', 'random celeb', 'mark rober', 'someone gets wrong manual password', 'pick and place game', 'shooter game', 'HAAS ad', 'shoutout to FLL/FTC', 'password is gibberish, 2025, reefscape', 'blair in jersey', 'canned laughs', 'game has no endgame', '"We are about to reveal it, but first"', 'field is called "reef"', 'balls', 'frisbee', 'weird object', 'dean kamen isnt wearing denim', 'stupid game', 'lowkey good game', 'someone falls asleep'
+        ]);
+    </script>
+</body>
+</html>
