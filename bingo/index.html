@@ -229,8 +229,8 @@
         this.loadSavedCard();
       }
       bindEvents() {
-        document.getElementById('newCard').addEventListener('click', () => {
-          this.generateCard(false);
+        document.getElementById('newCard').addEventListener('click', () => this.generateCard());
+        this.winOverlay.addEventListener('click', () => {
           this.winOverlay.style.display = 'none';
         });
       }
@@ -242,12 +242,9 @@
           console.error('Please provide an array with at least 24 responses!');
         }
       }
-      generateCard(isReload) {
-        if (!isReload) {
-          localStorage.removeItem('bingoGridState');
-        }
-        this.grid.innerHTML = ''; 
-        this.card = []; 
+      generateCard() {
+        this.grid.innerHTML = '';
+        this.card = [];
         this.winOverlay.style.display = 'none';
         const selectedResponses = this.pickRandomItems(this.responses, 24);
         let responseIndex = 0;
@@ -257,7 +254,8 @@
             if (row === 2 && col === 2) {
               number = 'FREE';
             } else {
-              number = selectedResponses[responseIndex++];
+              number = selectedResponses[responseIndex];
+              responseIndex++;
             }
             this.card.push(number);
             const cell = document.createElement('div');
@@ -267,6 +265,9 @@
             }
             cell.textContent = number;
             this.grid.appendChild(cell);
+            if (this.savedState && this.savedState[row * 5 + col] === 'marked') {
+              cell.classList.add('marked');
+            }
             cell.addEventListener('click', () => this.toggleCell(cell, row, col));
           }
         }
@@ -294,21 +295,7 @@
         const savedState = localStorage.getItem('bingoGridState');
         if (savedState) {
           this.savedState = JSON.parse(savedState);
-          this.generateCard(true);
-          this.applySavedState();
-        } else {
-          this.generateCard(false);
-        }
-      }
-      applySavedState() {
-        const cells = Array.from(this.grid.children);
-        const savedState = this.savedState;
-        if (savedState.length === 25) {
-          cells.forEach((cell, index) => {
-            if (savedState[index] === 'marked') {
-              cell.classList.add('marked');
-            }
-          });
+          this.generateCard();
         }
       }
       checkWin() {
