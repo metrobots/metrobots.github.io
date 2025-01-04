@@ -229,42 +229,40 @@
             }
         }
 
-        generateCard() {
-            this.grid.innerHTML = '';
-            this.card = [];
-            this.winOverlay.style.display = 'none';
+generateCard() {
+    localStorage.removeItem('bingoGridState');
 
-            const selectedResponses = this.pickRandomItems(this.responses, 24);
-            let responseIndex = 0;
+    this.grid.innerHTML = '';
+    this.card = [];
+    this.winOverlay.style.display = 'none';
 
-            for (let row = 0; row < 5; row++) {
-                for (let col = 0; col < 5; col++) {
-                    let number;
-                    if (row === 2 && col === 2) {
-                        number = 'FREE';
-                    } else {
-                        number = selectedResponses[responseIndex];
-                        responseIndex++;
-                    }
+    const selectedResponses = this.pickRandomItems(this.responses, 24);
+    let responseIndex = 0;
 
-                    this.card.push(number);
-                    
-                    const cell = document.createElement('div');
-                    cell.className = 'bingo-cell';
-                    if (number === 'FREE') {
-                        cell.classList.add('free', 'marked');
-                    }
-                    cell.textContent = number;
-                    this.grid.appendChild(cell);
-
-                    if (this.savedState && this.savedState[row * 5 + col] === 'marked') {
-                        cell.classList.add('marked');
-                    }
-
-                    cell.addEventListener('click', () => this.toggleCell(cell, row, col));
-                }
+    for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
+            let number;
+            if (row === 2 && col === 2) {
+                number = 'FREE';
+            } else {
+                number = selectedResponses[responseIndex];
+                responseIndex++;
             }
+
+            this.card.push(number);
+            
+            const cell = document.createElement('div');
+            cell.className = 'bingo-cell';
+            if (number === 'FREE') {
+                cell.classList.add('free', 'marked');
+            }
+            cell.textContent = number;
+            this.grid.appendChild(cell);
+
+            cell.addEventListener('click', () => this.toggleCell(cell, row, col));
         }
+    }
+}
 
         pickRandomItems(arr, count) {
             const shuffled = arr.slice();
