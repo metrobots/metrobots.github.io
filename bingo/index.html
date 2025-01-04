@@ -104,6 +104,7 @@
       width: 100%;
       max-width: 600px;
       overflow: hidden;
+      animation: cardGenerate 0.5s ease-out;
     }
 
     .bingo-grid {
@@ -135,21 +136,20 @@
       background: var(--background);
       border-radius: 0.375rem;
       cursor: pointer;
-      transition: background-color 0.2s ease;
       padding: 0.25rem;
       word-break: break-word;
       hyphens: auto;
       line-height: 1.2;
       user-select: none;
-    }
-
-    .bingo-cell-content:active {
-      transform: scale(0.98);
+      transform: scale(1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .bingo-cell.marked .bingo-cell-content {
       background: var(--primary);
       color: white;
+      transform: rotateY(180deg) scale(1);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .bingo-cell.free .bingo-cell-content {
@@ -169,17 +169,58 @@
       justify-content: center;
       color: white;
       font-size: clamp(2rem, 8vw, 3rem);
-      animation: fadeIn 0.5s ease;
       z-index: 1000;
+      animation: none;
     }
 
-    @keyframes fadeIn {
-      from {
+    .win-overlay.active {
+      display: flex;
+      animation: winPulse 1s ease-in-out infinite;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    @keyframes cardGenerate {
+      0% {
         opacity: 0;
+        transform: scale(0.9);
       }
 
-      to {
+      100% {
         opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes cellAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes winPulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
       }
     }
 
@@ -242,6 +283,7 @@
       bindEvents() {
         document.getElementById('newCard').addEventListener('click', () => this.generateCard());
         this.winOverlay.addEventListener('click', () => {
+          this.winOverlay.classList.remove('active');
           this.winOverlay.style.display = 'none';
         });
       }
@@ -256,33 +298,39 @@
       generateCard() {
         this.grid.innerHTML = '';
         this.card = [];
+        this.winOverlay.classList.remove('active');
         this.winOverlay.style.display = 'none';
         const selectedResponses = this.pickRandomItems(this.responses, 24);
         let responseIndex = 0;
+        const addCell = (row, col, delay) => {
+          let number;
+          if (row === 2 && col === 2) {
+            number = 'FREE';
+          } else {
+            number = selectedResponses[responseIndex];
+            responseIndex++;
+          }
+          this.card.push(number);
+          const cell = document.createElement('div');
+          cell.className = 'bingo-cell';
+          cell.style.animation = `cellAppear 0.5s ease-out ${delay}s`;
+          const content = document.createElement('div');
+          content.className = 'bingo-cell-content';
+          content.textContent = number;
+          if (number === 'FREE') {
+            cell.classList.add('free', 'marked');
+          }
+          if (this.savedState && this.savedState[row * 5 + col] === 'marked') {
+            cell.classList.add('marked');
+          }
+          cell.appendChild(content);
+          this.grid.appendChild(cell);
+          cell.addEventListener('click', () => this.toggleCell(cell, row, col));
+        };
         for (let row = 0; row < 5; row++) {
           for (let col = 0; col < 5; col++) {
-            let number;
-            if (row === 2 && col === 2) {
-              number = 'FREE';
-            } else {
-              number = selectedResponses[responseIndex];
-              responseIndex++;
-            }
-            this.card.push(number);
-            const cell = document.createElement('div');
-            cell.className = 'bingo-cell';
-            const content = document.createElement('div');
-            content.className = 'bingo-cell-content';
-            content.textContent = number;
-            if (number === 'FREE') {
-              cell.classList.add('free', 'marked');
-            }
-            if (this.savedState && this.savedState[row * 5 + col] === 'marked') {
-              cell.classList.add('marked');
-            }
-            cell.appendChild(content);
-            this.grid.appendChild(cell);
-            cell.addEventListener('click', () => this.toggleCell(cell, row, col));
+            const delay = (row * 5 + col) * 0.05;
+            addCell(row, col, delay);
           }
         }
       }
@@ -314,19 +362,31 @@
           this.generateCard();
         }
       }
-      checkWin() {
-        // Check rows
-        for (let i = 0; i < 5; i++) {
-          if (this.checkLine(i * 5, 1, 5)) return true;
+      createConfetti() {
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+        for (let i = 0; i < 50; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.left = Math.random() * window.innerWidth + 'px';
+          confetti.style.top = '-10px';
+          document.body.appendChild(confetti);
+          const angle = Math.random() * Math.PI * 2;
+          const velocity = 3 + Math.random() * 2;
+          let x = parseInt(confetti.style.left);
+          let y = -10;
+          const animate = () => {
+            y += velocity;
+            x += Math.cos(angle) * 2;
+            confetti.style.transform = `translate(${x}px, ${y}px) rotate(${y * 2}deg)`;
+            if (y < window.innerHeight) {
+              requestAnimationFrame(animate);
+            } else {
+              confetti.remove();
+            }
+          };
+          requestAnimationFrame(animate);
         }
-        // Check columns
-        for (let i = 0; i < 5; i++) {
-          if (this.checkLine(i, 5, 5)) return true;
-        }
-        // Check diagonals
-        if (this.checkLine(0, 6, 5)) return true;
-        if (this.checkLine(4, 4, 5)) return true;
-        return false;
       }
       checkLine(start, step, count) {
         const cells = this.grid.children;
@@ -336,8 +396,23 @@
             marked++;
           }
         }
-        if (marked === count) {
-          this.winOverlay.style.display = 'flex';
+        return marked === count;
+      }
+      checkWin() {
+        const hasWon = (() => {
+          for (let i = 0; i < 5; i++) {
+            if (this.checkLine(i * 5, 1, 5)) return true;
+          }
+          for (let i = 0; i < 5; i++) {
+            if (this.checkLine(i, 5, 5)) return true;
+          }
+          if (this.checkLine(0, 6, 5)) return true;
+          if (this.checkLine(4, 4, 5)) return true;
+          return false;
+        })();
+        if (hasWon) {
+          this.winOverlay.classList.add('active');
+          this.createConfetti();
           localStorage.removeItem('bingoGridState');
           return true;
         }
