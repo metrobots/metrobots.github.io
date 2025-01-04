@@ -196,115 +196,135 @@
     </div>
 
     <script>
-        class BingoGame {
-            constructor() {
-                this.grid = document.getElementById('bingoGrid');
-                this.winOverlay = document.getElementById('winOverlay');
-                this.card = [];
-                this.responses = [];
-                this.bindEvents();
-                this.generateCard();
-            }
+    class BingoGame {
+        constructor() {
+            this.grid = document.getElementById('bingoGrid');
+            this.winOverlay = document.getElementById('winOverlay');
+            this.card = [];
+            this.responses = [];
+            this.bindEvents();
+            this.loadSavedCard();
+        }
 
-            bindEvents() {
-                document.getElementById('newCard').addEventListener('click', () => this.generateCard());
-                this.winOverlay.addEventListener('click', () => {
-                    this.winOverlay.style.display = 'none';
-                });
-            }
-
-            setResponses(responses) {
-                if (Array.isArray(responses) && responses.length >= 24) {
-                    this.responses = responses;
-                    this.generateCard();
-                } else {
-                    console.error('Please provide an array with at least 24 responses!');
-                }
-            }
-
-            generateCard() {
-                this.grid.innerHTML = '';
-                this.card = [];
+        bindEvents() {
+            document.getElementById('newCard').addEventListener('click', () => this.generateCard());
+            this.winOverlay.addEventListener('click', () => {
                 this.winOverlay.style.display = 'none';
+            });
+        }
 
-                const selectedResponses = this.pickRandomItems(this.responses, 24);
-                let responseIndex = 0;
-
-                for (let row = 0; row < 5; row++) {
-                    for (let col = 0; col < 5; col++) {
-                        let number;
-                        if (row === 2 && col === 2) {
-                            number = 'FREE';
-                        } else {
-                            number = selectedResponses[responseIndex];
-                            responseIndex++;
-                        }
-
-                        this.card.push(number);
-                        
-                        const cell = document.createElement('div');
-                        cell.className = 'bingo-cell';
-                        if (number === 'FREE') {
-                            cell.classList.add('free', 'marked');
-                        }
-                        cell.textContent = number;
-                        cell.addEventListener('click', () => this.toggleCell(cell));
-                        this.grid.appendChild(cell);
-                    }
-                }
-            }
-
-            pickRandomItems(arr, count) {
-                const shuffled = arr.slice();
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                }
-                return shuffled.slice(0, count);
-            }
-
-            toggleCell(cell) {
-                if (cell.textContent !== 'FREE') {
-                    cell.classList.toggle('marked');
-                    this.checkWin();
-                }
-            }
-
-            checkWin() {
-                for (let i = 0; i < 5; i++) {
-                    if (this.checkLine(i * 5, 1, 5)) return true;
-                }
-
-                for (let i = 0; i < 5; i++) {
-                    if (this.checkLine(i, 5, 5)) return true;
-                }
-
-                if (this.checkLine(0, 6, 5)) return true;
-                if (this.checkLine(4, 4, 5)) return true;
-
-                return false;
-            }
-
-            checkLine(start, step, count) {
-                const cells = this.grid.children;
-                let marked = 0;
-                for (let i = 0; i < count; i++) {
-                    if (cells[start + (i * step)].classList.contains('marked')) {
-                        marked++;
-                    }
-                }
-                if (marked === count) {
-                    this.winOverlay.style.display = 'flex';
-                    return true;
-                }
-                return false;
+        setResponses(responses) {
+            if (Array.isArray(responses) && responses.length >= 24) {
+                this.responses = responses;
+                this.generateCard();
+            } else {
+                console.error('Please provide an array with at least 24 responses!');
             }
         }
 
-        const game = new BingoGame();
-        game.setResponses([
-            'horrific joke', 'funny looking piece', 'encryption password is in 1337', 'dozer in game animation', 'dean kamen is wearing denim', 'something falls on dozer', 'stream goes down', 'dean kamen segway', 'illegal animated robots', 'frc song parody', 'new FIRST sponsor', 'horrific acting', 'cant open game manual', 'TRON reference', 'pre-recorded to live', '"APPLY APPLY APPLY"', 'horrific pun', 'no safety glasses', 'we will get to the game in a minute', 'coopertition reference', 'woodie flowers tribute <3', 'safety animation winner', 'knockoff mario', 'multiple horrific puns', 'field component drawings wrong', 'game code leaked early', 'space force commercial', 'irrelevant graphics', 'game has crowd interaction', 'student interviews', 'random celeb', 'mark rober', 'someone gets wrong manual password', 'pick and place game', 'shooter game', 'HAAS ad', 'shoutout to FLL/FTC', 'password is gibberish, 2025, reefscape', 'blair in jersey', 'canned laughs', 'game has no endgame', '"We are about to reveal it, but first"', 'field is called "reef"', 'balls', 'frisbee', 'weird object', 'dean kamen isnt wearing denim', 'stupid game', 'lowkey good game', 'someone falls asleep'
-        ]);
-    </script>
+        generateCard() {
+            this.grid.innerHTML = '';
+            this.card = [];
+            this.winOverlay.style.display = 'none';
+
+            const selectedResponses = this.pickRandomItems(this.responses, 24);
+            let responseIndex = 0;
+
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    let number;
+                    if (row === 2 && col === 2) {
+                        number = 'FREE';
+                    } else {
+                        number = selectedResponses[responseIndex];
+                        responseIndex++;
+                    }
+
+                    this.card.push(number);
+                    
+                    const cell = document.createElement('div');
+                    cell.className = 'bingo-cell';
+                    if (number === 'FREE') {
+                        cell.classList.add('free', 'marked');
+                    }
+                    cell.textContent = number;
+                    this.grid.appendChild(cell);
+
+                    if (this.savedState && this.savedState[row * 5 + col] === 'marked') {
+                        cell.classList.add('marked');
+                    }
+
+                    cell.addEventListener('click', () => this.toggleCell(cell, row, col));
+                }
+            }
+        }
+
+        pickRandomItems(arr, count) {
+            const shuffled = arr.slice();
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled.slice(0, count);
+        }
+
+        toggleCell(cell, row, col) {
+            if (cell.textContent !== 'FREE') {
+                cell.classList.toggle('marked');
+                this.saveGridState();
+                this.checkWin();
+            }
+        }
+
+        saveGridState() {
+            const gridState = Array.from(this.grid.children).map(cell => cell.classList.contains('marked') ? 'marked' : 'unmarked');
+            localStorage.setItem('bingoGridState', JSON.stringify(gridState));
+        }
+
+        loadSavedCard() {
+            const savedState = localStorage.getItem('bingoGridState');
+            if (savedState) {
+                this.savedState = JSON.parse(savedState);
+                this.generateCard();
+            }
+        }
+
+        checkWin() {
+            for (let i = 0; i < 5; i++) {
+                if (this.checkLine(i * 5, 1, 5)) return true;
+            }
+
+            for (let i = 0; i < 5; i++) {
+                if (this.checkLine(i, 5, 5)) return true;
+            }
+
+            if (this.checkLine(0, 6, 5)) return true;
+            if (this.checkLine(4, 4, 5)) return true;
+
+            return false;
+        }
+
+        checkLine(start, step, count) {
+            const cells = this.grid.children;
+            let marked = 0;
+            for (let i = 0; i < count; i++) {
+                if (cells[start + (i * step)].classList.contains('marked')) {
+                    marked++;
+                }
+            }
+            if (marked === count) {
+                this.winOverlay.style.display = 'flex';
+                localStorage.removeItem('bingoGridState'); 
+                return true;
+            }
+            return false;
+        }
+    }
+
+    const game = new BingoGame();
+    game.setResponses([
+        'horrific joke', 'funny looking piece', 'encryption password is in 1337', 'dozer in game animation', 'dean kamen is wearing denim', 'something falls on dozer', 'stream goes down', 'dean kamen segway', 'illegal animated robots', 'frc song parody', 'new FIRST sponsor', 'horrific acting', 'cant open game manual', 'TRON reference', 'pre-recorded to live', '"APPLY APPLY APPLY"', 'horrific pun', 'no safety glasses', 'we will get to the game in a minute', 'coopertition reference', 'woodie flowers tribute <3', 'safety animation winner', 'knockoff mario', 'multiple horrific puns', 'field component drawings wrong', 'game code leaked early', 'space force commercial', 'irrelevant graphics', 'game has crowd interaction', 'student interviews', 'random celeb', 'mark rober', 'someone gets wrong manual password', 'pick and place game', 'shooter game', 'HAAS ad', 'shoutout to FLL/FTC', 'password is gibberish, 2025, reefscape', 'blair in jersey', 'canned laughs', 'game has no endgame', '"We are about to reveal it, but first"', 'field is called "reef"', 'balls', 'frisbee', 'weird object', 'dean kamen isnt wearing denim', 'stupid game', 'lowkey good game', 'someone falls asleep'
+    ]);
+</script>
 </body>
 </html>
