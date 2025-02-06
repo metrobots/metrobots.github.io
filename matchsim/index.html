@@ -302,7 +302,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
   <div class="container">
-    <h2 class="taClass">3324 - Team Analysis</h2>
+    <h2 class="taClass">Match Sim</h2>
     <input type="text" id="teamNumbers" placeholder="####...">
     <datalist id="suggestions"></datalist>
     <button onclick="getTeamData()">Search</button>
@@ -310,294 +310,388 @@
     <a href="https://metrobots.github.io/docs/" class="docs-button">Docs</a>
     <div id="team-data"></div>
   </div>
-<script src="https://metrobots.github.io/matchsim/teams.js"></script>
+  <script src="https://metrobots.github.io/matchsim/teams.js"></script>
   <script>
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('teamNumbers').addEventListener('keydown', function(event) {
-                if (event.key === 'Enter') {
-                    event.preventDefault(); 
-                    getTeamData(); 
-                }
-            });
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('teamNumbers').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          getTeamData();
+        }
+      });
+    });
+    let suggestionIndex = 0;
+    let cyclingSuggestions = null;
     
-        let suggestionIndex = 0;
-        let cyclingSuggestions = null;
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
-        async function getTeamData() {
-            stopSuggestionCycle();
-            checkInputFormat();
-
-            const inputField = document.getElementById('teamNumbers');
-            const input = inputField.value.split(',').map(num => num.trim());
-            const teamNumbers = [];
-
-            for (let item of input) {
-                if (!isNaN(item) && item) {
-                    teamNumbers.push(item);
-                } else {
-                    const team = teams.find(team => team.teamName.toLowerCase() === item.toLowerCase());
-
-                    if (team) {
-                        teamNumbers.push(team.teamNumber);
-                    } else {
-                        const suggestions = getTeamNameSuggestions(item);
-                        if (suggestions.length > 0) {
-                            console.warn(`No exact team name found for: "${item}". Suggestions: ${suggestions.join(', ')}`);
-                            startSuggestionCycle(inputField, suggestions);
-                        } else {
-                            console.warn(`No team number found or suggestions for name: "${item}"`);
-                        }
-                    }
-                }
-            }
-
-            if (teamNumbers.length > 0) {
-                const searchID = generateSearchID(teamNumbers);
-                window.history.replaceState({}, '', `?search=${searchID}`);
-                
-                try {
-                    const teamDataArray = await Promise.all(teamNumbers.map(teamNumber => {
-                        return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Failed to fetch team data. Status: ' + response.status);
-                            }
-                            return response.json();
-                        });
-                    }));
-
-                    if (teamDataArray.length === 1) {
-                        const teamData = teamDataArray[0];
-                        const teamPerformance = calculateTeamPerformance(teamData);
-                        displaySingleTeamData(teamData, teamPerformance);
-                    } else if (teamDataArray.length === 3) {
-                        const aggregatedData = aggregateTeamData(teamDataArray);
-                        displayAggregatedData(aggregatedData, teamDataArray);
-                        if (teamNumbers.length === 6) {
-                            animateCircle(aggregatedData.compositeScore);
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error fetching team data:', error.message);
-                }
-            }
+async function getTeamData() {
+  stopSuggestionCycle();
+  const inputField = document.getElementById('teamNumbers');
+  const input = inputField.value.split(',').map(num => num.trim());
+  const teamNumbers = [];
+  
+  for (let item of input) {
+    if (!isNaN(item) && item) {
+      teamNumbers.push(item);
+    } else {
+      const team = teams.find(team => team.teamName.toLowerCase() === item.toLowerCase());
+      if (team) {
+        teamNumbers.push(team.teamNumber);
+      } else {
+        const suggestions = getTeamNameSuggestions(item);
+        if (suggestions.length > 0) {
+          console.warn(`No exact team name found for: "${item}". Suggestions: ${suggestions.join(', ')}`);
+          startSuggestionCycle(inputField, suggestions);
+        } else {
+          console.warn(`No team number found or suggestions for name: "${item}"`);
         }
+      }
+    }
+  }
 
-        function startSuggestionCycle(inputField, suggestions) {
-            stopSuggestionCycle(); 
-            suggestionIndex = 0;
-
-            cyclingSuggestions = setInterval(() => {
-                inputField.value = suggestions[suggestionIndex];
-                suggestionIndex = (suggestionIndex + 1) % suggestions.length;
-            }, 1000); 
-        }
-
-        function stopSuggestionCycle() {
-            if (cyclingSuggestions) {
-                clearInterval(cyclingSuggestions);
-                cyclingSuggestions = null;
-            }
-        }
+  if (teamNumbers.length > 0) {
+    const searchID = generateSearchID(teamNumbers);
+    window.history.replaceState({}, '', `?search=${searchID}`);
     
-        function getLevenshteinDistance(a, b) {
-            const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+    try {
+      const teamDataArray = await Promise.all(
+        teamNumbers.map(teamNumber => 
+          fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+        )
+      );
 
-            for (let i = 0; i <= a.length; i++) {
-                matrix[i][0] = i;
-            }
+      const teamDataElement = document.getElementById('team-data');
+      teamDataElement.innerHTML = '';
 
-            for (let j = 0; j <= b.length; j++) {
-                matrix[0][j] = j;
-            }
+      if (teamDataArray.length === 1) {
+        const teamData = teamDataArray[0];
+        const teamPerformance = calculateTeamPerformance(teamData);
+        displaySingleTeamData(teamData, teamPerformance);
+      } else if (teamDataArray.length === 3) {
+        const aggregatedData = aggregateTeamData(teamDataArray);
+        displayAggregatedData(aggregatedData, teamDataArray);
+      }
+    } catch (error) {
+      console.error('Error fetching team data:', error);
+      const teamDataElement = document.getElementById('team-data');
+      teamDataElement.innerHTML = `<p style="color: red;">Error loading team data. Please try again.</p>`;
+    }
+  }
+}
 
-            for (let i = 1; i <= a.length; i++) {
-                for (let j = 1; j <= b.length; j++) {
-                    const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
-                    matrix[i][j] = Math.min(
-                        matrix[i][j - 1] + 1,
-                        matrix[i - 1][j] + 1,
-                        matrix[i - 1][j - 1] + indicator
-                    );
-                }
-            }
+    function startSuggestionCycle(inputField, suggestions) {
+      stopSuggestionCycle();
+      suggestionIndex = 0;
+      cyclingSuggestions = setInterval(() => {
+        inputField.value = suggestions[suggestionIndex];
+        suggestionIndex = (suggestionIndex + 1) % suggestions.length;
+      }, 1000);
+    }
 
-            return matrix[a.length][b.length];
+    function stopSuggestionCycle() {
+      if (cyclingSuggestions) {
+        clearInterval(cyclingSuggestions);
+        cyclingSuggestions = null;
+      }
+    }
+
+    function getLevenshteinDistance(a, b) {
+      const matrix = Array(a.length + 1).fill(null).map(() => Array(b.length + 1).fill(null));
+      for (let i = 0; i <= a.length; i++) {
+        matrix[i][0] = i;
+      }
+      for (let j = 0; j <= b.length; j++) {
+        matrix[0][j] = j;
+      }
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+          matrix[i][j] = Math.min(
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j] + 1,
+            matrix[i - 1][j - 1] + indicator
+          );
         }
+      }
+      return matrix[a.length][b.length];
+    }
 
-        function getTeamNameSuggestions(inputName) {
-            const maxDistance = 3;
-            const keyword = inputName.toLowerCase();
-            const suggestions = teams
-                .map(team => ({
-                    teamName: team.teamName,
-                    distance: getLevenshteinDistance(team.teamName.toLowerCase(), inputName.toLowerCase())
-                }))
-                .filter(item => item.distance <= maxDistance || item.teamName.toLowerCase().includes(keyword))
-                .sort((a, b) => {
-                    const aHasKeyword = a.teamName.toLowerCase().includes(keyword);
-                    const bHasKeyword = b.teamName.toLowerCase().includes(keyword);
-                    if (aHasKeyword && !bHasKeyword) return -1;
-                    if (!aHasKeyword && bHasKeyword) return 1;
-                    return a.distance - b.distance;
-                })
-                .slice(0, 5)
-                .map(item => item.teamName);
+    function getTeamNameSuggestions(inputName) {
+      const maxDistance = 3;
+      const keyword = inputName.toLowerCase();
+      const suggestions = teams
+        .map(team => ({
+          teamName: team.teamName,
+          distance: getLevenshteinDistance(team.teamName.toLowerCase(), inputName.toLowerCase())
+        }))
+        .filter(item => item.distance <= maxDistance || item.teamName.toLowerCase().includes(keyword))
+        .sort((a, b) => {
+          const aHasKeyword = a.teamName.toLowerCase().includes(keyword);
+          const bHasKeyword = b.teamName.toLowerCase().includes(keyword);
+          if (aHasKeyword && !bHasKeyword) return -1;
+          if (!aHasKeyword && bHasKeyword) return 1;
+          return a.distance - b.distance;
+        })
+        .slice(0, 5)
+        .map(item => item.teamName);
+      return suggestions;
+    }
 
-            return suggestions;
-        }
+    function generateSearchID(teamNumbers) {
+      return btoa(teamNumbers.join(','));
+    }
 
-        function generateSearchID(teamNumbers) {
-            return btoa(teamNumbers.join(','));
-        }
-
-        function loadSearchFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchID = urlParams.get('search');
-            if (searchID) {
-                const teamNumbers = atob(searchID).split(',');
-                document.getElementById('teamNumbers').value = teamNumbers.join(', ');
-                getTeamData();
-            }
-        }
-
-        window.onload = loadSearchFromURL;
-    
+    function loadSearchFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchID = urlParams.get('search');
+      if (searchID) {
+        const teamNumbers = atob(searchID).split(',');
+        document.getElementById('teamNumbers').value = teamNumbers.join(', ');
+        getTeamData();
+      }
+    }
+    window.onload = loadSearchFromURL;
     document.getElementById('teamNumbers').addEventListener('input', () => {
-    stopSuggestionCycle();
-});
+      stopSuggestionCycle();
+    });
 
     function calculateTeamPerformance(data) {
-      var maximumPossibleMatchScore = 130;
-      var maximumPossibleTeleopScore = 95;
-      var maximumPossibleAutoScore = 20;
-      var maximumPossibleEndgameScore = 15;
-      var winLossRatio = data.record.season.winrate;
-      var overallRank = data.epa.ranks.total.rank;
-      var totalNumberOfTeams = data.epa.ranks.total.team_count;
-      var averageMatchScore = data.epa.breakdown.total_points.mean;
-      var averageTeleopScore = data.epa.breakdown.teleop_points.mean;
-      var rankingInArea = data.epa.ranks.state.rank;
-      var averageAutoScore = data.epa.breakdown.auto_points.mean;
-      var averageEndgameScore = data.epa.breakdown.endgame_points.mean;
-      var sdMatchScore = data.epa.breakdown.total_points.sd;
-      var sdTeleopScore = data.epa.breakdown.teleop_points.sd;
-      var sdAutoScore = data.epa.breakdown.auto_points.sd;
-      var sdEndgameScore = data.epa.breakdown.endgame_points.sd;
-      var normalizedWinLossRatio = winLossRatio;
-      var normalizedOverallRank = 1 - (overallRank - 1) / totalNumberOfTeams;
-      var normalizedAverageMatchScore = averageMatchScore / maximumPossibleMatchScore;
-      var normalizedAverageTeleopScore = averageTeleopScore / maximumPossibleTeleopScore;
-      var normalizedAverageAutoScore = averageAutoScore / maximumPossibleAutoScore;
-      var normalizedEndgameScore = averageEndgameScore / maximumPossibleEndgameScore;
-      var normalizedRankingInArea = 1 - (rankingInArea - 1) / totalNumberOfTeams;
-      var weight = 1 / 7;
-      var compositeScore = (normalizedWinLossRatio + normalizedOverallRank + normalizedAverageMatchScore + normalizedAverageTeleopScore + normalizedAverageAutoScore + normalizedEndgameScore + normalizedRankingInArea) * weight;
-      return compositeScore;
+      const maximumPossibleMatchScore = 130; 
+      const maxAutoPoints = 30;
+      const maxTeleopPoints = 80;
+      const maxEndgamePoints = 20;
+      const normalizedScores = {
+        totalEPA: data.epa.total_points.mean / maximumPossibleMatchScore,
+        unitlessEPA: data.epa.unitless / 3000,
+        normalizedEPA: data.epa.norm / 3000,
+
+        globalPercentile: data.epa.ranks.total.percentile,
+        countryPercentile: data.epa.ranks.country.percentile,
+        statePercentile: data.epa.ranks.state.percentile,
+        gamePieceEfficiency: data.epa.breakdown.total_game_pieces / 15,
+        autoEfficiency: data.epa.breakdown.auto_points / maxAutoPoints,
+        teleopEfficiency: data.epa.breakdown.teleop_points / maxTeleopPoints,
+        endgameEfficiency: data.epa.breakdown.endgame_points / maxEndgamePoints,
+        autoRP: data.epa.breakdown.auto_rp,
+        coralRP: data.epa.breakdown.coral_rp,
+        bargeRP: data.epa.breakdown.barge_rp,
+        coralEfficiency: (data.epa.breakdown.auto_coral_points + data.epa.breakdown.teleop_coral_points) /
+          (maxAutoPoints + maxTeleopPoints),
+        processorEfficiency: (data.epa.breakdown.auto_processor + data.epa.breakdown.teleop_processor) / 2,
+        algaeEfficiency: (data.epa.breakdown.auto_algae + data.epa.breakdown.teleop_algae) / 2
+      };
+      const weights = {
+        totalEPA: 0.15,
+        unitlessEPA: 0.1,
+        normalizedEPA: 0.1,
+        globalPercentile: 0.1,
+        countryPercentile: 0.05,
+        statePercentile: 0.05,
+        gamePieceEfficiency: 0.1,
+        autoEfficiency: 0.05,
+        teleopEfficiency: 0.1,
+        endgameEfficiency: 0.05,
+        autoRP: 0.025,
+        coralRP: 0.025,
+        bargeRP: 0.025,
+        coralEfficiency: 0.05,
+        processorEfficiency: 0.025,
+        algaeEfficiency: 0.025
+      };
+      let compositeScore = 0;
+      for (const [metric, value] of Object.entries(normalizedScores)) {
+        compositeScore += value * weights[metric];
+      }
+      const consistencyFactor = 1 - (data.epa.total_points.sd / data.epa.total_points.mean) * 0.1;
+      compositeScore *= consistencyFactor;
+      return Math.max(0, Math.min(1, compositeScore));
     }
 
     function aggregateTeamData(teamDataArray) {
-      var totalPerformance = 0;
-      teamDataArray.forEach(data => {
-        totalPerformance += calculateTeamPerformance(data);
-      });
-      var averagePerformance = totalPerformance / teamDataArray.length;
+      const totalEPA = teamDataArray.reduce((sum, data) => sum + data.epa.total_points.mean, 0);
+      const totalSD = Math.sqrt(
+        teamDataArray.reduce((sum, data) => sum + Math.pow(data.epa.total_points.sd, 2), 0)
+      );
+      const autoPoints = teamDataArray.reduce((sum, data) => sum + data.epa.breakdown.auto_points, 0);
+      const teleopPoints = teamDataArray.reduce((sum, data) => sum + data.epa.breakdown.teleop_points, 0);
+      const endgamePoints = teamDataArray.reduce((sum, data) => sum + data.epa.breakdown.endgame_points, 0);
+      const avgPercentile = teamDataArray.reduce((sum, data) =>
+        sum + data.epa.ranks.total.percentile, 0) / teamDataArray.length;
       return {
-        compositeScore: averagePerformance
+        compositeScore: avgPercentile,
+        totalEPA,
+        totalSD,
+        autoPoints,
+        teleopPoints,
+        endgamePoints
       };
     }
 
     function displaySingleTeamData(data, performance) {
       var teamData = document.getElementById('team-data');
-      fetchTeamColors(data.team);
+      const totalGamePieces = data.epa.breakdown.total_game_pieces;
+      const avgPointsPerPiece = data.epa.total_points.mean / totalGamePieces;
       teamData.innerHTML = `
-                <h2 class="atClass">${data.name} (${new Date().getFullYear()})</h2>
-<svg width="200" height="200" onclick="toggleTeamData()">
-    <circle class="circle" cx="100" cy="100" r="80"></circle>
-    <text x="100" y="100" dominant-baseline="middle" text-anchor="middle" class="score-text">${performance.toFixed(2)}</text>
-</svg>
+    <h2 class="atClass">${data.name} (${data.year})</h2>
+    <svg width="200" height="200" onclick="toggleTeamData()">
+      <circle class="circle" cx="100" cy="100" r="80"></circle>
+      <text x="100" y="100" dominant-baseline="middle" text-anchor="middle" class="score-text">${performance.toFixed(2)}</text>
+    </svg>
 
-                <div class="statistic-container">
-                    <p>Win-Loss Ratio (0-1): <b>${data.record.season.winrate.toFixed(4)}</b></p>
-                    ${data.epa.ranks.total ? `<p>Overall Rank (World): <b>${data.epa.ranks.total.rank}</b> / ${data.epa.ranks.total.team_count}</p>` : ''}
-                    <p>Average Match Score: <b>${data.epa.breakdown.total_points.mean.toFixed(2)}</b> ± ${data.epa.breakdown.total_points.sd.toFixed(2)}</p>
-                    <p>Average Teleop Score: <b>${data.epa.breakdown.teleop_points.mean.toFixed(2)}</b> ± ${data.epa.breakdown.teleop_points.sd.toFixed(2)}</p>
-                    <p>Average Auto Score: <b>${data.epa.breakdown.auto_points.mean.toFixed(2)}</b> ± ${data.epa.breakdown.auto_points.sd.toFixed(2)}</p>
-                    <p>Average Endgame Score: <b>${data.epa.breakdown.endgame_points.mean.toFixed(2)}</b> ± ${data.epa.breakdown.endgame_points.sd.toFixed(2)}</p>
-                    ${data.state ? `<p>Ranking in Area: <b>${data.epa.ranks.state.rank}</b> / ${data.epa.ranks.state.team_count} ${data.state}</p>` : ''}
-                </div>
-            `;
+    <div class="statistic-container">
+      <h3>Team Information</h3>
+      <p>Location: ${data.state}, ${data.country}</p>
+      ${data.district ? `<p>District: ${data.district}</p>` : ''}
+      
+      <h3>Comp Status</h3>
+      ${data.competing.next_event_key ? 
+        `<p>Next Event: ${data.competing.next_event_name} (Week ${data.competing.next_event_week})</p>` : 
+        '<p>No upcoming events scheduled</p>'}
+      
+      <h3>Performance Metrics</h3>
+      <p>EPA Rating: <b>${data.epa.total_points.mean.toFixed(2)}</b> ± ${data.epa.total_points.sd.toFixed(2)}</p>
+      <p>Global Rank: <b>${data.epa.ranks.total.rank}</b> / ${data.epa.ranks.total.team_count} 
+         (Top ${(data.epa.ranks.total.percentile * 100).toFixed(1)}%)</p>
+      <p>State Rank: <b>${data.epa.ranks.state.rank}</b> / ${data.epa.ranks.state.team_count}
+         (Top ${(data.epa.ranks.state.percentile * 100).toFixed(1)}%)</p>
+      
+      <h3>Game Piece Analysis</h3>
+      <p>Average Game Pieces per Match: <b>${data.epa.breakdown.total_game_pieces.toFixed(2)}</b></p>
+      <p>Points per Game Piece: <b>${avgPointsPerPiece.toFixed(2)}</b></p>
+      
+      <h3>Scoring Breakdown</h3>
+      <p>Auto Points: <b>${data.epa.breakdown.auto_points.toFixed(2)}</b></p>
+      <ul>
+        <li>Auto Leave: ${data.epa.breakdown.auto_leave_points.toFixed(2)}</li>
+        <li>Auto Coral: ${data.epa.breakdown.auto_coral_points.toFixed(2)}</li>
+        <li>Auto Processor: ${data.epa.breakdown.auto_processor.toFixed(2)}</li>
+        <li>Auto Algae: ${data.epa.breakdown.auto_algae.toFixed(2)}</li>
+      </ul>
+      
+      <p>Teleop Points: <b>${data.epa.breakdown.teleop_points.toFixed(2)}</b></p>
+      <ul>
+        <li>Teleop Coral: ${data.epa.breakdown.teleop_coral_points.toFixed(2)}</li>
+        <li>Teleop Processor: ${data.epa.breakdown.teleop_processor.toFixed(2)}</li>
+        <li>Teleop Algae: ${data.epa.breakdown.teleop_algae.toFixed(2)}</li>
+      </ul>
+      
+      <p>Endgame Points: <b>${data.epa.breakdown.endgame_points.toFixed(2)}</b></p>
+      <p>Barge Points: <b>${data.epa.breakdown.barge_points.toFixed(2)}</b></p>
+      
+      <h3>Ranking Point Analysis</h3>
+      <p>Auto RP Rate: ${(data.epa.breakdown.auto_rp * 100).toFixed(1)}%</p>
+      <p>Coral RP Rate: ${(data.epa.breakdown.coral_rp * 100).toFixed(1)}%</p>
+      <p>Barge RP Rate: ${(data.epa.breakdown.barge_rp * 100).toFixed(1)}%</p>
+    </div>`;
       animateCircle(performance);
     }
 
-    function displayAggregatedData(aggregatedData, teamDataArray) {
-      clearColors();
-      console.log("aggregate");
-      var teamData = document.getElementById('team-data');
-      var totalWinLossRatio = 0;
-      var totalOverallRank = 0;
-      var totalAverageMatchScore = 0;
-      var totalAverageTeleopScore = 0;
-      var totalAverageAutoScore = 0;
-      var totalEndgameScore = 0;
-      var totalSDMatchScore = 0;
-      var totalSDTeleopScore = 0;
-      var totalSDAutoScore = 0;
-      var totalSDEndgameScore = 0;
-      var teamNames = '';
-      teamDataArray.forEach(data => {
-        totalWinLossRatio += data.record.season.winrate;
-        totalOverallRank += data.epa.ranks.total.rank;
-        totalAverageMatchScore += data.epa.breakdown.total_points.mean;
-        totalAverageTeleopScore += data.epa.breakdown.teleop_points.mean;
-        totalAverageAutoScore += data.epa.breakdown.auto_points.mean;
-        totalEndgameScore += data.epa.breakdown.endgame_points.mean;
-        totalSDMatchScore += data.epa.breakdown.total_points.sd;
-        totalSDTeleopScore += data.epa.breakdown.teleop_points.sd;
-        totalSDAutoScore += data.epa.breakdown.auto_points.sd;
-        totalSDEndgameScore += data.epa.breakdown.endgame_points.sd;
-        teamNames += `${data.name}, `;
-      });
-      teamNames = teamNames.slice(0, -2);
-      var averageWinLossRatio = totalWinLossRatio / teamDataArray.length;
-      var averageOverallRank = totalOverallRank / teamDataArray.length;
-      var averageAverageMatchScore = totalAverageMatchScore;
-      var averageAverageTeleopScore = totalAverageTeleopScore;
-      var averageAverageAutoScore = totalAverageAutoScore;
-      var averageEndgameScore = totalEndgameScore;
-      var averageSDMatchScore = totalSDMatchScore / teamDataArray.length;
-      var averageSDTeleopScore = totalSDTeleopScore / teamDataArray.length;
-      var averageSDAutoScore = totalSDAutoScore / teamDataArray.length;
-      var averageSDEndgameScore = totalSDEndgameScore / teamDataArray.length;
-      var compositeScore = aggregatedData.compositeScore;
-      teamData.innerHTML = `
-        <h2>Alliance Data</h2>
-        <svg width="200" height="200" onclick="toggleTeamData()">
-            <circle class="circle" cx="100" cy="100" r="80"></circle>
-            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-size="24px">${compositeScore.toFixed(2)}</text>
-        </svg>
-        <div class="statistic-container">
-            <p>Teams: ${teamNames}</p> <!-- Display team names here -->
-            <p>Est. Win-Loss Ratio: ${averageWinLossRatio.toFixed(4)}</p>
-            <p>Est. Average Match Score: <b>${averageAverageMatchScore.toFixed(2)}</b> ± ${averageSDMatchScore.toFixed(2)}</p>
-            <p>Est. Average Teleop Score: <b>${averageAverageTeleopScore.toFixed(2)}</b> ± ${averageSDTeleopScore.toFixed(2)}</p>
-            <p>Est. Average Auto Score: <b>${averageAverageAutoScore.toFixed(2)}</b> ± ${averageSDAutoScore.toFixed(2)}</p>
-            <p>Est. Average Endgame Score: <b>${averageEndgameScore.toFixed(2)}</b> ± ${averageSDEndgameScore.toFixed(2)}</p>
-        </div>
-    `;
-      animateCircle(compositeScore);
-    }
+function displayAggregatedData(aggregatedData, teamDataArray) {
 
-    function animateCircle(performance) {
-      var circle = document.querySelector('.circle');
-      circle.style.animation = 'none';
-      circle.getBoundingClientRect();
-      circle.style.animation = 'drawCircle 1s ease forwards';
-      var color = getColorForPerformance(performance);
-      circle.style.stroke = color;
+  console.log("aggregate");
+  
+  const teamData = document.getElementById('team-data');
+  
+  let totalWinRate = 0;
+  let totalRank = 0;
+  let totalMatchScore = 0;
+  let totalTeleopScore = 0;
+  let totalAutoScore = 0;
+  let totalEndgameScore = 0;
+  let sdMatchScore = 0;
+  
+  const teamNames = teamDataArray.map(data => {
+    totalWinRate += data.record.winrate;
+    totalRank += data.epa.ranks.total.rank;
+    
+    totalMatchScore += data.epa.total_points.mean;
+    sdMatchScore += data.epa.total_points.sd;
+    
+    totalAutoScore += data.epa.breakdown.auto_points;
+    totalTeleopScore += data.epa.breakdown.teleop_points;
+    totalEndgameScore += data.epa.breakdown.endgame_points;
+    
+    return data.name;
+  }).join(', ');
+  
+  const teamCount = teamDataArray.length;
+  const averages = {
+    winRate: totalWinRate / teamCount,
+    rank: totalRank / teamCount,
+    matchScore: totalMatchScore / teamCount,
+    teleopScore: totalTeleopScore / teamCount,
+    autoScore: totalAutoScore / teamCount,
+    endgameScore: totalEndgameScore / teamCount,
+    sdMatch: sdMatchScore / teamCount
+  };
+  
+  teamData.innerHTML = `
+    <h2>Alliance Data</h2>
+    <div class="composite-score">${aggregatedData.compositeScore.toFixed(2)}</div>
+    
+    <div class="alliance-details">
+      <p><strong>Teams:</strong> ${teamNames}</p>
+      
+      <p><strong>Est. Win-Loss Ratio:</strong> ${averages.winRate.toFixed(4)}</p>
+      
+      <p><strong>Est. Average Match Score:</strong> 
+         ${averages.matchScore.toFixed(2)} ± ${averages.sdMatch.toFixed(2)}</p>
+      
+      <p><strong>Est. Average Teleop Score:</strong> 
+         ${averages.teleopScore.toFixed(2)}</p>
+      
+      <p><strong>Est. Average Auto Score:</strong> 
+         ${averages.autoScore.toFixed(2)}</p>
+      
+      <p><strong>Est. Average Endgame Score:</strong> 
+         ${averages.endgameScore.toFixed(2)}</p>
+    </div>
+  `;
+  
+  animateCircle(aggregatedData.compositeScore);
+}
+
+function animateCircle(performance) {
+  const circle = document.querySelector('.circle');
+  if (!circle) return;
+  
+  circle.style.animation = 'none';
+  circle.offsetHeight; 
+  
+  const color = getColorForPerformance(performance);
+  circle.style.stroke = color;
+  
+  circle.style.animation = 'drawCircle 1s ease forwards';
+}
+
+const debouncedGetTeamData = debounce(getTeamData, 300);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const teamNumbersInput = document.getElementById('teamNumbers');
+  teamNumbersInput.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      debouncedGetTeamData();
     }
+  });
+});
 
     function toggleTeamData() {
       var teamData = document.querySelector('.statistic-container');
@@ -613,39 +707,32 @@
         color = "hsl(" + hue + ",100%,50%)";
       }
       return color;
-    }
+    } 
 
     function checkInputFormat() {
-  var teamNumbersInput = document.getElementById('teamNumbers').value;
-  
-  if (teamNumbersInput.includes('-')) {
-
-    var [group1, group2] = teamNumbersInput.split('-').map(g => g.trim());
-    
-    var teamNumbers1 = group1.split(',').map(num => num.trim());
-    var teamNumbers2 = group2.split(',').map(num => num.trim());
-    
-    
-    if (teamNumbers1.length === 3 && teamNumbers2.length === 3) {
-  
-      fetchAndProcessTeamData(teamNumbersInput);
-      displayAllianceIndicators();
-      return true;
+      var teamNumbersInput = document.getElementById('teamNumbers').value;
+      if (teamNumbersInput.includes('-')) {
+        var [group1, group2] = teamNumbersInput.split('-').map(g => g.trim());
+        var teamNumbers1 = group1.split(',').map(num => num.trim());
+        var teamNumbers2 = group2.split(',').map(num => num.trim());
+        if (teamNumbers1.length === 3 && teamNumbers2.length === 3) {
+          fetchAndProcessTeamData(teamNumbersInput);
+          displayAllianceIndicators();
+          return true;
+        }
+      }
+      getTeamData();
+      return false;
     }
-  }
-  
-  getTeamData();
-  return false;
-}
 
-function displayAllianceIndicators() {
-  var teamDataElement = document.getElementById('team-data');
-  var teamDataHTML = '';
-  teamDataHTML += '<span class="red"> 🟥 Red Alliance </span>';
-  teamDataHTML += '<span class="black"> vs </span>';
-  teamDataHTML += '<span class="blue"> Blue Alliance 🟦 </span>';
-  teamDataElement.innerHTML = teamDataHTML;
-}
+    function displayAllianceIndicators() {
+      var teamDataElement = document.getElementById('team-data');
+      var teamDataHTML = '';
+      teamDataHTML += '<span class="red"> 🟥 Red Alliance </span>';
+      teamDataHTML += '<span class="black"> vs </span>';
+      teamDataHTML += '<span class="blue"> Blue Alliance 🟦 </span>';
+      teamDataElement.innerHTML = teamDataHTML;
+    }
 
     function removeColoring() {
       var coloredNumbers = document.querySelectorAll('.red, .blue');
@@ -655,58 +742,72 @@ function displayAllianceIndicators() {
     }
 
     function fetchAndProcessTeamData(teamNumbersInput) {
-  var [group1, group2] = teamNumbersInput.split('-').map(g => g.trim());
-  var teamNumbers1 = group1.split(',').map(num => num.trim());
-  var teamNumbers2 = group2.split(',').map(num => num.trim());
+      var [group1, group2] = teamNumbersInput.split('-').map(g => g.trim());
+      var teamNumbers1 = group1.split(',').map(num => num.trim());
+      var teamNumbers2 = group2.split(',').map(num => num.trim());
+      Promise.all([...teamNumbers1, ...teamNumbers2].map(teamNumber => {
+          return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Failed to fetch team data. Status: ' + response.status);
+              }
+              return response.json();
+            });
+        }))
+        .then(teamDataArray => {
+          var alliance1Data = teamDataArray.slice(0, 3);
+          var alliance2Data = teamDataArray.slice(3, 6);
+          var alliance1Scores = calculateAllianceScores(alliance1Data);
+          var alliance2Scores = calculateAllianceScores(alliance2Data);
+          displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data, alliance2Data);
+        })
+        .catch(error => {
+          console.error('Error fetching or processing team data:', error);
+        });
+    }
 
-  Promise.all([...teamNumbers1, ...teamNumbers2].map(teamNumber => {
-    return fetch(`https://api.statbotics.io/v3/team_year/${teamNumber}/${new Date().getFullYear()}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch team data. Status: ' + response.status);
-        }
-        return response.json();
-      });
-  }))
-  .then(teamDataArray => {
-    var alliance1Data = teamDataArray.slice(0, 3);
-    var alliance2Data = teamDataArray.slice(3, 6);
-    
-    var alliance1Scores = calculateAllianceScores(alliance1Data);
-    var alliance2Scores = calculateAllianceScores(alliance2Data);
-    
-    displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data, alliance2Data);
-  })
-  .catch(error => {
-    console.error('Error fetching or processing team data:', error);
-  });
-}
-
-function calculateAllianceScores(allianceData) {
+    function calculateAllianceScores(allianceData) {
   return {
-    auto: allianceData.reduce((sum, data) => sum + data.epa.breakdown.auto_points.mean, 0),
-    teleop: allianceData.reduce((sum, data) => sum + data.epa.breakdown.teleop_points.mean, 0),
-    endgame: allianceData.reduce((sum, data) => sum + data.epa.breakdown.endgame_points.mean, 0),
-    sdAuto: Math.sqrt(allianceData.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0)),
-    sdTeleop: Math.sqrt(allianceData.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0)),
-    sdEndgame: Math.sqrt(allianceData.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0))
+    auto: allianceData.reduce((sum, data) => sum + data.epa.breakdown.auto_points, 0),
+    teleop: allianceData.reduce((sum, data) => sum + data.epa.breakdown.teleop_points, 0),
+    endgame: allianceData.reduce((sum, data) => sum + data.epa.breakdown.endgame_points, 0),
+    sdAuto: Math.sqrt(allianceData.reduce((sum, data) => {
+      // Use the main EPA standard deviation since individual breakdowns don't have SDs
+      const sd = data.epa.total_points.sd * (data.epa.breakdown.auto_points / data.epa.breakdown.total_points);
+      return sum + Math.pow(sd, 2);
+    }, 0)),
+    sdTeleop: Math.sqrt(allianceData.reduce((sum, data) => {
+      const sd = data.epa.total_points.sd * (data.epa.breakdown.teleop_points / data.epa.breakdown.total_points);
+      return sum + Math.pow(sd, 2);
+    }, 0)),
+    sdEndgame: Math.sqrt(allianceData.reduce((sum, data) => {
+      const sd = data.epa.total_points.sd * (data.epa.breakdown.endgame_points / data.epa.breakdown.total_points);
+      return sum + Math.pow(sd, 2);
+    }, 0))
   };
 }
 
 function displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data, alliance2Data) {
   var teamData = document.getElementById('team-data');
   
-  // Calculate total scores
   var totalScore1 = alliance1Scores.auto + alliance1Scores.teleop + alliance1Scores.endgame;
   var totalScore2 = alliance2Scores.auto + alliance2Scores.teleop + alliance2Scores.endgame;
-  var totalSD1 = Math.sqrt(Math.pow(alliance1Scores.sdAuto, 2) + Math.pow(alliance1Scores.sdTeleop, 2) + Math.pow(alliance1Scores.sdEndgame, 2));
-  var totalSD2 = Math.sqrt(Math.pow(alliance2Scores.sdAuto, 2) + Math.pow(alliance2Scores.sdTeleop, 2) + Math.pow(alliance2Scores.sdEndgame, 2));
-
+  
+  var totalSD1 = Math.sqrt(
+    Math.pow(alliance1Scores.sdAuto, 2) + 
+    Math.pow(alliance1Scores.sdTeleop, 2) + 
+    Math.pow(alliance1Scores.sdEndgame, 2)
+  );
+  var totalSD2 = Math.sqrt(
+    Math.pow(alliance2Scores.sdAuto, 2) + 
+    Math.pow(alliance2Scores.sdTeleop, 2) + 
+    Math.pow(alliance2Scores.sdEndgame, 2)
+  );
+  
   var pointDiff = Math.abs(totalScore1 - totalScore2);
   var favoredAlliance = totalScore1 > totalScore2 ? 'Red' : 'Blue';
   var pointDiffColor = totalScore1 > totalScore2 ? '#F91A48' : '#087cfc';
-
-  // Create point differential display
+  
   var pointDiffHTML = `
     <h2>Predicted Score:</h2>
     <div class="combined-scores">
@@ -730,15 +831,12 @@ function displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data,
         </tr>
       </table>
     </div>`;
-
+    
   teamData.innerHTML = pointDiffHTML;
-
   displayCombinedScores(alliance1Data, alliance2Data);
-  console.log("matchsim")
 }
 
     function displaySummedPoints(totalPoints1, totalPoints2, teamDataArray) {
-      clearColors();
       var teamData = document.getElementById('team-data');
       var p1 = totalPoints1.toFixed(2);
       var p2 = totalPoints2.toFixed(2);
@@ -791,113 +889,152 @@ function displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data,
     }
 
     function displayCombinedScores(alliance1, alliance2) {
-      clearColors();
-      var teamData = document.getElementById('team-data');
-      var combinedScores = document.getElementById('combined-scores');
-      if (combinedScores) {
-        combinedScores.remove();
-      }
-      combinedScores = document.createElement('div');
-      combinedScores.id = 'combined-scores';
-      combinedScores.innerHTML = '<h2>Match Breakdown</h2>';
-      var totalPointsAuto1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.auto_points.mean, 0);
-      var totalPointsTeleop1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.teleop_points.mean, 0);
-      var totalPointsEndgame1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.endgame_points.mean, 0);
-      var totalSDAuto1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0));
-      var totalSDTeleop1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0));
-      var totalSDEndgame1 = Math.sqrt(alliance1.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0));
-      var totalPointsAuto2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.auto_points.mean, 0);
-      var totalPointsTeleop2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.teleop_points.mean, 0);
-      var totalPointsEndgame2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.endgame_points.mean, 0);
-      var totalSDAuto2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.auto_points.sd, 2), 0));
-      var totalSDTeleop2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.teleop_points.sd, 2), 0));
-      var totalSDEndgame2 = Math.sqrt(alliance2.reduce((sum, data) => sum + Math.pow(data.epa.breakdown.endgame_points.sd, 2), 0));
-      var table = document.createElement('table');
-      table.innerHTML += `
-        <tr>
-            <th>Alliance</th>
-            <th>Auto (± SD)</th>
-            <th>Teleop (± SD)</th>
-            <th>Endgame (± SD)</th>
-        </tr>
-        <tr>
-            <td>Red Alliance:</td>
-            <td><b>${totalPointsAuto1.toFixed(2)}</b> ± ${totalSDAuto1.toFixed(2)}</td>
-            <td><b>${totalPointsTeleop1.toFixed(2)}</b> ± ${totalSDTeleop1.toFixed(2)}</td>
-            <td><b>${totalPointsEndgame1.toFixed(2)}</b> ± ${totalSDEndgame1.toFixed(2)}</td>
-        </tr>
-        <tr>
-            <td>Blue Alliance:</td>
-            <td><b>${totalPointsAuto2.toFixed(2)}</b> ± ${totalSDAuto2.toFixed(2)}</td>
-            <td><b>${totalPointsTeleop2.toFixed(2)}</b> ± ${totalSDTeleop2.toFixed(2)}</td>
-            <td><b>${totalPointsEndgame2.toFixed(2)}</b> ± ${totalSDEndgame2.toFixed(2)}</td>
-        </tr>
-    `;
-      combinedScores.appendChild(table);
-      var datasets = [{
-        label: 'Red Alliance',
-        borderColor: 'rgba(249, 26, 72, 1)',
-        data: [totalPointsAuto1, totalPointsTeleop1, totalPointsEndgame1]
-      }, {
-        label: 'Blue Alliance',
-        borderColor: 'rgba(8,124,252, 1)',
-        data: [totalPointsAuto2, totalPointsTeleop2, totalPointsEndgame2]
-      }];
-      var chartContainer = document.createElement('div');
-      chartContainer.classList.add('chart-container');
-      combinedScores.appendChild(chartContainer);
-      var combinedChartCanvas = document.createElement('canvas');
-      combinedChartCanvas.id = 'combined-chart';
-      chartContainer.appendChild(combinedChartCanvas);
-      var combinedChart = new Chart(combinedChartCanvas, {
-        type: 'line',
-        data: {
-          labels: ['Auto', 'Teleop', 'Endgame'],
-          datasets: datasets
+  var teamData = document.getElementById('team-data');
+  var combinedScores = document.getElementById('combined-scores');
+  if (combinedScores) {
+    combinedScores.remove();
+  }
+  
+  combinedScores = document.createElement('div');
+  combinedScores.id = 'combined-scores';
+  combinedScores.innerHTML = '<h2>Match Breakdown</h2>';
+  
+  var totalPointsAuto1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.auto_points, 0);
+  var totalPointsTeleop1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.teleop_points, 0);
+  var totalPointsEndgame1 = alliance1.reduce((sum, data) => sum + data.epa.breakdown.endgame_points, 0);
+  
+  var totalPointsAuto2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.auto_points, 0);
+  var totalPointsTeleop2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.teleop_points, 0);
+  var totalPointsEndgame2 = alliance2.reduce((sum, data) => sum + data.epa.breakdown.endgame_points, 0);
+  
+  var totalSDAuto1 = Math.sqrt(alliance1.reduce((sum, data) => {
+    const sd = data.epa.total_points.sd * (data.epa.breakdown.auto_points / data.epa.breakdown.total_points);
+    return sum + Math.pow(sd, 2);
+  }, 0));
+  var totalSDTeleop1 = Math.sqrt(alliance1.reduce((sum, data) => {
+    const sd = data.epa.total_points.sd * (data.epa.breakdown.teleop_points / data.epa.breakdown.total_points);
+    return sum + Math.pow(sd, 2);
+  }, 0));
+  var totalSDEndgame1 = Math.sqrt(alliance1.reduce((sum, data) => {
+    const sd = data.epa.total_points.sd * (data.epa.breakdown.endgame_points / data.epa.breakdown.total_points);
+    return sum + Math.pow(sd, 2);
+  }, 0));
+  
+  var totalSDAuto2 = Math.sqrt(alliance2.reduce((sum, data) => {
+    const sd = data.epa.total_points.sd * (data.epa.breakdown.auto_points / data.epa.breakdown.total_points);
+    return sum + Math.pow(sd, 2);
+  }, 0));
+  var totalSDTeleop2 = Math.sqrt(alliance2.reduce((sum, data) => {
+    const sd = data.epa.total_points.sd * (data.epa.breakdown.teleop_points / data.epa.breakdown.total_points);
+    return sum + Math.pow(sd, 2);
+  }, 0));
+  var totalSDEndgame2 = Math.sqrt(alliance2.reduce((sum, data) => {
+    const sd = data.epa.total_points.sd * (data.epa.breakdown.endgame_points / data.epa.breakdown.total_points);
+    return sum + Math.pow(sd, 2);
+  }, 0));
+  
+  var table = document.createElement('table');
+  table.innerHTML = `
+    <tr>
+      <th>Alliance</th>
+      <th>Auto (± SD)</th>
+      <th>Teleop (± SD)</th>
+      <th>Endgame (± SD)</th>
+    </tr>
+    <tr>
+      <td>Red Alliance:</td>
+      <td><b>${totalPointsAuto1.toFixed(2)}</b> ± ${totalSDAuto1.toFixed(2)}</td>
+      <td><b>${totalPointsTeleop1.toFixed(2)}</b> ± ${totalSDTeleop1.toFixed(2)}</td>
+      <td><b>${totalPointsEndgame1.toFixed(2)}</b> ± ${totalSDEndgame1.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td>Blue Alliance:</td>
+      <td><b>${totalPointsAuto2.toFixed(2)}</b> ± ${totalSDAuto2.toFixed(2)}</td>
+      <td><b>${totalPointsTeleop2.toFixed(2)}</b> ± ${totalSDTeleop2.toFixed(2)}</td>
+      <td><b>${totalPointsEndgame2.toFixed(2)}</b> ± ${totalSDEndgame2.toFixed(2)}</td>
+    </tr>
+  `;
+  
+  combinedScores.appendChild(table);
+
+  var datasets = [{
+    label: 'Red Alliance',
+    borderColor: 'rgba(249, 26, 72, 1)',
+    backgroundColor: 'rgba(249, 26, 72, 0.1)',
+    data: [totalPointsAuto1, totalPointsTeleop1, totalPointsEndgame1],
+    fill: true
+  }, {
+    label: 'Blue Alliance',
+    borderColor: 'rgba(8,124,252, 1)',
+    backgroundColor: 'rgba(8,124,252, 0.1)',
+    data: [totalPointsAuto2, totalPointsTeleop2, totalPointsEndgame2],
+    fill: true
+  }];
+
+  var chartContainer = document.createElement('div');
+  chartContainer.classList.add('chart-container');
+  chartContainer.style.marginTop = '20px';
+  chartContainer.style.height = '300px';
+  
+  var combinedChartCanvas = document.createElement('canvas');
+  combinedChartCanvas.id = 'combined-chart';
+  chartContainer.appendChild(combinedChartCanvas);
+  combinedScores.appendChild(chartContainer);
+
+  if (window.combinedChart) {
+    window.combinedChart.destroy();
+  }
+  
+  window.combinedChart = new Chart(combinedChartCanvas, {
+    type: 'line',
+    data: {
+      labels: ['Auto', 'Teleop', 'Endgame'],
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Points'
+          }
         },
-        options: {
-          scales: {
-            x: {
-              title: {
-                display: true,
-                text: 'Game Phases'
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Scores'
-              }
-            }
-          },
-          plugins: {
-            tooltip: {
-              mode: 'nearest',
-              callbacks: {
-                label: function(context) {
-                  var label = context.dataset.label || '';
-                  if (label) {
-                    label += ': ';
-                  }
-                  if (context.parsed.y !== null) {
-                    label += context.parsed.y.toFixed(2);
-                  }
-                  if (context.dataset.label === 'Red Alliance') {
-                    var blueAllianceValue = datasets[1].data[context.dataIndex].toFixed(2);
-                    label += ' - (' + blueAllianceValue + ')';
-                  } else {
-                    var redAllianceValue = datasets[0].data[context.dataIndex].toFixed(2);
-                    label += ' - (' + redAllianceValue + ')';
-                  }
-                  return label;
-                }
-              }
-            }
+        x: {
+          title: {
+            display: true,
+            text: 'Game Phase'
           }
         }
-      });
-      teamData.appendChild(combinedScores);
+      },
+      plugins: {
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            label: function(context) {
+              var label = context.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (context.parsed.y !== null) {
+                label += context.parsed.y.toFixed(2) + ' points';
+              }
+              return label;
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+        }
+      }
     }
+  });
+
+  teamData.appendChild(combinedScores);
+}
 
     function toggleCombinedScores(alliance1, alliance2) {
       var combinedScores = document.getElementById('combined-scores');
@@ -912,48 +1049,6 @@ function displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data,
       document.body.classList.toggle('dark-mode');
     }
 
-    function fetchTeamColors(teamNumber) {
-      fetch(`https://api.statbotics.io/v3/team/${teamNumber}`)
-        .then(response => response.json())
-        .then(data => {
-          const primaryColor = data.colors.primary;
-          const secondaryColor = data.colors.secondary;
-          const container = document.querySelector('.container');
-          const taClass = document.querySelector('.taClass');
-          const atClass = document.querySelector('.atClass');
-          const tatClass = document.querySelector('.team-data');
-          document.body.style.transition = 'background-color 1s ease';
-          if (container) {
-            container.style.transition = 'background-color 1s ease';
-          }
-          document.body.style.backgroundColor = primaryColor;
-          if (container) {
-            container.style.backgroundColor = secondaryColor;
-            const secondaryColorBrightness = getColorBrightness(secondaryColor);
-            if (secondaryColorBrightness <= 50) {
-              if (taClass) {
-                taClass.style.color = 'white';
-                atClass.style.color = 'white';
-                tatClass.style.fill = 'white';
-                console.log("Text color set to white because the background is dark enough.");
-              }
-            } else {
-              if (taClass) {
-                taClass.style.color = 'black';
-                atClass.style.color = 'black';
-                tatClass.style.fill = 'black';
-                console.log("Text color set to black because the background is light.");
-              }
-            }
-          } else {
-            console.error('Container element not found.');
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching team colors:', error);
-        });
-    }
-
     function getColorBrightness(color) {
       const hex = color.replace('#', '');
       const r = parseInt(hex.substring(0, 2), 16);
@@ -962,17 +1057,6 @@ function displayMatchSimulation(alliance1Scores, alliance2Scores, alliance1Data,
       return (r * 0.299 + g * 0.587 + b * 0.114);
     }
 
-    function clearColors() {
-      document.body.style.backgroundColor = '';
-      const container = document.querySelector('.container');
-      if (container) {
-        container.style.backgroundColor = '';
-      }
-      const teamData = document.querySelector('.team-data');
-      if (teamData) {
-        teamData.style.fill = '';
-      }
-    }
   </script>
 </body>
 
