@@ -354,7 +354,7 @@
         await handleSingleTeam(teamNumbers[0]);
       } else if (teamNumbers.length === 3) {
         await handleAllianceData(teamNumbers);
-      } else if (teamNumbers.length !== 6) { 
+      } else if (teamNumbers.length !== 6) {
         document.getElementById('team-data').innerHTML =
           '<p style="color: red;">Please enter either:<br>' +
           '- Single team number or name<br>' +
@@ -425,6 +425,7 @@
           '<p style="color: red;">Error loading match simulation data. Please try again.</p>';
       }
     }
+
     function startSuggestionCycle(inputField, suggestions) {
       stopSuggestionCycle();
       suggestionIndex = 0;
@@ -440,7 +441,6 @@
         cyclingSuggestions = null;
       }
     }
-
     document.addEventListener('DOMContentLoaded', () => {
       const teamNumbersInput = document.getElementById('teamNumbers');
       teamNumbersInput.addEventListener('keydown', function(event) {
