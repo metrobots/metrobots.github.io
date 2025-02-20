@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,166 +12,552 @@
       <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
       <meta name="msapplication-TileColor" content="#333333">
       <meta name="theme-color" content="#ffffff">
-    
     <style>
         body {
             margin: 0;
-            padding: 0;
-            overflow: hidden;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            gap: 20px;
+        }
+        
+        #simulation-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        #canvas {
+            border: 2px solid #333;
+            background: #fff;
+        }
+        
+        #controls {
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .value-display {
+            font-family: monospace;
+            color: #666;
         }
 
-        .custom-button {
-            background-color: #4CAF50;
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            background: #007bff;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        canvas {
-            display: block;
-            background-image: url('https://mateo-johnson.github.io/hosted-assets/aa745548020a507cf4a07051dcd0faa446607840.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+        button:hover {
+            background: #0056b3;
         }
     </style>
 </head>
 <body>
-<canvas id="robotCanvas" width="1298" height="638"></canvas>
-<div style="position: absolute; top: 10px; right: 10px;">
-    <label for="relativeMovement">Relative Movement:</label>
-    <input type="checkbox" id="relativeMovement">
-</div>
+    <div id="simulation-container">
+        <canvas id="canvas" width="800" height="800"></canvas>
+    </div>
+    
+    <div id="controls">
+        <h2>Swerve Drive Controls</h2>
+        
+        <div class="control-group">
+            <h3>Robot Configuration</h3>
+            <label>Robot Width (m):
+                <input type="range" id="robotWidth" min="0.5" max="1.0" step="0.01" value="0.7">
+                <span class="value-display" id="robotWidthValue">0.7</span>
+            </label>
+            
+            <label>Robot Length (m):
+                <input type="range" id="robotLength" min="0.5" max="1.0" step="0.01" value="0.7">
+                <span class="value-display" id="robotLengthValue">0.7</span>
+            </label>
+            
+            <label>Max Speed (m/s):
+                <input type="range" id="maxSpeed" min="1" max="5" step="0.1" value="3">
+                <span class="value-display" id="maxSpeedValue">3.0</span>
+            </label>
+            
+            <label>Max Angular Speed (rad/s):
+                <input type="range" id="maxAngularSpeed" min="1" max="10" step="0.1" value="6.28">
+                <span class="value-display" id="maxAngularSpeedValue">6.28</span>
+            </label>
+        </div>
 
-<button class="custom-button" onclick="submitBugReport()">Submit Bug Report</button>
+        <div class="control-group">
+            <h3>Obstacle Controls</h3>
+            <button id="addObstacle">Add Random Obstacle</button>
+            <button id="clearObstacles">Clear Obstacles</button>
+        </div>
+        
+        <div class="control-group">
+            <h3>Controls Info</h3>
+            <p>Keyboard:</p>
+            <ul>
+                <li>Arrow keys: Translation</li>
+                <li>Q/E: Rotation</li>
+            </ul>
+            <p>Controller:</p>
+            <ul>
+                <li>Left stick: Translation</li>
+                <li>Right stick X: Rotation</li>
+            </ul>
+        </div>
+        
+        <div class="control-group">
+            <h3>Telemetry</h3>
+            <pre id="telemetry">No data</pre>
+        </div>
+    </div>
 
-<script>
+    <script>
+        class Obstacle {
+            constructor(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+            }
 
-    const canvas = document.getElementById('robotCanvas');
-    const ctx = canvas.getContext('2d');
-    const ROTATION_SPEED = Math.PI / 30; 
+            checkCollision(robotX, robotY, robotWidth, robotLength, robotHeading) {
+                // Transform robot corners to world space
+                const cos = Math.cos(robotHeading);
+                const sin = Math.sin(robotHeading);
+                const hw = robotWidth / 2;
+                const hl = robotLength / 2;
 
+                const corners = [
+                    {x: -hw, y: -hl},
+                    {x: hw, y: -hl},
+                    {x: hw, y: hl},
+                    {x: -hw, y: hl}
+                ].map(p => ({
+                    x: p.x * cos - p.y * sin + robotX,
+                    y: p.x * sin + p.y * cos + robotY
+                }));
 
-    let robot = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        width: 55.99992,
-        height: 60, 
-        color: 'white',
-        outlineColor: 'black', 
-        mass: 1, 
-        velocity: { x: 0, y: 0 }, 
-        acceleration: 5,
-        maxSpeed: 6, 
-        rotation: 0, 
-        forwardDirection: { x: -1, y: 0 }, 
-        frictionCoefficient: 0.5 
-    };
+                // Check if any corner is inside the obstacle
+                for (const corner of corners) {
+                    if (corner.x >= this.x && corner.x <= this.x + this.width &&
+                        corner.y >= this.y && corner.y <= this.y + this.height) {
+                        return true;
+                    }
+                }
 
+                // Check if any obstacle corner is inside the robot's transformed rectangle
+                const obstacleCorners = [
+                    {x: this.x, y: this.y},
+                    {x: this.x + this.width, y: this.y},
+                    {x: this.x + this.width, y: this.y + this.height},
+                    {x: this.x, y: this.y + this.height}
+                ];
 
-    const inchesToPixels = (inches) => inches * 24;
+                for (const corner of obstacleCorners) {
+                    // Transform obstacle corner to robot space
+                    const dx = corner.x - robotX;
+                    const dy = corner.y - robotY;
+                    const rx = dx * cos + dy * sin;
+                    const ry = -dx * sin + dy * cos;
 
+                    if (rx >= -hw && rx <= hw && ry >= -hl && ry <= hl) {
+                        return true;
+                    }
+                }
 
-    const keys = {};
-    window.addEventListener("keydown", function (e) {
-        keys[e.key] = true;
-    });
-    window.addEventListener("keyup", function (e) {
-        delete keys[e.key];
-    });
+                return false;
+            }
+        }
 
+        class SwerveModule {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.angle = 0;
+                this.speed = 0;
+                this.targetAngle = 0;
+                this.targetSpeed = 0;
+                this.forceX = 0;
+                this.forceY = 0;
+            }
 
-    function update() {
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
-        robot.velocity.x *= 1 - robot.frictionCoefficient;
-        robot.velocity.y *= 1 - robot.frictionCoefficient;
-
-
-        const deadzoneThreshold = 0.1;
-
-
-        const gamepads = navigator.getGamepads();
-        if (gamepads[0]) {
-            const gamepad = gamepads[0];
-            const leftStickX = gamepad.axes[0]; 
-            const leftStickY = gamepad.axes[1];
-            const rightStickX = gamepad.axes[2]; 
-
-      
-            const leftStickMagnitude = Math.sqrt(leftStickX ** 2 + leftStickY ** 2);
-
-            if (leftStickMagnitude > deadzoneThreshold) {
-                if (document.getElementById('relativeMovement').checked) {
-              
-                    const forwardDirectionX = Math.cos(robot.rotation);
-                    const forwardDirectionY = Math.sin(robot.rotation);
-                    const sidewaysDirectionX = -Math.sin(robot.rotation);
-                    const sidewaysDirectionY = Math.cos(robot.rotation);
-                    robot.velocity.x += leftStickY * robot.acceleration * forwardDirectionX + -leftStickX * robot.acceleration * sidewaysDirectionX;
-                    robot.velocity.y += leftStickY * robot.acceleration * forwardDirectionY + leftStickX * robot.acceleration * sidewaysDirectionY;
-
+            update(dt) {
+                // Optimize wheel rotation direction
+                let angleError = this.targetAngle - this.angle;
+                
+                while (angleError > Math.PI) angleError -= 2 * Math.PI;
+                while (angleError < -Math.PI) angleError += 2 * Math.PI;
+                
+                if (Math.abs(angleError) > Math.PI / 2) {
+                    angleError = angleError > 0 ? angleError - Math.PI : angleError + Math.PI;
+                    this.targetSpeed = -this.targetSpeed;
+                }
+                
+                this.angle += angleError * 20 * dt;
+                
+                if (Math.abs(this.targetSpeed) < 0.1) {
+                    this.speed *= Math.pow(0.1, dt);
                 } else {
-                    
-                    robot.velocity.x += -leftStickY * robot.acceleration;
-                    robot.velocity.y += leftStickX * robot.acceleration;
+                    const speedError = this.targetSpeed - this.speed;
+                    this.speed += speedError * 15 * dt;
+                }
 
+                // Calculate force vectors
+                this.forceX = this.speed * Math.cos(this.angle);
+                this.forceY = this.speed * Math.sin(this.angle);
+            }
+        }
+
+        class SwerveDrive {
+            constructor() {
+                this.width = 0.7;
+                this.length = 0.7;
+                this.x = 400;
+                this.y = 400;
+                this.heading = 0;
+                this.maxSpeed = 4.8;
+                this.maxAngularSpeed = 2 * Math.PI;
+                this.lastValidPosition = { x: 400, y: 400, heading: 0 };
+                
+                const halfWidth = this.width / 2;
+                const halfLength = this.length / 2;
+                this.modules = [
+                    new SwerveModule(-halfWidth, -halfLength),
+                    new SwerveModule(halfWidth, -halfLength),
+                    new SwerveModule(-halfWidth, halfLength),
+                    new SwerveModule(halfWidth, halfLength),
+                ];
+            }
+
+            setDriveInput(xSpeed, ySpeed, rotation, fieldOriented = true) {
+                const deadband = 0.05;
+                xSpeed = Math.abs(xSpeed) < deadband ? 0 : xSpeed;
+                ySpeed = Math.abs(ySpeed) < deadband ? 0 : ySpeed;
+                rotation = Math.abs(rotation) < deadband ? 0 : rotation;
+
+                xSpeed *= this.maxSpeed;
+                ySpeed *= this.maxSpeed;
+                rotation *= this.maxAngularSpeed;
+                
+                if (fieldOriented) {
+                    const cosAngle = Math.cos(this.heading);
+                    const sinAngle = Math.sin(this.heading);
+                    const temp = xSpeed * cosAngle + ySpeed * sinAngle;
+                    ySpeed = -xSpeed * sinAngle + ySpeed * cosAngle;
+                    xSpeed = temp;
+                }
+                
+                for (let i = 0; i < this.modules.length; i++) {
+                    const module = this.modules[i];
+                    const dx = xSpeed + rotation * -module.y;
+                    const dy = ySpeed + rotation * module.x;
+                    module.targetAngle = Math.atan2(dy, dx);
+                    module.targetSpeed = Math.sqrt(dx * dx + dy * dy);
+                }
+                
+                let maxSpeed = this.modules.reduce((max, module) => 
+                    Math.max(max, Math.abs(module.targetSpeed)), 0);
+                
+                if (maxSpeed > this.maxSpeed) {
+                    const scale = this.maxSpeed / maxSpeed;
+                    this.modules.forEach(module => module.targetSpeed *= scale);
                 }
             }
-           
-            robot.rotation += rightStickX * ROTATION_SPEED; // Adjust rotation
+
+            checkCollisions(obstacles) {
+                for (const obstacle of obstacles) {
+                    if (obstacle.checkCollision(
+                        this.x, 
+                        this.y, 
+                        this.width * PIXELS_PER_METER, 
+                        this.length * PIXELS_PER_METER, 
+                        this.heading
+                    )) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            update(dt, obstacles) {
+                // Store current position
+                const prevX = this.x;
+                const prevY = this.y;
+                const prevHeading = this.heading;
+
+                // Update modules
+                this.modules.forEach(module => module.update(dt));
+                
+                let totalVx = 0;
+                let totalVy = 0;
+                let totalOmega = 0;
+                
+                this.modules.forEach(module => {
+                    const vx = module.speed * Math.cos(module.angle);
+                    const vy = module.speed * Math.sin(module.angle);
+                    
+                    totalVx += vx;
+                    totalVy += vy;
+                    totalOmega += (-module.y * vx + module.x * vy) / 
+                        (Math.pow(module.x, 2) + Math.pow(module.y, 2));
+                });
+                
+                totalVx /= 4;
+                totalVy /= 4;
+                totalOmega /= 4;
+                
+                const PIXELS_PER_METER = 100;
+                this.x += (totalVx * Math.cos(this.heading) - totalVy * Math.sin(this.heading)) 
+                    * dt * PIXELS_PER_METER;
+                this.y += (totalVx * Math.sin(this.heading) + totalVy * Math.cos(this.heading)) 
+                    * dt * PIXELS_PER_METER;
+                this.heading += totalOmega * dt;
+                
+                // Keep robot on canvas
+                this.x = Math.max(0, Math.min(800, this.x));
+                this.y = Math.max(0, Math.min(800, this.y));
+
+                // Check for collisions
+                if (this.checkCollisions(obstacles)) {
+                    // Revert to previous position if collision detected
+                    this.x = prevX;
+                    this.y = prevY;
+                    this.heading = prevHeading;
+                } else {
+                    // Update last valid position
+                    this.lastValidPosition = { x: this.x, y: this.y, heading: this.heading };
+                }
+            }
         }
 
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const robot = new SwerveDrive();
+        const PIXELS_PER_METER = 100;
+        
+        const input = {
+            x: 0,
+            y: 0,
+            rotation: 0
+        };
 
+        // Obstacle management
+        const obstacles = [];
 
-      
-        const speed = Math.sqrt(robot.velocity.x ** 2 + robot.velocity.y ** 2);
-        if (speed > robot.maxSpeed) {
-            const scale = robot.maxSpeed / speed;
-            robot.velocity.x *= scale;
-            robot.velocity.y *= scale;
+        document.getElementById('addObstacle').addEventListener('click', () => {
+            const width = Math.random() * 100 + 50;
+            const height = Math.random() * 100 + 50;
+            const x = Math.random() * (800 - width);
+            const y = Math.random() * (800 - height);
+            obstacles.push(new Obstacle(x, y, width, height));
+        });
+
+        document.getElementById('clearObstacles').addEventListener('click', () => {
+            obstacles.length = 0;
+        });
+        
+        let gamepad = null;
+        window.addEventListener("gamepadconnected", (e) => {
+            console.log("Gamepad connected:", e.gamepad);
+            gamepad = e.gamepad;
+        });
+        
+        window.addEventListener("gamepaddisconnected", (e) => {
+            console.log("Gamepad disconnected");
+            gamepad = null;
+        });
+        
+        const keys = new Set();
+        window.addEventListener('keydown', (e) => {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(e.key)) {
+                e.preventDefault();
+            }
+            keys.add(e.key);
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys.delete(e.key);
+        });
+        
+        document.getElementById('robotWidth').addEventListener('input', (e) => {
+            robot.width = parseFloat(e.target.value);
+            document.getElementById('robotWidthValue').textContent = e.target.value;
+        });
+        
+        document.getElementById('robotLength').addEventListener('input', (e) => {
+            robot.length = parseFloat(e.target.value);
+            document.getElementById('robotLengthValue').textContent = e.target.value;
+        });
+        
+       document.getElementById('maxSpeed').addEventListener('input', (e) => {
+            robot.maxSpeed = parseFloat(e.target.value);
+            document.getElementById('maxSpeedValue').textContent = e.target.value;
+        });
+        
+        document.getElementById('maxAngularSpeed').addEventListener('input', (e) => {
+            robot.maxAngularSpeed = parseFloat(e.target.value);
+            document.getElementById('maxAngularSpeedValue').textContent = e.target.value;
+        });
+        
+        function updateInput() {
+            input.x = 0;
+            input.y = 0;
+            input.rotation = 0;
+            
+            if (keys.has('ArrowUp')) input.y -= 1;
+            if (keys.has('ArrowDown')) input.y += 1;
+            if (keys.has('ArrowLeft')) input.x -= 1;
+            if (keys.has('ArrowRight')) input.x += 1;
+            if (keys.has('q')) input.rotation -= 1;
+            if (keys.has('e')) input.rotation += 1;
+            
+            if (gamepad) {
+                gamepad = navigator.getGamepads()[gamepad.index];
+                
+                const deadzone = 0.1;
+                if (Math.abs(gamepad.axes[0]) > deadzone) input.x += gamepad.axes[0];
+                if (Math.abs(gamepad.axes[1]) > deadzone) input.y += gamepad.axes[1];
+                if (Math.abs(gamepad.axes[2]) > deadzone) input.rotation += gamepad.axes[2];
+            }
+            
+            const magnitude = Math.sqrt(input.x * input.x + input.y * input.y);
+            if (magnitude > 1) {
+                input.x /= magnitude;
+                input.y /= magnitude;
+            }
         }
+        
+        function drawRobot() {
+            ctx.save();
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 800; i += 50) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, 800);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(0, i);
+                ctx.lineTo(800, i);
+                ctx.stroke();
+            }
 
-    
-        robot.x += robot.velocity.x;
-        robot.y += robot.velocity.y;
-
-
-        robot.x = Math.max(robot.width / 2, Math.min(canvas.width - robot.width / 2, robot.x));
-        robot.y = Math.max(robot.height / 2, Math.min(canvas.height - robot.height / 2, robot.y));
-
-
-        ctx.save(); 
-        ctx.translate(robot.x, robot.y); 
-        ctx.rotate(robot.rotation); 
-        ctx.fillStyle = robot.color;
-        ctx.strokeStyle = robot.outlineColor; 
-        ctx.lineWidth = 2; 
-        ctx.fillRect(-robot.width / 2, -robot.height / 2, robot.width, robot.height); 
-        ctx.strokeRect(-robot.width / 2, -robot.height / 2, robot.width, robot.height); 
-
-       
-        ctx.beginPath(); 
-        ctx.arc(-robot.width * 0.5, 0 / 2, 5, 0, 2 * Math.PI); 
-        ctx.fillStyle = 'red'; 
-        ctx.fill(); 
-        ctx.restore(); 
-
-        // Request next frame
-        requestAnimationFrame(update);
-    }
-
-
-    function submitBugReport() {
-        alert('cant do that very sorry)');
-    }
-
-
-    update();
-</script>
+            // Draw obstacles
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+            ctx.lineWidth = 2;
+            for (const obstacle of obstacles) {
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                ctx.strokeRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            }
+            
+            // Transform to robot position
+            ctx.translate(robot.x, robot.y);
+            ctx.rotate(robot.heading);
+            
+            // Draw robot body
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            const width = robot.width * PIXELS_PER_METER;
+            const length = robot.length * PIXELS_PER_METER;
+            ctx.strokeRect(-width/2, -length/2, width, length);
+            
+            // Draw direction indicator
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(width/2, 0);
+            ctx.strokeStyle = '#00f';
+            ctx.stroke();
+            
+            // Draw swerve modules with force vectors
+            robot.modules.forEach((module, i) => {
+                const x = module.x * PIXELS_PER_METER;
+                const y = module.y * PIXELS_PER_METER;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(module.angle);
+                
+                // Module body
+                ctx.fillStyle = '#666';
+                ctx.fillRect(-10, -10, 20, 20);
+                
+                // Module direction/speed indicator
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(20 * (module.speed / robot.maxSpeed), 0);
+                ctx.strokeStyle = '#f00';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Force vector
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                const forceScale = 30; // Scale factor for force visualization
+                ctx.lineTo(
+                    module.forceX * forceScale,
+                    module.forceY * forceScale
+                );
+                ctx.strokeStyle = '#0f0';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                ctx.restore();
+            });
+            
+            ctx.restore();
+            
+            // Update telemetry display
+            const telemetry = document.getElementById('telemetry');
+            telemetry.textContent = `Position: (${robot.x.toFixed(1)}, ${robot.y.toFixed(1)})
+Heading: ${(robot.heading * 180 / Math.PI).toFixed(1)}°
+Input: (${input.x.toFixed(2)}, ${input.y.toFixed(2)}, ${input.rotation.toFixed(2)})
+Obstacles: ${obstacles.length}`;
+        }
+        
+        let lastTime = performance.now();
+        function gameLoop() {
+            const currentTime = performance.now();
+            const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
+            lastTime = currentTime;
+            
+            updateInput();
+            robot.setDriveInput(input.x, input.y, input.rotation, true);
+            robot.update(dt, obstacles);
+            drawRobot();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        gameLoop();
+    </script>
 </body>
 </html>
