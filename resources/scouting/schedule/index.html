@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Match Scouting Calendar</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .calendar {
+            background-color: #1E1E1E;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+        .match-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .match-card {
+            background-color: #2C2C2C;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .match-card:hover {
+            transform: scale(1.05);
+            background-color: #3C3C3C;
+        }
+        .red-alliance {
+            color: #FF6B6B;
+        }
+        .blue-alliance {
+            color: #4ECDC4;
+        }
+        .match-time {
+            color: #888;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar">
+        <div class="calendar-header">
+            <h1>Qualification Matches</h1>
+        </div>
+        <div id="matchGrid" class="match-grid">
+            <!-- Matches will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const matches = [
+    {
+        qual: 4,
+        time: "Fri 9:24 AM",
+        redAlliance: [
+            { name: "Abhi Karthikeyan", score: 1038 },
+            { name: "Nidhi Kunduru", score: 2252 },
+            { name: "Sai Prem Kumar", score: 325 }
+        ],
+        blueAlliance: [
+            { name: "Isha Joshi", score: 6936 },
+            { name: "Patera Boontagarnon", score: 1014 },
+            { name: "Shani Dukat", score: 7917 }
+        ]
+    },
+    {
+        qual: 8,
+        time: "Fri 9:56 AM",
+        redAlliance: [
+            { name: "Benny Spanos", score: 4150 },
+            { name: "Ethan Emery", score: 1317 },
+            { name: "Max Nichols", score: 10011 }
+        ],
+        blueAlliance: [
+            { name: "Elijah Ware", score: 432 },
+            { name: "Malik Diagni", score: 7525 },
+            { name: "Micheal Puthoff", score: 4930 }
+        ]
+    },
+    {
+        qual: 12,
+        time: "Fri 10:29 AM",
+        redAlliance: [
+            { name: "Nathan Streitenberger", score: 3814 },
+            { name: "Zaiden Latta", score: 2010 },
+            { name: "Abhi Karthikeyan", score: 4085 }
+        ],
+        blueAlliance: [
+            { name: "Peyton Batdorff", score: 340 },
+            { name: "Zamir Latta", score: 7903 },
+            { name: "Isha Joshi", score: 325 }
+        ]
+    },
+    {
+        qual: 16,
+        time: "Fri 11:01 AM",
+        redAlliance: [
+            { name: "Nidhi Kunduru", score: 8145 },
+            { name: "Sai Prem Kumar", score: 2252 },
+            { name: "Benny Spanos", score: 1317 }
+        ],
+        blueAlliance: [
+            { name: "Patera Boontagarnon", score: 4150 },
+            { name: "Shani Dukat", score: 9668 },
+            { name: "Elijah Ware", score: 4028 }
+        ]
+    },
+    {
+        qual: 20,
+        time: "Fri 11:34 AM",
+        redAlliance: [
+            { name: "Ethan Emery", score: 3324 },
+            { name: "Max Nichols", score: 432 },
+            { name: "Nathan Streitenberger", score: 7515 }
+        ],
+        blueAlliance: [
+            { name: "Malik Diagni", score: 3814 },
+            { name: "Micheal Puthoff", score: 6936 },
+            { name: "Peyton Batdorff", score: 9767 }
+        ]
+    },
+    {
+        qual: 24,
+        time: "Fri 1:08 PM",
+        redAlliance: [
+            { name: "Zaiden Latta", score: 1038 },
+            { name: "Abhi Karthikeyan", score: 4028 },
+            { name: "Nidhi Kunduru", score: 10011 }
+        ],
+        blueAlliance: [
+            { name: "Zamir Latta", score: 4930 },
+            { name: "Isha Joshi", score: 340 },
+            { name: "Patera Boontagarnon", score: 8222 }
+        ]
+    },
+    {
+        qual: 28,
+        time: "Fri 1:40 PM",
+        redAlliance: [
+            { name: "Sai Prem Kumar", score: 4145 },
+            { name: "Benny Spanos", score: 120 },
+            { name: "Ethan Emery", score: 4085 }
+        ],
+        blueAlliance: [
+            { name: "Shani Dukat", score: 1317 },
+            { name: "Elijah Ware", score: 3814 },
+            { name: "Malik Diagni", score: 6302 }
+        ]
+    },
+    {
+        qual: 32,
+        time: "Fri 2:12 PM",
+        redAlliance: [
+            { name: "Max Nichols", score: 5492 },
+            { name: "Nathan Streitenberger", score: 9097 },
+            { name: "Zaiden Latta", score: 2010 }
+        ],
+        blueAlliance: [
+            { name: "Micheal Puthoff", score: 340 },
+            { name: "Peyton Batdorff", score: 2783 },
+            { name: "Zamir Latta", score: 1369 }
+        ]
+    },
+    {
+        qual: 36,
+        time: "Fri 2:45 PM",
+        redAlliance: [
+            { name: "Abhi Karthikeyan", score: 4329 },
+            { name: "Nidhi Kunduru", score: 7515 },
+            { name: "Sai Prem Kumar", score: 8145 }
+        ],
+        blueAlliance: [
+            { name: "Isha Joshi", score: 5667 },
+            { name: "Patera Boontagarnon", score: 1038 },
+            { name: "Shani Dukat", score: 7525 }
+        ]
+    },
+    {
+        qual: 40,
+        time: "Fri 3:17 PM",
+        redAlliance: [
+            { name: "Benny Spanos", score: 5811 },
+            { name: "Ethan Emery", score: 4145 },
+            { name: "Max Nichols", score: 10011 }
+        ],
+        blueAlliance: [
+            { name: "Elijah Ware", score: 2010 },
+            { name: "Malik Diagni", score: 3193 },
+            { name: "Micheal Puthoff", score: 451 }
+        ]
+    },
+    {
+        qual: 44,
+        time: "Fri 3:50 PM",
+        redAlliance: [
+            { name: "Nathan Streitenberger", score: 3201 },
+            { name: "Zaiden Latta", score: 8222 },
+            { name: "Abhi Karthikeyan", score: 7525 }
+        ],
+        blueAlliance: [
+            { name: "Peyton Batdorff", score: 4028 },
+            { name: "Zamir Latta", score: 6032 },
+            { name: "Isha Joshi", score: 325 }
+        ]
+    },
+    {
+        qual: 48,
+        time: "Fri 4:22 PM",
+        redAlliance: [
+            { name: "Nidhi Kunduru", score: 4930 },
+            { name: "Sai Prem Kumar", score: 4085 },
+            { name: "Benny Spanos", score: 144 }
+        ],
+        blueAlliance: [
+            { name: "Patera Boontagarnon", score: 2252 },
+            { name: "Shani Dukat", score: 5811 },
+            { name: "Elijah Ware", score: 3324 }
+        ]
+    },
+    {
+        qual: 52,
+        time: "Fri 4:54 PM",
+        redAlliance: [
+            { name: "Ethan Emery", score: 7515 },
+            { name: "Max Nichols", score: 2783 },
+            { name: "Nathan Streitenberger", score: 1507 }
+        ],
+        blueAlliance: [
+            { name: "Malik Diagni", score: 4028 },
+            { name: "Micheal Puthoff", score: 7903 },
+            { name: "Peyton Batdorff", score: 4145 }
+        ]
+    },
+    {
+        qual: 56,
+        time: "Fri 5:27 PM",
+        redAlliance: [
+            { name: "Zaiden Latta", score: 9075 },
+            { name: "Abhi Karthikeyan", score: 1014 },
+            { name: "Nidhi Kunduru", score: 4930 }
+        ],
+        blueAlliance: [
+            { name: "Zamir Latta", score: 3138 },
+            { name: "Isha Joshi", score: 3201 },
+            { name: "Patera Boontagarnon", score: 4150 }
+        ]
+    }
+];
+
+        function renderMatches() {
+            const matchGrid = document.getElementById('matchGrid');
+            
+            matches.forEach(match => {
+                const matchCard = document.createElement('a');
+                matchCard.href = "https://metrobots.github.io/resources/scouting"; 
+                matchCard.className = 'match-card';
+                matchCard.setAttribute('target', '_blank'); // Optional: opens link in new tab
+                
+                matchCard.innerHTML = `
+                    <h3>Qual ${match.qual}</h3>
+                    <div class="match-time">${match.time}</div>
+                    <div class="red-alliance">
+                        <h4>Red Alliance</h4>
+                        ${match.redAlliance.map(team => 
+                            `<div>${team.name}: ${team.score}</div>`
+                        ).join('')}
+                    </div>
+                    <div class="blue-alliance">
+                        <h4>Blue Alliance</h4>
+                        ${match.blueAlliance.map(team => 
+                            `<div>${team.name}: ${team.score}</div>`
+                        ).join('')}
+                    </div>
+                `;
+                
+                matchGrid.appendChild(matchCard);
+            });
+        }
+
+        // Render matches when page loads
+        document.addEventListener('DOMContentLoaded', renderMatches);
+    </script>
+</body>
+</html>
