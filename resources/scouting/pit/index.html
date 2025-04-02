@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3324 Pit Scouting Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #007bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --bg-color: #f8f9fa;
+            --text-color: #343a40;
+            --border-color: #dee2e6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), #0056b3);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-progress {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .form-progress::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--border-color);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .progress-step.completed {
+            border-color: var(--success);
+            background-color: var(--success);
+            color: white;
+        }
+
+        .form-page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .form-page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .radio-option input, .checkbox-option input {
+            width: auto;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button.prev {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        button.next, button.submit {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .number-input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .number-input-group input {
+            text-align: center;
+        }
+
+        .number-btn {
+            background-color: var(--secondary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .rating {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .rating-item {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rating-item:hover, .rating-item.selected {
+            background-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* For the preview page */
+        .data-preview {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            margin: 1rem 0;
+        }
+
+        .data-item {
+            margin-bottom: 0.5rem;
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .data-label {
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .data-value {
+            flex: 2;
+        }
+
+        /* For the PDF output */
+        #pdfContent {
+            display: none;
+            background-color: white;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .form-progress {
+                margin: 1rem 0;
+            }
+            
+            .progress-step {
+                width: 30px;
+                height: 30px;
+                font-size: 0.875rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>3324 Pit Scouting Form</h1>
+        </header>
+
+        <div class="form-progress">
+            <div class="progress-step active" data-step="1">1</div>
+            <div class="progress-step" data-step="2">2</div>
+            <div class="progress-step" data-step="3">3</div>
+            <div class="progress-step" data-step="4">4</div>
+        </div>
+
+        <form id="scoutingForm">
+            <!-- Page 1: Basic Team Information -->
+            <div class="form-page active" data-page="1">
+                <h2>Basic Team Information</h2>
+                
+                <div class="form-group">
+                    <label for="teamNumber">Team Number *</label>
+                    <input type="number" id="teamNumber" name="teamNumber" required>
+                    <div class="error-message">Please enter a valid team number</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="teamName">Team Name *</label>
+                    <input type="text" id="teamName" name="teamName" required>
+                    <div class="error-message">Please enter the team name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="scoutName">Scout Name *</label>
+                    <input type="text" id="scoutName" name="scoutName" required>
+                    <div class="error-message">Please enter your name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventName">Event Name *</label>
+                    <input type="text" id="eventName" name="eventName" required>
+                    <div class="error-message">Please enter the event name</div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="prev" disabled>Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
+            </div>
+
+            <!-- Page 2: Robot Specifications -->
+            <div class="form-page" data-page="2">
+                <h2>Robot Specifications</h2>
+                
+                <div class="form-group">
+                    <label for="drivetrainType">Drivetrain Type</label>
+                    <select id="drivetrainType" name="drivetrainType">
+                        <option value="">Select an option</option>
+                        <option value="Tank Drive">Tank Drive</option>
+                        <option value="Mecanum">Mecanum</option>
+                        <option value="Swerve">Swerve</option>
+                        <option value="Holonomic">Holonomic</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="swerveType">Swerve Type (if applicable)</label>
+                    <textarea id="swerveType" name="swerveType" rows="1" placeholder="SDS MK4i, Thrifty Swerve, REV MAXSwerve..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Game Piece Handling</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="handlesCoral" name="gamePieces" value="Coral">
+                            <label for="handlesCoral">Coral</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="handlesRing" name="gamePieces" value="Algae">
+                            <label for="handlesRing">Algae</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Robot Weight (approx. in lbs)</label>
+                    <div class="number-input-group">
+                        <div class="number-btn decrease">-</div>
+                        <input type="number" id="robotWeight" name="robotWeight" value="100" min="0" max="150">
+                        <div class="number-btn increase">+</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Robot Height (in inches)</label>
+                    <div class="number-input-group">
+                        <div class="number-btn decrease">-</div>
+                        <input type="number" id="robotHeight" name="robotHeight" value="24" min="0" max="60">
+                        <div class="number-btn increase">+</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Starting Configuration</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="startingBelow" name="startingConfig" value="Below Maximum" checked>
+                            <label for="startingBelow">Below Maximum Height</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="startingExtended" name="startingConfig" value="Extended">
+                            <label for="startingExtended">Extended/Above Maximum</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
+            </div>
+
+            <!-- Page 3: Robot Capabilities -->
+            <div class="form-page" data-page="3">
+                <h2>Robot Capabilities</h2>
+                
+                <div class="form-group">
+                    <label>Can score in which locations?</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="scoreL1" name="scoreLocations" value="L1">
+                            <label for="scoreL1">L1</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="scoreL2" name="scoreLocations" value="L2">
+                            <label for="scoreL2">L2</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="scoreL3" name="scoreLocations" value="L3">
+                            <label for="scoreL3">L3</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="scoreL4" name="scoreLocations" value="L4">
+                            <label for="scoreL4">L4</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="scoreProcessor" name="scoreLocations" value="Processor">
+                            <label for="scoreProcessor">Processor</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="scoreNet" name="scoreLocations" value="Net">
+                            <label for="scoreNet">Net</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Deep Climb?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="climbYes" name="canClimb" value="Yes">
+                            <label for="climbYes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="climbNo" name="canClimb" value="No" checked>
+                            <label for="climbNo">No</label>
+                        </div>
+                    </div>
+                </div>
+              
+                <div class="form-group">
+                    <label for="cyclesPerMatch">Cycles Per Match</label>
+                    <textarea id="cyclesPerMatch" name="cyclesPerMatch" rows="1" placeholder="The amount of combined Coral and Algae cycles"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Auto</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="autoMobility" name="autoCapabilities" value="Mobility">
+                            <label for="autoMobility">Mobility</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="autoScoring" name="autoCapabilities" value="Scoring">
+                            <label for="autoScoring">Scoring</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" id="autoCollect" name="autoCapabilities" value="Collect">
+                            <label for="autoCollect">Collect</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reefScoreRating">Rate Reef Scoring Ability (1-5)</label>
+                    <div class="rating" id="reefScoreRating">
+                        <div class="rating-item" data-value="1"></div>
+                        <div class="rating-item" data-value="2"></div>
+                        <div class="rating-item" data-value="3"></div>
+                        <div class="rating-item" data-value="4"></div>
+                        <div class="rating-item" data-value="5"></div>
+                    </div>
+                    <input type="hidden" name="reefScoreRating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="algaeScoreRating">Rate Algae Scoring Ability (1-5)</label>
+                    <div class="rating" id="algaeScoreRating">
+                        <div class="rating-item" data-value="1"></div>
+                        <div class="rating-item" data-value="2"></div>
+                        <div class="rating-item" data-value="3"></div>
+                        <div class="rating-item" data-value="4"></div>
+                        <div class="rating-item" data-value="5"></div>
+                    </div>
+                    <input type="hidden" name="algaeScoreRating" value="0">
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="next">Next</button>
+                </div>
+            </div>
+
+            <!-- Page 4: Additional Notes & Review -->
+            <div class="form-page" data-page="4">
+                <h2>Additional Notes & Review</h2>
+                
+                <div class="form-group">
+                    <label for="strategyNotes">Strategy Notes</label>
+                    <textarea id="strategyNotes" name="strategyNotes" rows="4" placeholder="Note any specific strategies or preferences the team mentioned..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="strengthsWeaknesses">Strengths & Weaknesses</label>
+                    <textarea id="strengthsWeaknesses" name="strengthsWeaknesses" rows="4" placeholder="Note any observed strengths or potential weaknesses..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="potentialAlliance">Potential Alliance Partner?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="allianceYes" name="potentialAlliance" value="Yes">
+                            <label for="allianceYes">Yes</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="allianceMaybe" name="potentialAlliance" value="Maybe" checked>
+                            <label for="allianceMaybe">Maybe</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="allianceNo" name="potentialAlliance" value="No">
+                            <label for="allianceNo">No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h3>Review Information</h3>
+                    <div id="dataReview" class="data-preview">
+                        <!-- Data will be populated here by JavaScript -->
+                        <p>Complete previous steps to see your data summary</p>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="prev">Previous</button>
+                    <button type="button" class="submit">Download as PDF</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Hidden content that will be used for PDF generation -->
+    <div id="pdfContent">
+        <h1>FRC Pit Scouting Form</h1>
+        <div id="pdfData"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Page navigation
+            const pages = document.querySelectorAll('.form-page');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const nextButtons = document.querySelectorAll('.next');
+            const prevButtons = document.querySelectorAll('.prev');
+            const submitButton = document.querySelector('.submit');
+            const form = document.getElementById('scoutingForm');
+            
+            let currentPage = 1;
+            const totalPages = pages.length;
+            
+            // Initialize number input controls
+            document.querySelectorAll('.number-input-group').forEach(group => {
+                const input = group.querySelector('input');
+                const decreaseBtn = group.querySelector('.decrease');
+                const increaseBtn = group.querySelector('.increase');
+                
+                decreaseBtn.addEventListener('click', () => {
+                    const currentValue = parseInt(input.value) || 0;
+                    const minValue = parseInt(input.min) || 0;
+                    if (currentValue > minValue) {
+                        input.value = currentValue - 1;
+                    }
+                });
+                
+                increaseBtn.addEventListener('click', () => {
+                    const currentValue = parseInt(input.value) || 0;
+                    const maxValue = parseInt(input.max);
+                    if (!maxValue || currentValue < maxValue) {
+                        input.value = currentValue + 1;
+                    }
+                });
+            });
+            
+            // Initialize rating controls
+            document.querySelectorAll('.rating').forEach(ratingGroup => {
+                const items = ratingGroup.querySelectorAll('.rating-item');
+                const inputField = ratingGroup.nextElementSibling;
+                
+                items.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const value = item.getAttribute('data-value');
+                        
+                        // Clear all selections
+                        items.forEach(i => i.classList.remove('selected'));
+                        
+                        // Select up to the clicked item
+                        for (let i = 0; i < value; i++) {
+                            items[i].classList.add('selected');
+                        }
+                        
+                        // Update hidden input value
+                        inputField.value = value;
+                    });
+                });
+            });
+            
+            // Navigate to next page
+            nextButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (validatePage(currentPage)) {
+                        if (currentPage < totalPages) {
+                            goToPage(currentPage + 1);
+                            updateProgress();
+                            if (currentPage === totalPages) {
+                                updateDataReview();
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Navigate to previous page
+            prevButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        goToPage(currentPage - 1);
+                        updateProgress();
+                    }
+                });
+            });
+            
+            // Submit form
+            submitButton.addEventListener('click', () => {
+                if (validateForm()) {
+                    generatePDF();
+                }
+            });
+            
+            // Validate current page
+            function validatePage(pageNumber) {
+                const currentPageElement = document.querySelector(`.form-page[data-page="${pageNumber}"]`);
+                const requiredFields = currentPageElement.querySelectorAll('input[required], select[required], textarea[required]');
+                
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        showError(field);
+                    } else {
+                        hideError(field);
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // Validate entire form
+            function validateForm() {
+                let isValid = true;
+                
+                for (let i = 1; i <= totalPages; i++) {
+                    if (!validatePage(i)) {
+                        isValid = false;
+                        goToPage(i);
+                        break;
+                    }
+                }
+                
+                return isValid;
+            }
+            
+            // Show error message
+            function showError(field) {
+                const errorMessage = field.nextElementSibling;
+                if (errorMessage && errorMessage.classList.contains('error-message')) {
+                    errorMessage.style.display = 'block';
+                }
+                field.style.borderColor = '#dc3545';
+            }
+            
+            // Hide error message
+            function hideError(field) {
+                const errorMessage = field.nextElementSibling;
+                if (errorMessage && errorMessage.classList.contains('error-message')) {
+                    errorMessage.style.display = 'none';
+                }
+                field.style.borderColor = '';
+            }
+            
+            // Go to specific page
+            function goToPage(pageNumber) {
+                // Hide all pages
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show the target page
+                document.querySelector(`.form-page[data-page="${pageNumber}"]`).classList.add('active');
+                
+                // Update current page
+                currentPage = pageNumber;
+                
+                // Update button states
+                prevButtons.forEach(button => {
+                    button.disabled = currentPage === 1;
+                });
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                progressSteps.forEach(step => {
+                    const stepNumber = parseInt(step.getAttribute('data-step'));
+                    
+                    step.classList.remove('active', 'completed');
+                    
+                    if (stepNumber === currentPage) {
+                        step.classList.add('active');
+                    } else if (stepNumber < currentPage) {
+                        step.classList.add('completed');
+                    }
+                });
+            }
+            
+            // Update data review section
+            function updateDataReview() {
+                const dataReview = document.getElementById('dataReview');
+                dataReview.innerHTML = '';
+                
+                // Get form data
+                const formData = new FormData(form);
+                const data = {};
+                
+                for (const [key, value] of formData.entries()) {
+                    if (key === 'gamePieces' || key === 'scoreLocations' || key === 'autoCapabilities') {
+                        if (!data[key]) {
+                            data[key] = [];
+                        }
+                        data[key].push(value);
+                    } else {
+                        data[key] = value;
+                    }
+                }
+                
+                // Basic team info
+                addDataItem(dataReview, 'Team Number', data.teamNumber);
+                addDataItem(dataReview, 'Team Name', data.teamName);
+                addDataItem(dataReview, 'Scout Name', data.scoutName);
+                addDataItem(dataReview, 'Event Name', data.eventName);
+                
+                // Robot specs
+                addDataItem(dataReview, 'Drivetrain Type', data.drivetrainType || 'Not specified');
+                addDataItem(dataReview, 'Swerve Type (if applicable)', data.swerveType || 'Not specified')
+                addDataItem(dataReview, 'Game Pieces', data.gamePieces ? data.gamePieces.join(', ') : 'None');
+                addDataItem(dataReview, 'Robot Weight', `${data.robotWeight} lbs`);
+                addDataItem(dataReview, 'Robot Height', `${data.robotHeight} inches`);
+                addDataItem(dataReview, 'Starting Configuration', data.startingConfig);
+                
+                // Robot capabilities
+                addDataItem(dataReview, 'Score Locations', data.scoreLocations ? data.scoreLocations.join(', ') : 'None');
+                addDataItem(dataReview, 'Deep Climb', data.canClimb);
+                addDataItem(dataReview, 'Cycles Per Match (est.)', data.cyclesPerMatch);
+                addDataItem(dataReview, 'Auto Capabilities', data.autoCapabilities ? data.autoCapabilities.join(', ') : 'None');
+                addDataItem(dataReview, 'Reef Score Rating', data.reefScoreRating + '/5');
+                addDataItem(dataReview, 'Algae Score Rating', data.algaeScoreRating + '/5');
+                
+                // Additional notes
+                addDataItem(dataReview, 'Strategy Notes', data.strategyNotes || 'None');
+                addDataItem(dataReview, 'Strengths & Weaknesses', data.strengthsWeaknesses || 'None');
+                addDataItem(dataReview, 'Potential Alliance', data.potentialAlliance);
+            }
+            
+            // Helper function to add an item to the data review
+            function addDataItem(container, label, value) {
+                const item = document.createElement('div');
+                item.className = 'data-item';
+                
+                const labelElement = document.createElement('div');
+                labelElement.className = 'data-label';
+                labelElement.textContent = label + ':';
+                
+                const valueElement = document.createElement('div');
+                valueElement.className = 'data-value';
+                valueElement.textContent = value;
+                
+                item.appendChild(labelElement);
+                item.appendChild(valueElement);
+                container.appendChild(item);
+            }
+            
+function generatePDF() {
+    // Get form data
+    const formData = new FormData(form);
+    const data = {};
+    
+    for (const [key, value] of formData.entries()) {
+        if (key === 'gamePieces' || key === 'scoreLocations' || key === 'autoCapabilities') {
+            if (!data[key]) {
+                data[key] = [];
+            }
+            data[key].push(value);
+        } else {
+            data[key] = value;
+        }
+    }
+    
+    // Create markdown content
+    let markdown = '#Pit Scouting Form\n\n';
+    markdown += `## Team ${data.teamNumber} - ${data.teamName}\n\n`;
+    
+    // Basic Information section
+    markdown += '### Basic Information\n\n';
+    markdown += `- Team Number: ${data.teamNumber}\n`;
+    markdown += `- Team Name: ${data.teamName}\n`;
+    markdown += `- Scout Name: ${data.scoutName}\n`;
+    markdown += `- Event Name: ${data.eventName}\n\n`;
+    
+    // Robot Specifications section
+    markdown += '### Robot Specifications\n\n';
+    markdown += `- Drivetrain Type: ${data.drivetrainType || 'Not specified'}\n`;
+    markdown += `- Swerve Type (if applicable): ${data.swerveType || 'Not specified'}\n`;
+    markdown += `- Game Pieces: ${data.gamePieces ? data.gamePieces.join(', ') : 'None'}\n`;
+    markdown += `- Robot Weight: ${data.robotWeight} lbs\n`;
+    markdown += `- Robot Height: ${data.robotHeight} inches\n`;
+    markdown += `- Starting Configuration: ${data.startingConfig}\n\n`;
+    
+    // Robot Capabilities section
+    markdown += '### Robot Capabilities\n\n';
+    markdown += `- Score Locations: ${data.scoreLocations ? data.scoreLocations.join(', ') : 'None'}\n`;
+    markdown += `- Deep Climb: ${data.canClimb}\n`;
+    markdown += `- Cycles Per Match (est.): ${data.cyclesPerMatch}\n`;
+    markdown += `- Auto Capabilities: ${data.autoCapabilities ? data.autoCapabilities.join(', ') : 'None'}\n`;
+    markdown += `- Reef Score Rating: ${data.reefScoreRating}/5\n`;
+    markdown += `- Algae Score Rating: ${data.algaeScoreRating}/5\n\n`;
+    
+    // Additional Notes section
+    markdown += '### Additional Notes\n\n';
+    markdown += '- Strategy Notes:\n' + data.strategyNotes.split('\n').map(line => '  ' + line).join('\n') + '\n\n';
+    markdown += '- Strengths & Weaknesses:\n' + data.strengthsWeaknesses.split('\n').map(line => '  ' + line).join('\n') + '\n\n';
+    markdown += `- Potential Alliance: ${data.potentialAlliance}\n\n`;
+    
+    // Add timestamp
+    const currentDate = new Date();
+    markdown += `### Generated: ${currentDate.toLocaleDateString()} at ${currentDate.toLocaleTimeString()}`;
+    
+    // Download the file
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Team_${data.teamNumber}_Pit_Scouting.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+            
+            // Add event listeners for required fields to hide error messages when they change
+            document.querySelectorAll('input[required], select[required], textarea[required]').forEach(field => {
+                field.addEventListener('input', () => {
+                    if (field.value.trim()) {
+                        hideError(field);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
