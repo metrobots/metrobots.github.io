@@ -11,13 +11,13 @@
 
   <title>Metrobots 3324</title>
 
-<link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
-      <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
-      <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
-      <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
-      <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
-      <meta name="msapplication-TileColor" content="#333333">
-      <meta name="theme-color" content="#ffffff">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="https://metrobots.github.io/assets/favicon/site.webmanifest">
+  <link rel="mask-icon" href="https://metrobots.github.io/assets/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#333333">
+  <meta name="theme-color" content="#ffffff">
 
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
@@ -42,12 +42,13 @@
     body {
       margin: 0;
       color: var(--color-text);
-      background-image: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true), radial-gradient(at center top, rgb(255, 255, 255) 0%, rgb(221, 221, 221) 100%);
+      background: #FFFFFF;
       font-family: "Poppins", sans-serif;
       text-transform: uppercase;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
+
     h2 {
       z-index: -1;
     }
@@ -200,7 +201,7 @@
       transition: all 0.3s;
       z-index: -1;
     }
-    
+
     .enter:focus::before,
     .enter:hover::before {
       background-color: rgba(0, 0, 0, 0.2);
@@ -223,6 +224,7 @@
       padding: var(--page-padding);
       position: relative;
       z-index: 2;
+      padding-top: 6rem;
     }
 
     .content::before {
@@ -234,8 +236,7 @@
       top: 0;
       left: 0;
       z-index: 0;
-      background: url(https://github.com/misalagp/imgs/blob/main/noise.png?raw=true),
-        radial-gradient(at top, #FFFFFF 0%, #ddd 100%);
+      background: #FFFFFF;
       background-size: 250px, 100%;
     }
 
@@ -255,7 +256,7 @@
       font-family: "Anton", sans-serif;
       font-style: normal;
       font-weight: 400;
-      margin: 6rem 0 10vh;
+      margin: 1rem 0 10vh;
       line-height: 0.9;
     }
 
@@ -280,10 +281,8 @@
       font-family: "Poppins", sans-serif;
       font-weight: 800;
       font-size: clamp(2rem, 6vh, 4rem);
-
     }
 
-    
     .content__footer {
       display: flex;
       justify-content: space-between;
@@ -316,358 +315,528 @@
       opacity: 0.8;
     }
 
-.button-container {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: right;
-  z-index: 2;
-  pointer-events: none;
-}
+    .button-container {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: right;
+      z-index: 2;
+      pointer-events: none;
+    }
 
-.button-container.show {
-  pointer-events: auto;
-}
+    .button-container.show {
+      pointer-events: auto;
+    }
 
-.always-buttons {
-  position: center;
-  margin: 0 auto; 
-  display: flex;
-  flex-direction: column;
-  left: 37.5%;
-  top: -60px; 
-}
+    .always-buttons {
+      position: center;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      left: 37.5%;
+      top: -60px;
+    }
 
-.always-buttons .button {
-  background-color: transparent;
-  color: black;
-  padding: 10px 20px;
-  margin: 5px;
-  border: 2px solid black;
-  border-radius: 5px;
-  font-family: 'Telefon Black', monospace;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  opacity: 0;
-  transform: translateY(20px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
+    .always-buttons .button {
+      background-color: transparent;
+      color: black;
+      padding: 10px 20px;
+      margin: 5px;
+      border: 2px solid black;
+      border-radius: 5px;
+      font-family: 'Telefon Black', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+      opacity: 0;
+      transform: translateY(20px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
 
-.always-buttons .button:nth-child(1) {
-  animation: slideFadeIn 0.9s ease forwards 0.6s;
-}
+    .always-buttons .button:nth-child(1) {
+      animation: slideFadeIn 0.9s ease forwards 0.6s;
+    }
 
-.always-buttons .button:nth-child(2) {
-  animation: slideFadeIn 0.9s ease forwards 0.7s;
-}
+    .always-buttons .button:nth-child(2) {
+      animation: slideFadeIn 0.9s ease forwards 0.7s;
+    }
 
-.always-buttons .button:nth-child(3) {
-  animation: slideFadeIn 0.9s ease forwards 0.8s;
-}
+    .always-buttons .button:nth-child(3) {
+      animation: slideFadeIn 0.9s ease forwards 0.8s;
+    }
 
-.always-buttons .button:nth-child(4) {
-  animation: slideFadeIn 0.9s ease forwards 0.9s;
-}
+    .always-buttons .button:nth-child(4) {
+      animation: slideFadeIn 0.9s ease forwards 0.9s;
+    }
 
-@keyframes slideFadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    @keyframes slideFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
 
-.always-buttons .button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: black;
-  transform: translateY(-3px) !important;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-}
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-.always-buttons .button:focus {
-  outline: none;
-  box-shadow: 0 0 10px darkRed;
-}
+    .always-buttons .button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: black;
+      transform: translateY(-3px) !important;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
 
-.corner-image {
-    position: fixed; 
-    bottom: 0;       
-    right: 0;        
-    margin: 10px;    
-}
+    .always-buttons .button:focus {
+      outline: none;
+      box-shadow: 0 0 10px darkRed;
+    }
 
-.corner-image img {
-    width: 100px;   
-    height: px;   
-    object-fit: cover;
-}
+    .corner-image {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      margin: 10px;
+    }
 
-        .screen {
-            width: 300px;
-            display: flex;
-            border: 2px solid #2c2c2c;
-            aspect-ratio: 10 / 16;
-            border-radius: 1rem;
-            background-color: rgb(var(--primary-rgb) / 15%);
-            overflow: hidden;
-            position: relative;
-            z-index: 10;
-            left: 0%;
-        }
-    
+    .corner-image img {
+      width: 100px;
+      height: px;
+      object-fit: cover;
+    }
 
-        .screen:after,
-        .screen:before {
-            content: "";
-            height: 5px;
-            position: absolute;
-            z-index: 4;
-            left: 50%;
-            translate: -50% 0%;
-            background-color: white;
-        }
+    .screen {
+      width: 300px;
+      display: flex;
+      border: 2px solid #2c2c2c;
+      aspect-ratio: 10 / 16;
+      border-radius: 1rem;
+      background-color: rgb(var(--primary-rgb) / 15%);
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+      left: 0%;
+    }
 
-        .screen:before {
-            width: 15%;
-            top: 0;
-            border-bottom-left-radius: 1rem;
-            border-bottom-right-radius: 1rem;
-        }
+    .screen:after,
+    .screen:before {
+      content: "";
+      height: 5px;
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      translate: -50% 0%;
+      background-color: white;
+    }
 
-        .screen:after {
-            width: 25%;
-            bottom: 0;
-            border-top-left-radius: 1rem;
-            border-top-right-radius: 1rem;
-        }
+    .screen:before {
+      width: 15%;
+      top: 0;
+      border-bottom-left-radius: 1rem;
+      border-bottom-right-radius: 1rem;
+    }
 
-        @keyframes pan-overlay {
-            from {
-                background-position: 0% 0%;
-            }
-            to {
-                background-position: 0% -100%;
-            }
-        }
+    .screen:after {
+      width: 25%;
+      bottom: 0;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+    }
 
-        .screen-overlay {
-            background: linear-gradient(
-                rgb(var(--primary-rgb) / 0.15),
-                rgb(var(--primary-rgb) / 0.15) 3px,
-                transparent 3px,
-                transparent 9px
-            );
-            background-size: 100% 9px;
-            height: 100%;
-            width: 100%;
-            animation: pan-overlay 22s infinite linear;
-            position: absolute;
-            z-index: 2;
-            left: 0;
-            top: 0;
-        }
+    @keyframes pan-overlay {
+      from {
+        background-position: 0% 0%;
+      }
 
-        @keyframes pan-image {
-            0% {
-                background-position: 36% 42%;
-                background-size: 200%;
-            }
-            20% {
-                background-position: 30% 35%;
-                background-size: 200%;
-            }
-            20.0001% {
-                background-position: 60% 85%;
-                background-size: 500%;
-            }
-            40% {
-                background-position: 49% 81%;
-                background-size: 500%;
-            }
-            40.0001% {
-                background-position: 80% 42%;
-                background-size: 300%;
-            }
-            60% {
-                background-position: 84% 33%;
-                background-size: 300%;
-            }
-            60.0001% {
-                background-position: 0% 0%;
-                background-size: 300%;
-            }
-            80% {
-                background-position: 15% 4%;
-                background-size: 300%;
-            }
-            80.0001% {
-                background-position: 80% 10%;
-                background-size: 300%;
-            }
-            100% {
-                background-position: 72% 14%;
-                background-size: 300%;
-            }
-        }
+      to {
+        background-position: 0% -100%;
+      }
+    }
 
-        .screen > .screen-image {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            background-size: 300%;
-            background-position: 0% 0%;
-            filter: sepia(100%) hue-rotate(160deg);
-            opacity: 0.6;
-            animation: pan-image 15s linear infinite;
-        }
+    .screen-overlay {
+      background: linear-gradient(rgb(var(--primary-rgb) / 0.15),
+          rgb(var(--primary-rgb) / 0.15) 3px,
+          transparent 3px,
+          transparent 9px);
+      background-size: 100% 9px;
+      height: 100%;
+      width: 100%;
+      animation: pan-overlay 22s infinite linear;
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      top: 0;
+    }
 
-        .screen > .screen-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            flex-grow: 1;
-            gap: 4rem;
-            position: relative;
-            z-index: 3;
-            margin: 1rem;
-            padding-bottom: 6rem;
-            border: 1px solid rgb(var(--primary-rgb) / 50%);
-            border-radius: 0.6rem;
-        }
+    @keyframes pan-image {
+      0% {
+        background-position: 36% 42%;
+        background-size: 200%;
+      }
 
-        .screen > .screen-content > .screen-icon {
-            color: white;
-            font-size: 4rem;
-            text-shadow: 0px 0px 0.5rem white;
-        }
+      20% {
+        background-position: 30% 35%;
+        background-size: 200%;
+      }
 
-        .screen > .screen-content > .screen-user {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            position: relative;
-        }
+      20.0001% {
+        background-position: 60% 85%;
+        background-size: 500%;
+      }
 
-        .screen > .screen-content > .screen-user:before,
-        .screen > .screen-content > .screen-user:after {
-            content: "";
-            position: absolute;
-            top: 0;
-            background-color: rgb(var(--primary-rgb));
-            border-radius: 1rem;
-            box-shadow: 0px 0px 8px 3px rgb(var(--primary-rgb) / 60%);
-        }
+      40% {
+        background-position: 49% 81%;
+        background-size: 500%;
+      }
 
-        .screen > .screen-content > .screen-user:before {
-            height: 2px;
-            width: 50px;
-            translate: -20px -1rem;
-            opacity: 0.75;
-        }
+      40.0001% {
+        background-position: 80% 42%;
+        background-size: 300%;
+      }
 
-        .screen > .screen-content > .screen-user:after {
-            height: 3px;
-            width: 30px;
-            translate: 26px calc(-1rem - 0.5px);
-        }
+      60% {
+        background-position: 84% 33%;
+        background-size: 300%;
+      }
 
-        .screen > .screen-content > .screen-user > :is(.name, .link) {
-            font-family: "Poppins", sans-serif;
-            color: #ecebeb;
-            text-align: center;
-            text-transform: uppercase;
-        }
+      60.0001% {
+        background-position: 0% 0%;
+        background-size: 300%;
+      }
 
-        .screen > .screen-content > .screen-user > .name {
-            position: relative;
-            font-size: 4.25rem;
-            font-weight: 400;
-        }
+      80% {
+        background-position: 15% 4%;
+        background-size: 300%;
+      }
 
-        .screen > .screen-content > .screen-user > .name:before,
-        .screen > .screen-content > .screen-user > .name:after {
-            content: "";
-            height: 4px;
-            width: 4px;
-            position: absolute;
-            border: 2px solid white;
-            border-radius: 2px;
-        }
+      80.0001% {
+        background-position: 80% 10%;
+        background-size: 300%;
+      }
 
-        .screen > .screen-content > .screen-user > .name:before {
-            top: 55%;
-            right: -1.5rem;
-        }
+      100% {
+        background-position: 72% 14%;
+        background-size: 300%;
+      }
+    }
 
-        .screen > .screen-content > .screen-user > .name:after {
-            top: 45%;
-            left: -1.5rem;
-        }
+    .screen>.screen-image {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      background-size: 300%;
+      background-position: 0% 0%;
+      filter: sepia(100%) hue-rotate(160deg);
+      opacity: 0.6;
+      animation: pan-image 15s linear infinite;
+    }
 
-        .screen > .screen-content > .screen-user > .link {
-            opacity: 0.8;
-            font-size: 1.5rem;
-            text-shadow: 0px 0px 0.5rem white;
-            font-weight: 400;
-            letter-spacing: 0.3rem;
-            text-decoration: none;
-        }
+    .screen>.screen-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      flex-grow: 1;
+      gap: 4rem;
+      position: relative;
+      z-index: 3;
+      margin: 1rem;
+      padding-bottom: 6rem;
+      border: 1px solid rgb(var(--primary-rgb) / 50%);
+      border-radius: 0.6rem;
+    }
 
-        .screen > .screen-content > .screen-user > .link:is(:hover, :focus) {
-            text-decoration: underline;
-        }
+    .screen>.screen-content>.screen-icon {
+      color: white;
+      font-size: 4rem;
+      text-shadow: 0px 0px 0.5rem white;
+    }
 
-        @media(max-width: 700px) {
-            .screen {
-                scale: 0.6;
-                margin-bottom: 0;
-            }
-        }
+    .screen>.screen-content>.screen-user {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+    }
 
-        @keyframes rotate {
-            from {
-                rotate: 0deg;
-            }
-            50% {
-                scale: 1 1.5;
-            }
-            to {
-                rotate: 360deg;
-            }
-        }
+    .screen>.screen-content>.screen-user:before,
+    .screen>.screen-content>.screen-user:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      background-color: rgb(var(--primary-rgb));
+      border-radius: 1rem;
+      box-shadow: 0px 0px 8px 3px rgb(var(--primary-rgb) / 60%);
+    }
 
-        #blob {
-            background-color: white;
-            height: 34vmax;
-            aspect-ratio: 1;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            translate: -50% -50%;
-            border-radius: 50%;
-            background: linear-gradient(to right, var(--blob-color-1), var(--blob-color-2));
-            animation: rotate 20s infinite;
-            opacity: 0.5;
-        }
+    .screen>.screen-content>.screen-user:before {
+      height: 2px;
+      width: 50px;
+      translate: -20px -1rem;
+      opacity: 0.75;
+    }
 
+    .screen>.screen-content>.screen-user:after {
+      height: 3px;
+      width: 30px;
+      translate: 26px calc(-1rem - 0.5px);
+    }
+
+    .screen>.screen-content>.screen-user> :is(.name, .link) {
+      font-family: "Poppins", sans-serif;
+      color: #ecebeb;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .screen>.screen-content>.screen-user>.name {
+      position: relative;
+      font-size: 4.25rem;
+      font-weight: 400;
+    }
+
+    .screen>.screen-content>.screen-user>.name:before,
+    .screen>.screen-content>.screen-user>.name:after {
+      content: "";
+      height: 4px;
+      width: 4px;
+      position: absolute;
+      border: 2px solid white;
+      border-radius: 2px;
+    }
+
+    .screen>.screen-content>.screen-user>.name:before {
+      top: 55%;
+      right: -1.5rem;
+    }
+
+    .screen>.screen-content>.screen-user>.name:after {
+      top: 45%;
+      left: -1.5rem;
+    }
+
+    .screen>.screen-content>.screen-user>.link {
+      opacity: 0.8;
+      font-size: 1.5rem;
+      text-shadow: 0px 0px 0.5rem white;
+      font-weight: 400;
+      letter-spacing: 0.3rem;
+      text-decoration: none;
+    }
+
+    .screen>.screen-content>.screen-user>.link:is(:hover, :focus) {
+      text-decoration: underline;
+    }
+
+    @media(max-width: 700px) {
+      .screen {
+        scale: 0.6;
+        margin-bottom: 0;
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        rotate: 0deg;
+      }
+
+      50% {
+        scale: 1 1.5;
+      }
+
+      to {
+        rotate: 360deg;
+      }
+    }
+
+    #blob {
+      background-color: white;
+      height: 34vmax;
+      aspect-ratio: 1;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      translate: -50% -50%;
+      border-radius: 50%;
+      background: linear-gradient(to right, var(--blob-color-1), var(--blob-color-2));
+      animation: rotate 20s infinite;
+      opacity: 0.5;
+    }
+
+    .nav-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      transform: translateY(-100%);
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .nav-header.visible {
+      transform: translateY(0);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: "Anton", sans-serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--color-text);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .nav-logo:hover {
+      text-decoration: none;
+      opacity: 0.7;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-link {
+      position: relative;
+      font-family: "Poppins", sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--color-text);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
+      border-radius: 0.5rem;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+    }
+
+    .nav-link:hover::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .nav-link:hover {
+      text-decoration: none;
+      transform: translateY(-2px);
+      color: var(--color-text);
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 0.3rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .mobile-nav-toggle span {
+      width: 2rem;
+      height: 0.2rem;
+      background: var(--color-text);
+      border-radius: 0.1rem;
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        transform: translateY(-100%);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+      }
+
+      .nav-links.active {
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .mobile-nav-toggle {
+        display: flex;
+      }
+
+      .nav-container {
+        padding: 1rem;
+      }
+
+      .nav-logo {
+        font-size: 1.5rem;
+      }
+    }
   </style>
-  
+
 </head>
+
 <body class="noscroll">
+
   <div class="video-overlay"></div>
+
+  <nav class="nav-header" id="navHeader">
+    <div class="nav-container">
+      <a href="?skip=true" class="nav-logo">Metrobots</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="about/" class="nav-link">About Us</a></li>
+        <li><a href="our-season/" class="nav-link">Our Season</a></li>
+        <li><a href="mission/" class="nav-link">Our Community</a></li>
+        <li><a href="resources/" class="nav-link">Resources</a></li>
+      </ul>
+      <button class="mobile-nav-toggle" id="mobileNavToggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
   <main>
     <section class="intro">
       <div class="grid">
@@ -797,8 +966,7 @@
             </div>
           </div>
           <div class="row__item">
-            <div 
-                 class="row__item-inner">
+            <div class="row__item-inner">
               <div class="row__item-img" style="background-image:url(https://metrobots.github.io/assets/specific/IMG_3537.jpg)"></div>
             </div>
           </div>
@@ -862,6 +1030,7 @@
           </div>
         </div>
       </div>
+
       <div class="fullview"></div>
       <div class="enter"><span id="welcome-text">Welcome</span></div>
     </section>
@@ -871,119 +1040,86 @@
       </div>
       <div class="content__text">
         <p class="right">The most <strong>extraordinary</strong> aspect of a team is not just in the <strong>victories</strong>, but in the relentless pursuit of <strong>improvement</strong>, learning from every setback, and striving towards a common goal. In robotics, every failure is just another step toward <strong>success</strong>.
-          
-          <center><div class="screen">
-        <div class="screen-image"></div>
-        <div class="screen-overlay"></div>
-        <div class="screen-content">
-            <i class="screen-icon fa-brands fa-codepen"></i>
 
-            <center><p class="highlight">quick links</p>
-
-          <center><div class="always-buttons">
-    <center><div class="button"><b><center>About Us</center></b></div>
-    <div class="button"><b>Our Season</b></div>
-    <div class="button"><b><center>Our Community</center></b></div>
-    <div class="button"><b><center>Resources </center></b></div>
-  </div>
-        </div>
-    </div>
-       
-        
-        <div style="
-    position: fixed; 
-    bottom: -38%; 
-    left: 0%; 
-    margin: 10px;">
-    <img src="https://metrobots.github.io/assets/robots/downsized-removebg-preview.png" alt="" style="
-        width: 30px; 
-        height: 27px; 
-        object-fit: cover;">
-</div>
-
-        
       </div>
     </section>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/Flip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
-  
+
   <script>
-    
+    const urlParams = new URLSearchParams(window.location.search);
+    const skipIntro = urlParams.get('skip') === 'true';
+    if (skipIntro) {
+      document.addEventListener('DOMContentLoaded', () => {
+        body.classList.remove("noscroll");
+        document.querySelector('.intro').style.display = 'none';
+        navHeader.classList.add('visible');
+      });
+    }
     const welcomeMessages = [
-    "Welcome",
-    "Welcome",
-    "Welcome",
-    "Welcome",
-    "Welcome",
-    "Bienvenue",
-    "Bienvenido",
-    "Willkommen",
-    "Benvenuti",
-    "歡迎",
-    "ようこそ",
-    "Добро пожаловать",
-    "Welkom",
-    "환영합니다",
-    "أهلاً وسهلاً",
-    "ברוך הבא",
-    "ברוכה הבאה",
-    "स्वागत है",
-    "ยินดีต้อนรับ",
-    "Chào mừng",
-    "Karibu",
-    "Hoş geldiniz",
-    "Καλώς ήρθατε",
-    "Tervetuloa",
-    "Üdvözöljük",
-    "வரவேற்கிறேன்"
-];
+      "Welcome",
+      "Welcome",
+      "Welcome",
+      "Welcome",
+      "Welcome",
+      "Bienvenue",
+      "Bienvenido",
+      "Willkommen",
+      "Benvenuti",
+      "歡迎",
+      "ようこそ",
+      "Добро пожаловать",
+      "Welkom",
+      "환영합니다",
+      "أهلاً وسهلاً",
+      "ברוך הבא",
+      "ברוכה הבאה",
+      "स्वागत है",
+      "ยินดีต้อนรับ",
+      "Chào mừng",
+      "Karibu",
+      "Hoş geldiniz",
+      "Καλώς ήρθατε",
+      "Tervetuloa",
+      "Üdvözöljük",
+      "வரவேற்கிறேன்"
+    ];
 
-
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
+      }
     }
-}
+    shuffleArray(welcomeMessages);
+    let currentIndex = 0;
+    const welcomeText = document.getElementById('welcome-text');
 
-shuffleArray(welcomeMessages);
-
-let currentIndex = 0;
-const welcomeText = document.getElementById('welcome-text');
-
-function scrambleToNextWord() {
-    const currentWord = welcomeMessages[currentIndex];
-    currentIndex = (currentIndex + 1) % welcomeMessages.length;
-    const nextWord = welcomeMessages[currentIndex];
-
-    let scrambleIndex = 0;
-    const scrambleInterval = setInterval(() => {
+    function scrambleToNextWord() {
+      const currentWord = welcomeMessages[currentIndex];
+      currentIndex = (currentIndex + 1) % welcomeMessages.length;
+      const nextWord = welcomeMessages[currentIndex];
+      let scrambleIndex = 0;
+      const scrambleInterval = setInterval(() => {
         let scrambledText = nextWord.split('');
-        
         for (let i = 0; i < scrambleIndex; i++) {
-            if (i < currentWord.length) {
-                scrambledText[i] = nextWord[i];
-            }
+          if (i < currentWord.length) {
+            scrambledText[i] = nextWord[i];
+          }
         }
-
         for (let i = scrambleIndex; i < nextWord.length; i++) {
-            scrambledText[i] = String.fromCharCode(33 + Math.random() * 94);
+          scrambledText[i] = String.fromCharCode(33 + Math.random() * 94);
         }
-
         welcomeText.textContent = scrambledText.join('');
-
         if (scrambleIndex++ >= nextWord.length) {
-            clearInterval(scrambleInterval);
-            setTimeout(scrambleToNextWord, 2000);
+          clearInterval(scrambleInterval);
+          setTimeout(scrambleToNextWord, 2000);
         }
-    }, 50);
-}
-
-scrambleToNextWord();
-
-    
+      }, 50);
+    }
+    scrambleToNextWord();
     gsap.registerPlugin(Flip);
     const body = document.body;
     const content = document.querySelector(".content");
@@ -1174,6 +1310,9 @@ scrambleToNextWord();
         requestId = undefined;
       }
     };
+    const navHeader = document.getElementById('navHeader');
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const navLinks = document.getElementById('navLinks');
     const enterFullview = () => {
       const flipstate = Flip.getState(middleRowItemInner);
       fullview.appendChild(middleRowItemInner);
@@ -1208,9 +1347,23 @@ scrambleToNextWord();
           duration: 0.9,
           ease: "power4"
         });
+      setTimeout(() => {
+        navHeader.classList.add('visible');
+      }, 900);
       enterButton.classList.add("hidden");
       body.classList.remove("noscroll");
+      setTimeout(() => {
+        window.history.pushState({}, '', '?skip=true');
+      }, 900);
     };
+    mobileNavToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+      });
+    });
     const init = () => {
       startRendering();
       enterButton.addEventListener("click", enterFullview);
@@ -1232,8 +1385,7 @@ scrambleToNextWord();
     };
     initSmoothScrolling();
     init();
-    
-        class TextScramble {
+    class TextScramble {
       constructor(el) {
         this.el = el;
         this.chars = '!<>-_\\/[]{}—=+*^?#________';
@@ -1304,49 +1456,43 @@ scrambleToNextWord();
         fx.setText('METROBOTS');
       });
     });
-    
-   document.querySelector('.always-buttons .button:nth-child(1)').addEventListener('click', function() {
+    document.querySelector('.always-buttons .button:nth-child(1)').addEventListener('click', function() {
       window.location.href = "about/";
     });
-
     document.querySelector('.always-buttons .button:nth-child(2)').addEventListener('click', function() {
       window.location.href = "our-season/";
     });
-
     document.querySelector('.always-buttons .button:nth-child(3)').addEventListener('click', function() {
       window.location.href = "mission/";
     });
-
     document.querySelector('.always-buttons .button:nth-child(4)').addEventListener('click', function() {
       window.location.href = "resources/";
-    }); 
-    
+    });
     const imageUrls = [
-            "https://metrobots.github.io/assets/robots/IMG_2784.JPG",
-            "https://metrobots.github.io/assets/robots/IMG_2785.jpg",
-            "https://metrobots.github.io/assets/robots/IMG_2880.jpg",
-            "https://metrobots.github.io/assets/robots/IMG_2964.jpg",
-            "https://metrobots.github.io/assets/specific/3.jpeg",
-            "https://metrobots.github.io/assets/specific/5.jpeg",
-            "https://metrobots.github.io/assets/specific/6.jpeg",
-            "https://metrobots.github.io/assets/specific/IMG_0248.jpg",
-            "https://metrobots.github.io/assets/specific/IMG_9775.JPG",
-            "https://metrobots.github.io/assets/specific/awd.png",
-            "https://metrobots.github.io/assets/IMG_9760.JPG",
-            "https://metrobots.github.io/assets/IMG_0538.JPG",
-            "https://metrobots.github.io/assets/IMG_0654.JPG",
-            "https://metrobots.github.io/assets/IMG_2692.jpg",
-            "https://metrobots.github.io/assets/IMG_2947.jpg"
-        ];
-
-        document.addEventListener("DOMContentLoaded", function() {
-            function getRandomImageUrl() {
-                const randomIndex = Math.floor(Math.random() * imageUrls.length);
-                return imageUrls[randomIndex];
-            }
-
-            document.querySelector('.screen-image').style.backgroundImage = `url(${getRandomImageUrl()})`;
-        });
+      "https://metrobots.github.io/assets/robots/IMG_2784.JPG",
+      "https://metrobots.github.io/assets/robots/IMG_2785.jpg",
+      "https://metrobots.github.io/assets/robots/IMG_2880.jpg",
+      "https://metrobots.github.io/assets/robots/IMG_2964.jpg",
+      "https://metrobots.github.io/assets/specific/3.jpeg",
+      "https://metrobots.github.io/assets/specific/5.jpeg",
+      "https://metrobots.github.io/assets/specific/6.jpeg",
+      "https://metrobots.github.io/assets/specific/IMG_0248.jpg",
+      "https://metrobots.github.io/assets/specific/IMG_9775.JPG",
+      "https://metrobots.github.io/assets/specific/awd.png",
+      "https://metrobots.github.io/assets/IMG_9760.JPG",
+      "https://metrobots.github.io/assets/IMG_0538.JPG",
+      "https://metrobots.github.io/assets/IMG_0654.JPG",
+      "https://metrobots.github.io/assets/IMG_2692.jpg",
+      "https://metrobots.github.io/assets/IMG_2947.jpg"
+    ];
+    document.addEventListener("DOMContentLoaded", function() {
+      function getRandomImageUrl() {
+        const randomIndex = Math.floor(Math.random() * imageUrls.length);
+        return imageUrls[randomIndex];
+      }
+      document.querySelector('.screen-image').style.backgroundImage = `url(${getRandomImageUrl()})`;
+    });
   </script>
 </body>
+
 </html>
