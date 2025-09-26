@@ -700,17 +700,25 @@
     }
 
     .nav-logo {
-      font-family: "Anton", sans-serif;
-      font-size: 2rem;
-      font-weight: 400;
-      color: var(--color-text);
-      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
       transition: all 0.3s ease;
+      text-decoration: none;
     }
 
     .nav-logo:hover {
       text-decoration: none;
-      opacity: 0.7;
+      transform: scale(1.1);
+    }
+
+    .nav-logo img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+      display: block !important;
     }
 
     .nav-links {
@@ -824,7 +832,7 @@
   <nav class="nav-header" id="navHeader">
     <div class="nav-container">
       <a href="?skip=true" class="nav-logo">
-        <img src="http://metrobots.github.io/assets/gdb.png" alt="Metrobots Logo" style="height:50px; width:auto; display:block;">
+        <img src="http://metrobots.github.io/assets/gdb.png" alt="Metrobots Logo">
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="about/" class="nav-link">About Us</a></li>
