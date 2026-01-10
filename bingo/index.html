@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta name="google-site-verification" content="MD90Yss8t7VRGIyZQYEGNS4SPkazpoqRJhn-KvPxnT4" />
   <meta charset="UTF-8">
@@ -37,34 +36,34 @@
     }
 
     h1 {
-      font-size: clamp(1.75rem, 5vw, 2.5rem);
-      margin-bottom: 12px;
+      font-size: 2rem;
+      margin-bottom: 8px;
       color: #111;
     }
 
     .stats {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px 16px;
+      gap: 16px;
       margin-bottom: 12px;
       font-size: 0.85rem;
       color: #666;
       text-align: center;
     }
 
+    /* BOARD */
+
     #board {
       width: 100%;
-      max-width: min(550px, 95vw);
+      max-width: 520px;
+      max-height: min(520px, 75vh);
+      aspect-ratio: 1 / 1;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: clamp(4px, 2vw, 8px);
+      gap: 6px;
       margin-bottom: 16px;
     }
 
     .cell {
-      aspect-ratio: 1 / 1;
-      min-height: 44px;
       background: #fff;
       border: 2px solid #ddd;
       border-radius: 6px;
@@ -72,12 +71,13 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: clamp(6px, 2vw, 12px);
-      font-size: clamp(0.65rem, 2.5vw, 0.9rem);
+      padding: 8px;
+      font-size: 0.8rem;
       font-weight: 500;
       color: #333;
       cursor: pointer;
       user-select: none;
+      min-height: 56px;
       transition: background 0.15s, border-color 0.15s, transform 0.15s;
     }
 
@@ -104,16 +104,25 @@
       }
     }
 
+    @media (max-width: 420px) {
+      .cell {
+        font-size: 0.7rem;
+        padding: 6px;
+      }
+    }
+
+    /* CONTROLS */
+
     .controls {
       width: 100%;
+      max-width: 520px;
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
     }
 
     button {
-      flex: 1 1 140px;
+      flex: 1;
       min-height: 44px;
       padding: 10px 14px;
       font-size: 0.9rem;
@@ -138,6 +147,18 @@
       background: #eee;
     }
 
+    @media (max-width: 480px) {
+      .controls {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
+    /* MODAL */
+
     .modal {
       display: none;
       position: fixed;
@@ -154,6 +175,8 @@
       padding: 24px;
       width: 90%;
       max-width: 360px;
+      max-height: 85vh;
+      overflow-y: auto;
       border-radius: 10px;
       text-align: center;
     }
@@ -174,6 +197,8 @@
       color: #fff;
     }
 
+    /* CONFETTI */
+
     .confetti {
       position: fixed;
       pointer-events: none;
@@ -183,6 +208,16 @@
       to {
         transform: translateY(100vh) rotate(1080deg);
         opacity: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .confetti {
+        animation: none !important;
+      }
+
+      .cell.winning {
+        animation: none;
       }
     }
   </style>
@@ -295,7 +330,8 @@
     }
 
     function updateStats() {
-      markedCountEl.textContent = cells.filter(c => c.classList.contains("marked")).length;
+      markedCountEl.textContent =
+        cells.filter(c => c.classList.contains("marked")).length;
     }
 
     function checkWin() {
@@ -334,7 +370,8 @@
           c.style.top = "-10px";
           c.style.width = c.style.height = Math.random() * 8 + 6 + "px";
           c.style.background = colors[Math.floor(Math.random() * colors.length)];
-          c.style.animation = `confetti-fall ${Math.random() * 3 + 2}s ease-out forwards`;
+          c.style.animation =
+            `confetti-fall ${Math.random() * 3 + 2}s ease-out forwards`;
           document.body.appendChild(c);
           setTimeout(() => c.remove(), 4000);
         }, i * 12);
@@ -366,4 +403,3 @@
   </script>
 </body>
 </html>
-
