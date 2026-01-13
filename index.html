@@ -1060,7 +1060,6 @@
       </div>
       <div class="content__text">
         <p class="right">The most <strong>extraordinary</strong> aspect of a team is not just in the <strong>victories</strong>, but in the relentless pursuit of <strong>improvement</strong>, learning from every setback, and striving towards a common goal. In robotics, every failure is just another step toward <strong>success</strong>.
-
       </div>
     </section>
   </main>
@@ -1068,6 +1067,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/Flip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
+  <!-- Beginning(?) of Start Page Code -->
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const skipIntro = urlParams.get('skip') === 'true';
@@ -1076,7 +1076,7 @@
         body.classList.remove("noscroll");
         document.querySelector('.intro').style.display = 'none';
         navHeader.classList.add('visible');
-      });
+      }); 
     }
     const welcomeMessages = [
       "Welcome",
@@ -1488,7 +1488,7 @@
     document.querySelector('.always-buttons .button:nth-child(4)').addEventListener('click', function() {
       window.location.href = "resources/";
     });
-    const imageUrls = [
+    const imageUrls = [ 
       "https://metrobots.github.io/assets/robots/IMG_2784.JPG",
       "https://metrobots.github.io/assets/robots/IMG_2785.jpg",
       "https://metrobots.github.io/assets/robots/IMG_2880.jpg",
@@ -1503,7 +1503,7 @@
       "https://metrobots.github.io/assets/IMG_0538.JPG",
       "https://metrobots.github.io/assets/IMG_0654.JPG",
       "https://metrobots.github.io/assets/IMG_2692.jpg",
-      "https://metrobots.github.io/assets/IMG_2947.jpg"
+      "https://metrobots.github.io/assets/IMG_2947.jpg" 
     ];
     document.addEventListener("DOMContentLoaded", function() {
       function getRandomImageUrl() {
@@ -1516,3 +1516,5 @@
 </body>
 
 </html>
+
+<!-- End of Start Page Code -->
