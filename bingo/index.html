@@ -279,6 +279,10 @@
     let hasWon = false;
     let winCount = 0;
 
+    
+// Random Bingo Board Generation (?)
+
+    
     function mulberry32(seed) {
       return function () {
         let t = seed += 0x6D2B79F5;
@@ -317,6 +321,10 @@
       const picks = shuffle(OPTIONS, rng).slice(0, 25);
       picks[12] = "FREE";
 
+      
+// End of Random Bingo Board Generation (?)
+
+      
       picks.forEach((text, i) => {
         const cell = document.createElement("div");
         cell.className = "cell";
@@ -386,6 +394,10 @@
       }
     }
 
+    
+    // Bottom Buttons (New Board, Reset Marks, Share Board) 
+
+    
     document.getElementById("newBoard").onclick = () => {
       const seed = Math.floor(Math.random() * 1e9);
       setSeed(seed);
@@ -405,6 +417,10 @@
       navigator.clipboard.writeText(location.href);
     };
 
+    
+// End of Bottom Buttons (New Board, Reset Marks, Share Board) 
+
+    
     const seed = getSeed();
     setSeed(seed);
     generateBoard(seed);
