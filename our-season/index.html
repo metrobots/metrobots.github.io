@@ -290,6 +290,13 @@
     }
 
 /* Fun testing things- image & image-text delete if no work*/    
+ .image-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
     .image {
       background-color: #333;
       border-radius: 10px;
@@ -300,7 +307,23 @@
       align-items: center;
       transition: transform 0.3s ease-in-out;
     }
-     .image-text {
+
+    .image:hover {
+      transform: scale(1.1);
+    }
+
+    .image img {
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0.8;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .image:hover img {
+      opacity: 1;
+    }
+
+    .image-text {
       position: absolute;
       bottom: 0;
       left: 0;
@@ -313,7 +336,7 @@
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
-      
+
     .image:hover .image-text {
       opacity: 1;
     }
@@ -360,6 +383,11 @@
       <img src="https://metrobots.github.io/assets/robots/a5.png" alt="Placeholder" class="picture" loading="lazy">
       <img src="https://metrobots.github.io/assets/robots/a6.png" alt="Placeholder" class="picture" loading="lazy">
     </div>
+
+          <div class="image" style="width: 150px; height: 200px;">
+        <img src="https://metrobots.github.io/assets/specific/IMG_3537.jpg" alt="Placeholder Image" loading="lazy">
+        <div class="image-text">COSI Science Fest (2024)</div>
+      </div>
 
     <div class="info-container">
       <div class="info-box">
