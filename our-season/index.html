@@ -6,7 +6,7 @@
   <meta name="description" content="Metrobots 3324 - FIRST Robotics Team">
   <meta name="keywords" content="Metrobots, FIRST Robotics, Team 3324, Robotics">
   <title>Our Season</title>
-
+<!--hgchgc-->
 <link rel="apple-touch-icon" sizes="180x180" href="https://metrobots.github.io/assets/favicon/apple-touch-icon.png">
       <link rel="icon" type="image/png" sizes="32x32" href="https://metrobots.github.io/assets/favicon/favicon-32x32.png">
       <link rel="icon" type="image/png" sizes="16x16" href="https://metrobots.github.io/assets/favicon/favicon-16x16.png">
@@ -174,7 +174,7 @@
       margin-right: 5px;
     }
     
-        .instagram-logo {
+    .instagram-logo {
       background-image: url('https://metrobots.github.io/assets/logos/4.png');
       background-size: cover;
       width: 30px;
@@ -192,7 +192,7 @@
       margin-right: 5px;
     }
     
-        .twitter-logo {
+    .twitter-logo {
       background-image: url('https://metrobots.github.io/assets/logos/3.png');
       background-size: cover;
       width: 30px; 
@@ -210,7 +210,7 @@
       margin-right: 5px;
     }
     
-        .github-logo:hover {
+    .github-logo:hover {
       background-image: url('https://metrobots.github.io/assets/github.png');
       background-size: cover;
       width: 30px;
@@ -241,27 +241,6 @@
       color: white;
     }
 
-    .picture-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
-
-    .picture {
-      width: 200px;
-      height: 200px;
-      margin: 0 10px;
-      border-radius: 10px;
-      overflow: hidden;
-      transition: transform 0.3s ease-in-out;
-      margin-bottom: 20px;
-    }
-
-    .picture:hover {
-      transform: scale(1.05); 
-    }
-
     .info-container {
       display: flex;
       flex-wrap: wrap;
@@ -289,23 +268,13 @@
       color: #2c2c2c;
     }
 
-/* Fun testing things- image & image-text delete if no work*/    
-    .image {
-      background-color: #333;
-      border-radius: 10px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: transform 0.3s ease-in-out;
-    }
-     .image-text {
-      position: absolute;
+    
+    .image-text {
+      position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      padding: 10px;
+      padding: 10px; /* Black space around caption */
       background-color: rgba(0, 0, 0, 0.7);
       color: white;
       text-align: center;
@@ -313,7 +282,38 @@
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
     }
+
+    .image {
+      width: 200px;
+      height: 200px;
+      /* for some reason, setting margin as a # crops the top... */
+      background-color: #333;
+      border-radius: 10px; /* Determines shape of container box- 0 is sharp corners, 100 is circles */
+      overflow: hidden;
+      position: relative;
+      display: flex; 
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.3s ease-in-out;
+    }
+     
+     .image-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+     }
+
+     .image:hover .image-text {
+      opacity: 1;
+     }
+
+    .image:hover {
+      transform: scale(1.05);
+    }
+   
     
+
   </style>
 </head>
 <body>
@@ -348,20 +348,58 @@
       </table>
     </div>
 
-    <div class="picture-container">
+    <!-- <div class="picture-container"> OG code
       <img src="https://metrobots.github.io/assets/robots/a0.png" alt="Placeholder" class="picture" loading="lazy">
       <img src="https://metrobots.github.io/assets/robots/a1.png" alt="Placeholder" class="picture" loading="lazy">
       <img src="https://metrobots.github.io/assets/robots/a2.png" alt="Placeholder" class="picture" loading="lazy">
       <img src="https://metrobots.github.io/assets/robots/a3.png" alt="Placeholder" class="picture" loading="lazy">
       <img src="https://metrobots.github.io/assets/robots/a4.png" alt="Placeholder" class="picture" loading="lazy">
       <img src="https://metrobots.github.io/assets/robots/a5.png" alt="Placeholder" class="picture" loading="lazy">
-      <img src="https://metrobots.github.io/assets/robots/a6.png" alt="Placeholder" class="picture" loading="lazy">
-     <div class="image" style="width: 200px; height: 200px;"> 
-        <img src="https://metrobots.github.io/assets/robots/a5.png" alt="Placeholder" loading="lazy"> 
-        <div class="image-text">Steamworks (2017)</div>
-     </div> 
+      <img src="https://metrobots.github.io/assets/robots/a6.png" alt="Placeholder" class="picture" loading="lazy"> 
+    </div> -->
+ 
+     
+    <div class="image-container"> 
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/a0.png" alt="Placeholder" loading="lazy" width="200px">
+        <div class="image-text">Rapid React (2022) </div>
+      </div>
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/a1.png" alt="Placeholder" loading="lazy" height="200px">
+        <div class="image-text">Infinite Recharge (2021) </div>
+      </div>
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/ab2.png" alt="Placeholder" loading="lazy" height="200px">
+        <div class="image-text">Infinite Recharge (2020) </div>
+      </div>
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/a3.png" alt="Placeholder" loading="lazy" height="200px">
+        <div class="image-text">Destination: Deep Space (2019) </div>
+      </div>
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/a4.png" alt="Placeholder" loading="lazy" height="200px">
+        <div class="image-text">Power Up (2018) </div>
+      </div>
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/a5.png" alt="Placeholder" loading="lazy" width="200px">
+        <div class="image-text">Steamworks (2017) </div>
+      </div>
+      <div class="image" >
+        <img src="https://metrobots.github.io/assets/robots/a6.png" alt="Placeholder" loading="lazy" height="200px">
+        <div class="image-text">Stronghold (2016) </div>
+      </div>
     </div>
+  <br>
 
+      <!--<div class="image" style="width: 200px; height: 200px;"> 
+        <img src="https://metrobots.github.io/assets/robots/a5.png" alt="Steamworks 2017" class="image" loading="lazy"> 
+        <div class="image-text">Steamworks (2017) </div>
+      </div>
+    <br>
+      <div class="image-container" style="width: 200px; height: 200px;"> 
+        <img src="https://metrobots.github.io/assets/robots/a5.png" alt="Steamworks 2017" class="image" loading="lazy"> 
+        <div class="image-text">Steamworks (2017) </div>
+      </div> -->
     <div class="info-container">
       <div class="info-box">
         <h2 class="info-title">General Schedule</h2>
@@ -376,7 +414,6 @@
         <p class="info-description">We don't know yet, but it is most likely to be some combination of the Pittsburgh, Buckeye and Miami Valley Regionals. Comp dates coming soon!!!!!</p>
       </div>
     </div>
-  </div>
 
   <a href="#" class="home-button" id="homeButton"></a>
 
@@ -450,25 +487,69 @@
 
     const now = new Date();
     generateCalendar(now.getFullYear(), now.getMonth(), [
+ [
+    2,
+    "Build Meeting (3-6pm)"
+  ],
   [
+    3,
+    "Build Meeting (3-6pm)"
+  ],
+        [
     4,
-    "Team Meeting ((2:45-3:45))"
+    "Build Meeting (3-8pm)"
   ],
-  [
+        [
+    5,
+    "Build Meeting (3-6pm)"
+  ],
+        [
     7,
-    "Football Parking ((TBD))"
+    "Build Meeting (10am-4pm)"
   ],
-  [
+        [
+    9,
+    "Build Meeting (3-6pm)"
+  ],
+        [
+    10,
+    "Build Meeting (3-6pm)"
+  ],
+        [
+    11,
+    "Build Meeting (3-8pm)"
+  ],
+        [
+    12,
+    "Build Meeting (3-6pm)"
+  ],
+        [
+    14,
+    "Build Meeting (10am-4pm)"
+  ],
+        [
+    16,
+    "Build Meeting (3-6pm)"
+  ],
+        [
+    17,
+    "Build Meeting (3-6pm)"
+  ],
+        [
     18,
-    "Team Meeting ((2:45-3:45))"
+    "Build Meeting (3-8pm)"
   ],
-  [
+   [
+    19,
+    "Build Meeting (3-6pm)"
+  ],
+        [
     21,
-    "Football Parking ((TBD))"
+    "Build Meeting (10am-4pm)"
   ],
   [
     25,
-    "Team Meeting ((2:45-3:45))"
+    "Team Meeting ((3-4pm))"
   ]
 ]);
   </script>
