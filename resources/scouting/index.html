@@ -160,29 +160,10 @@
                         </label>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Coral?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="autoCoralYN" value="yes" onchange="toggleConditional(this, 'coralAutoLevelSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="autoCoralYN" value="no" onchange="toggleConditional(this, 'coralAutoLevelSection')"> No
-                        </label>
-                    </div>
-                    <div id="coralAutoLevelSection" class="conditional-section">
-                        <label>Coral Level</label>
-                        <select name="autoCoralLevel">
-                            <option value="">Select Level</option>
-                            <option value="L1">L1</option>
-                            <option value="L2">L2</option>
-                            <option value="L3">L3</option>
-                            <option value="L4">L4</option>
-                        </select>
-                    </div>
+               
                 </div>
                 <div class="form-group">
-                    <label>Algae?</label>
+                    <label>Fuel?</label>
                     <div class="radio-group">
                         <label>
                             <input type="radio" name="autoAlgaeYN" value="yes" onchange="toggleConditional(this, 'autoAlgaeSection')"> Yes
@@ -192,15 +173,41 @@
                         </label>
                     </div>
                     <div id="autoAlgaeSection" class="conditional-section">
-                        <label>Algae Action</label>
+                        <label>Amount of fuel scored:</label>
                         <div class="radio-group">
-                            <label>
-                                <input type="radio" name="autoAlgaeAction" value="remove"> Remove
+                             <label>
+                                <input type="number" name="teleopCoralL1" min="0" placeholder="L1">
                             </label>
                             <label>
-                                <input type="radio" name="autoAlgaeAction" value="score"> Score
+                                <input type="number" name="teleopCoralL2" min="0" placeholder="L2">
+                            </label>
+                            <label>
+                                <input type="number" name="teleopCoralL3" min="0" placeholder="L3">
+                            </label>
+                            <label>
+                                <input type="number" name="teleopCoralL4" min="0" placeholder="L4">
                             </label>
                         </div>
+                         <div class="form-group">
+                    <label>Auto Climb?</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="autoCoralYN" value="yes" onchange="toggleConditional(this, 'coralAutoLevelSection')"> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="autoCoralYN" value="no" onchange="toggleConditional(this, 'coralAutoLevelSection')"> No
+                        </label>
+                    </div>
+                    <div id="coralAutoLevelSection" class="conditional-section">
+                        <label>Climb Level:</label>
+                        <select name="autoCoralLevel">
+                            <option value="">Select Level</option>
+                            <option value="L1">No climb (unsuccessful)</option>
+                            <option value="L2">L1</option>
+                            <option value="L3">L2</option>
+                            <option value="L4">L3</option>
+                        </select>
+                    </div>
                     </div>
                 </div>
                 <div class="nav-buttons">
@@ -215,7 +222,7 @@
                     <h2>Teleop</h2>
                 </div>
                 <div class="form-group">
-                    <label>Coral?</label>
+                    <label>Fuel?</label>
                     <div class="radio-group">
                         <label>
                             <input type="radio" name="teleopCoralYN" value="yes" onchange="toggleConditional(this, 'teleopCoralSection')"> Yes
@@ -225,7 +232,7 @@
                         </label>
                     </div>
                     <div id="teleopCoralSection" class="conditional-section">
-                        <label>Coral Levels Scored</label>
+                        <label>Amount of fuel scored?</label>
                         <div class="radio-group">
                             <label>
                                 <input type="number" name="teleopCoralL1" min="0" placeholder="L1">
@@ -243,24 +250,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Algae?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="teleopAlgaeYN" value="yes" onchange="toggleConditional(this, 'teleopAlgaeSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="teleopAlgaeYN" value="no" onchange="toggleConditional(this, 'teleopAlgaeSection')"> No
-                        </label>
+    
                     </div>
                     <div id="teleopAlgaeSection" class="conditional-section">
-                        <label>Algae Scored</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="number" name="teleopAlgaeBarge" min="0" placeholder="Barge">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopAlgaeProcessor" min="0" placeholder="Processor">
-                            </label>
+                    
                         </div>
                     </div>
                 </div>
@@ -308,14 +301,12 @@
                         </label>
                     </div>
                     <div id="climbTypeSection" class="conditional-section">
-                        <label>Climb Type</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="climbType" value="deep"> Deep
-                            </label>
-                            <label>
-                                <input type="radio" name="climbType" value="shallow"> Shallow
-                            </label>
+                        <label>Climb Level</label>
+                        <option value="">Select Level</option>
+                            <option value="L1">No climb (unsuccessful)</option>
+                            <option value="L2">L1</option>
+                            <option value="L3">L2</option>
+                            <option value="L4">L3</option>
                         </div>
                     </div>
                 </div>
