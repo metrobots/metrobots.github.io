@@ -160,7 +160,6 @@
                         </label>
                     </div>
                 </div>
-               
                 </div>
                 <div class="form-group">
                     <label>Fuel?</label>
@@ -173,7 +172,7 @@
                         </label>
                     </div>
                     <div id="autoAlgaeSection" class="conditional-section">
-                        <label>Amount of fuel scored:</label>
+                        <label>Fuel scored:</label>
                         <div class="radio-group">
                              <label>
                                 <input type="number" name="teleopCoralL1" min="0" placeholder="L1">
@@ -188,8 +187,8 @@
                                 <input type="number" name="teleopCoralL4" min="0" placeholder="L4">
                             </label>
                         </div>
-                         <div class="form-group">
-                    <label>Auto Climb?</label>
+                        <div class="form-group">
+                    <label>Climb?</label>
                     <div class="radio-group">
                         <label>
                             <input type="radio" name="autoCoralYN" value="yes" onchange="toggleConditional(this, 'coralAutoLevelSection')"> Yes
@@ -199,10 +198,10 @@
                         </label>
                     </div>
                     <div id="coralAutoLevelSection" class="conditional-section">
-                        <label>Climb Level:</label>
+                        <label>Climb Level</label>
                         <select name="autoCoralLevel">
                             <option value="">Select Level</option>
-                            <option value="L1">No climb (unsuccessful)</option>
+                            <option value="L1">None (unsuccessful)</option>
                             <option value="L2">L1</option>
                             <option value="L3">L2</option>
                             <option value="L4">L3</option>
@@ -232,7 +231,7 @@
                         </label>
                     </div>
                     <div id="teleopCoralSection" class="conditional-section">
-                        <label>Amount of fuel scored?</label>
+                        <label>Fuel Scored:</label>
                         <div class="radio-group">
                             <label>
                                 <input type="number" name="teleopCoralL1" min="0" placeholder="L1">
@@ -248,13 +247,6 @@
                             </label>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-    
-                    </div>
-                    <div id="teleopAlgaeSection" class="conditional-section">
-                    
-                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -263,14 +255,10 @@
                         <label>
                             <input type="radio" name="intakeType" value="ground"> Ground
                         </label>
-                    </div>
-                </div>
                         <label>
                             <input type="radio" name="intakeType" value="station"> Station
                         </label>
                     </div>
-                </div>
-            </div>
                 </div>
                 <div class="form-group">
                     <label>Strategy</label>
@@ -304,14 +292,16 @@
                             <input type="radio" name="climbYN" value="no" onchange="toggleConditional(this, 'climbTypeSection')"> No
                         </label>
                     </div>
+                </div>
                     <div id="climbTypeSection" class="conditional-section">
-                        <label>Climb Level</label>
-                        <option value="">Select Level</option>
-                            <option value="L1">No climb (unsuccessful)</option>
+                        <select name="autoCoralLevel">
+                            <option value="">Select Level</option>
+                            <option value="L1">None (unsuccessful)</option>
                             <option value="L2">L1</option>
                             <option value="L3">L2</option>
                             <option value="L4">L3</option>
-                        </div>
+                        </select>
+                    </div>
                     </div>
                 </div>
                 <div class="nav-buttons">
