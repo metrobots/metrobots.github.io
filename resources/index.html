@@ -36,12 +36,6 @@
       justify-content: center;
       height: 100vh;
     }
-   
-    .container2 {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 50px 20px;
-    }
 
     .title {
       font-size: 3rem;
@@ -51,7 +45,7 @@
 
     .button-container {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
     }
 
@@ -217,7 +211,7 @@
 
     /* Sponsor Style */
     .sponsors {
-      margin-top: 50px;
+      margin-top: 10px;
       text-align: center;
     }
 
@@ -234,6 +228,9 @@
     <div class="button-container">
       <a href="swervesim/" class="button text-no-decoration">Swerve Simulator</a>
       <a href="scouting/" class="button text-no-decoration">Scouting App</a>
+    </div>
+      
+    <div class="button-container">
       <a href="https://www.instagram.com/metrobots3324/" class="button text-no-decoration" target="_blank">
         <span class="icon instagram-logo"></span>
         <span class="tooltip">Follow us on Instagram</span>
@@ -254,11 +251,29 @@
         <span class="icon mail-logo"></span>
         <span class="tooltip">Right-click to copy email</span>
       </a>
+    </div>
+    <br><br><br><br><br><br>
+    <div class="sponsors">
+      <h2>Sponsors</h2>
+      <div class="sponsor-logos"> <!-- <a href=> defines where the img links to. class= and target= make it open in a new tab. Battelle, OSU, Metro, PAST -->
+       <a href="https://www.battelle.org" class="text-no-decoration" target="_blank"> 
+        <img class="sponsor-logo" src="https://metrobots.github.io/assets/logos/10.png" alt="Battelle">
+       </a>  
+        
+       <a href="https://www.osu.edu" class="text-no-decoration" target="_blank">
+        <img class="sponsor-logo" src="https://metrobots.github.io/assets/logos/8.png" alt="THE Ohio State University">
+       </a>
+       
+       <a href="https://www.themetroschool.org" class="text-no-decoration" target="_blank">
+        <img class="sponsor-logo" src="https://metrobots.github.io/assets/logos/9.png" alt="The Metro Schools">
+       </a> 
+        
+       <a href="https://www.pastfoundation.org" class="text-no-decoration" target="_blank">
+        <img class="sponsor-logo" src="https://metrobots.github.io/assets/logos/6.png" alt="Past Foundation">
+       </a>
+      </div>
+    </div>
   </div>
-  </div>
-
-  
-
   <a href="#" class="home-button" id="homeButton"></a>
 
   <script>
@@ -269,9 +284,7 @@
     document.querySelector('.mail-button').addEventListener('contextmenu', function(event) {
       event.preventDefault();
       const email = 'team3324metrobots@gmail.com';
-     
     });
-
-   </script>
+  </script>
 </body>
 </html>
