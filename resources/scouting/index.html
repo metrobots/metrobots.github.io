@@ -1,47 +1,51 @@
-<<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>3324 Scouting Form</title>
-    <style>
-        :root {
-            --bg-dark: #121212;
-            --card-dark: #1E1E1E;
-            --text-light: #ffffff;
-            --accent-color: #4ECDC4;
-            --input-bg: #2C2C2C;
-        } 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .form-container {
-            background-color: var(--card-dark);
-            border-radius: 10px;
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .form-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-        .form-page {
+<!DOCTYPE html>
+<html lang="en-US">
+    <head> 
+        <meta name="viewport" content="width=device-width"> 
+        <meta charset="UTF-8"> 
+        <title>Scouting Form 3324 2nd Variant</title>
+        <style>
+            :root {
+                --bg-dark: #000000;
+                --card-dark: #042F56;
+                --text-light: #ffffff;
+                --accent-color: #0Ab5fd;
+                --input-bg: #A2B4C6; 
+            }
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family:'Courier New', Courier, monospace;
+                h1,h2,h3,h4 {
+                font-weight: normal;
+                }
+                background-color: var(--bg-dark);
+                color: var(--text-light);
+                line-height: 1.6;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+            .form-container {
+                background-color: var(--card-dark);
+                border-radius: 10px;
+                width: 100%;
+                max-width: 500px;
+                padding: 30px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            .form-header { 
+                text-align: center;
+                margin-bottom: 20px;
+                border-bottom: 1px solid #333;
+                padding-bottom: 10px;
+            }
+            .form-page {
             display: none;
         }
         .form-page.active {
@@ -77,6 +81,7 @@
             display: inline-block;
             padding: 10px 15px;
             background-color: var(--accent-color);
+            font-family: 'Courier New', Courier, monospace;
             color: var(--bg-dark);
             border: none;
             border-radius: 5px;
@@ -98,245 +103,225 @@
         .conditional-section.show {
             display: block;
         }
-    </style>
-</head>
-<body>
+        </style>
+    </head>
     <div class="form-container">
         <form id="scoutingForm" action="https://hooks.zapier.com/hooks/catch/19421684/2coyq0j/" method="POST">
-            <!-- General Page -->
-            <div id="generalPage" class="form-page active">
-                <div class="form-header">
-                    <h2>General</h2>
-                </div>
-                <div class="form-group">
-                    <label for="teamNumber">Team Number</label>
-                    <input type="number" id="teamNumber" name="teamNumber" required>
-                </div>
-                <div class="form-group">
-                    <label for="matchNumber">Match Number</label>
-                    <input type="number" id="matchNumber" name="matchNumber" required>
-                </div>
-                <div class="form-group">
-                    <label>Team Alliance</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="alliance" value="red" required> Red
-                        </label>
-                        <label>
-                            <input type="radio" name="alliance" value="blue" required> Blue
-                        </label>
-                    </div>
-                </div>
+         <!--all of the stuff above until now is just copied off of Mateo's code (save for some formatting changes because I felt like it), so if there's a problem there blame him. i'll try to keep everything I do similar (i.e. keeping names the same) so it's not too confusing!!-->
+         <!--General Page-->
+         <div id="generalPage" class="form-page active">
+         <div class="form-header">
+            <h2>GENERAL</h2> 
+         </div>
+         <div class="form-group"> 
+            <label for="teamNumber">Team Number</label>
+            <input type="number" id="teamNumber" name="teamNumber" required>
+         </div>
+         <div class="form-group">
+            <label for="matchNumber">Match Number</label>
+            <input type="number" id="matchNumber" name="matchNumber" required>
+         </div>
+         <div class="form-group">
+            <label>Team Alliance</label>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="alliance" value="red" required> Red
+                </label>
+
+                <label> 
+                    <input type="radio" name="alliance" value="blue" required> Blue
+                </label>
             </div>
         </form>
-                <div class="form-group">
-                    <label>Functional?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="functional" value="yes" required> Yes
+            <div class="form-group">
+                <label>Functional?</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="functional" value="yes" required> Yes 
                         </label>
                         <label>
                             <input type="radio" name="functional" value="no" required> No
                         </label>
-                    </div>
-                </div>
-                <div class="nav-buttons">
-                    <div></div>
-                    <button type="button" class="btn" onclick="nextPage('generalPage', 'autoPage')">Next</button>
+                    </label>
                 </div>
             </div>
-
-            <!-- Auto Page -->
-            <!-- the buggy edits were from here to endgame. need to fix them. -->
-            <div id="autoPage" class="form-page">
-                <div class="form-header">
-                    <h2>Autonomous</h2>
-                </div> 
-                <div class="form-group">
-                    <label>Move?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="autoMove" value="yes" onchange="toggleConditional(this, 'coralAutoSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="autoMove" value="no" onchange="toggleConditional(this, 'coralAutoSection')"> No
-                        </label>
-                    </div>
-                </div>
-                </div>
-                <div class="form-group">
-                    <label>Fuel?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="autoAlgaeYN" value="yes" onchange="toggleConditional(this, 'autoAlgaeSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="autoAlgaeYN" value="no" onchange="toggleConditional(this, 'autoAlgaeSection')"> No
-                        </label>
-                    </div>
-                    <div id="autoAlgaeSection" class="conditional-section">
-                        <label>Fuel scored:</label>
-                        <div class="radio-group">
-                             <label>
-                                <input type="number" name="teleopCoralL1" min="0" placeholder="L1">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopCoralL2" min="0" placeholder="L2">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopCoralL3" min="0" placeholder="L3">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopCoralL4" min="0" placeholder="L4">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                        <div class="form-group">
-                    <label>Climb?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="autoCoralYN" value="yes" onchange="toggleConditional(this, 'coralAutoLevelSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="autoCoralYN" value="no" onchange="toggleConditional(this, 'coralAutoLevelSection')"> No
-                        </label>
-                    </div>
-                    <div id="coralAutoLevelSection" class="conditional-section">
-                        <label>Climb Level</label>
-                        <select name="autoCoralLevel">
-                            <option value="">Select Level</option>
-                            <option value="L1">None (unsuccessful)</option>
-                            <option value="L2">L1</option>
-                            <option value="L3">L2</option>
-                            <option value="L4">L3</option>
-                        </select>
-                    </div>
-                    </div>
-                </div>
-                <div class="nav-buttons">
-                    <button type="button" class="btn" onclick="nextPage('autoPage', 'generalPage')">Previous</button>
-                    <button type="button" class="btn" onclick="nextPage('autoPage', 'teleopPage')">Next</button>
-                </div>
+            <div class="nav-buttons">
+                <div></div>
+                <button type="button" class="btn" onclick="nextPage('generalPage', 'autoPage')"><b>NEXT</b></button>
             </div>
-
-            <!-- Teleop Page -->
-            <div id="teleopPage" class="form-page">
-                <div class="form-header">
-                    <h2>Teleop</h2>
-                </div>
-                <div class="form-group">
-                    <label>Fuel?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="teleopCoralYN" value="yes" onchange="toggleConditional(this, 'teleopCoralSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="teleopCoralYN" value="no" onchange="toggleConditional(this, 'teleopCoralSection')"> No
-                        </label>
-                    </div>
-                    <div id="teleopCoralSection" class="conditional-section">
-                        <label>Fuel Scored:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="number" name="teleopCoralL1" min="0" placeholder="L1">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopCoralL2" min="0" placeholder="L2">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopCoralL3" min="0" placeholder="L3">
-                            </label>
-                            <label>
-                                <input type="number" name="teleopCoralL4" min="0" placeholder="L4">
-                            </label>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Intake Type</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="intakeType" value="ground"> Ground
-                        </label>
-                        <label>
-                            <input type="radio" name="intakeType" value="station"> Station
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Strategy</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="strategy" value="defense"> Defense
-                        </label>
-                        <label>
-                            <input type="radio" name="strategy" value="offense"> Offense
-                        </label>
-                    </div>
-                </div>
-                <div class="nav-buttons">
-                    <button type="button" class="btn" onclick="nextPage('teleopPage', 'autoPage')">Previous</button>
-                    <button type="button" class="btn" onclick="nextPage('teleopPage', 'endgamePage')">Next</button>
-                </div>
-            </div>
-
-            <!-- Endgame Page -->
-            <div id="endgamePage" class="form-page">
-                <div class="form-header">
-                    <h2>Endgame</h2>
-                </div>
-                <div class="form-group">
-                    <label>Climb?</label>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="climbYN" value="yes" onchange="toggleConditional(this, 'climbTypeSection')"> Yes
-                        </label>
-                        <label>
-                            <input type="radio" name="climbYN" value="no" onchange="toggleConditional(this, 'climbTypeSection')"> No
-                        </label>
-                    </div>
-                </div>
-                    <div id="climbTypeSection" class="conditional-section">
-                        <select name="autoCoralLevel">
-                            <option value="">Select Level</option>
-                            <option value="L1">None (unsuccessful)</option>
-                            <option value="L2">L1</option>
-                            <option value="L3">L2</option>
-                            <option value="L4">L3</option>
-                        </select>
-                    </div>
-                    </div>
-                </div>
-                <div class="nav-buttons">
-                    <button type="button" class="btn" onclick="nextPage('endgamePage', 'teleopPage')">Previous</button>
-                    <button type="submit" class="btn">Submit</button>
-                </div>
-            </div>
-        </form>
+         </div>
+         </div>
+         
+         <!--auto page! finally!-->
+<div id="autoPage" class= "form-page">
+    <div class="form-header">
+        <h2> AUTONOMOUS</h2>
+    </div>
+    <div class="form-group">
+        <label>Move?</label>
+        <div class="radio-group"> 
+            <label>
+        <input type="radio" name="autoMove" value="yes" onchange="toggleConditional(this, 'moveAutoSection')">Yes
+    </label>
+    <label> 
+    <input type="radio" name="autoMove" value="no" onchange="toggleConditional(this, 'moveAutoSection')">No
+    </label>
+    </div>
+    <label>Fuel?</label>
+    <div class="radio-group">
+        <label>
+            <input type="radio" name="autoFuelYN" value="yes" onchange="toggleConditional(this,'fuelAutoSection')" required> Yes 
+            <input type="radio" name="autoFuelYN" value="no" onchange="toggleConditional(this,'fuelAutoSection')" required> No
+        </label>
     </div>
 
-    <script>
-        function nextPage(currentPageId, nextPageId) {
-            document.getElementById(currentPageId).classList.remove('active');
-            document.getElementById(nextPageId).classList.add('active');
-        }
+    <div id="fuelAutoSection" class="conditional-section">
+        <label>Fuel Scored:</label>
+        <div class="radio-group">
+            <input type="number" name="fuelScored">
+        </div>
+        </div>
+        <div class="form-group"> 
+            <label>Climb?</label>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="autoClimbYN" value="yes" onchange="toggleConditional(this, 'autoClimbLevelSection')" required>Yes
+                </label>
+                <label>
+                    <input type="radio" name="autoClimbYN" value="no" onchange="toggleConditional(this, 'autoClimbLevelSection')" required>No 
+                </label>
+            </div>
+            <div id="autoClimbLevelSection" class="conditional-section">
+                <label>Climb Level</label>
+                <select name="autoClimbLevel">
+                    <option value="">Select Level</option>
+                    <option value="L0">None (unsuccessful)</option>
+                    <option value="L1">L1</option>
+                    <option value="L2">L2</option>
+                    <option value="L3">L3</option>
+                </select>
+            </div>
+        
+        </div>
+</div>
+<div class="nav-buttons">
+    <button type="button" class="btn" onclick="nextPage('autoPage', 'generalPage')"><b>PREVIOUS</b></button>
+    <button type="button" class="btn" onclick="nextPage('autoPage', 'teleopPage')"><b>NEXT</b></button>
+</div>
+</div>
 
-        function toggleConditional(radio, sectionId) {
-            const section = document.getElementById(sectionId);
-            if (radio.value === 'yes') {
-                section.classList.add('show');
-            } else {
-                section.classList.remove('show');
-            }
-        }
 
-        // Optional: Form validation before submission
-        document.getElementById('scoutingForm').addEventListener('submit', function(e) {
-            // Add any custom validation logic here
-            alert('Form submitted! Data will be sent to Zapier.');
-        });
-    </script>
-</body>
+
+<!--Tele-op!!! Yay!!!-->
+<div id="teleopPage" class="form-page">
+    <div class="form-header">
+        <h2>TELEOP</h2>
+        </div>
+            <label>Fuel?</label>
+            <div class="radio-group">
+            <label>
+                <input type="radio" name="teleopFuelYN" value="yes" onchange="toggleConditional(this, 'teleopFuelSection')" required>Yes
+            </label>
+            <label>
+                <input type="radio" name="teleopFuelYN" value="no" onchange="toggleConditional(this, 'teleopFuelSection')" required>No 
+        </label>
+    </div>
+
+    <div id="teleopFuelSection" class="conditional-section">
+        <label>Fuel Scored:</label>
+        <div class="radio-group"> 
+            <label>
+                <input type="number" name="teleopFuelScored" min="0">
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Intake Type?</label>
+        <label>
+        <input type="radio" name="intakeType" value="ground" required> Ground
+        </label> 
+        <label>
+        <input type="radio" name="intakeType" value="station" required> Station
+        </label>
+        </div>
+
+    <div class="form-group"> 
+        <label>Strategy?</label>
+        <div class="radio-group"> 
+            <label>
+                <input type="radio" name="strategy" value="defense" required>Defense
+            </label>
+            <label>
+                <input type="radio" name="strategy" value="offense" required>Offense
+            </label>
+        </div>
+    </div>
+    <div class="nav-buttons">
+        <button type="button" class="btn" onclick="nextPage('teleopPage', 'autoPage')"><b>PREVIOUS</b></button>
+        <button type="button" class="btn" onclick="nextPage('teleopPage', 'endgamePage')"><b>NEXT</b></button>
+    </div>
+    </div>
+    <!--Endgame Page! Almost finished!-->
+<div id="endgamePage" class="form-page">
+    <div class="form-header">
+        <h2>ENDGAME</h2>
+    </div>
+    <div class="form-group">
+        <label>Climb?</label>
+        <div class="radio-group">
+            <label>
+            <input type="radio" name="endgameClimbYN" value="yes" onchange="toggleConditional(this, 'endgameClimbSection')" required> Yes
+            </label>
+            <label>
+                <input type="radio" name="endgameClimbYN" value="no" onchange="toggleConditional(this, 'endgameClimbSection')" required> No
+            </label>
+        </div>
+        <div id="endgameClimbSection" class="conditional-section">
+            <label>Level?</label>
+            <select>
+                <option value="" >Select level</option>
+                <option value="L0">None (unsuccessful)</option>
+                <option value="L1">L1</option>
+                <option value="L2">L2</option>
+                <option value="L3">L3</option>
+            </select>
+        </div>
+    </div>
+    <div class="nav-buttons">
+        <button type="button" class="btn" onclick="nextPage('endgamePage', 'teleopPage')"><b>PREVIOUS</b></button>
+        <button type="submit" class="btn"><b>SUBMIT</b></button>
+    </div>
+    </div>
+</div>
+</div>
+</div>
+
+    
+     </div>
+     
+        </form>
+        
+       
+
+<script>
+    function nextPage(currentPageId, nextPageId) {
+        document.getElementById(currentPageId).classList.remove('active');
+        document.getElementById(nextPageId).classList.add('active');
+    }
+    function toggleConditional(radio, sectionId) {
+        const section = document.getElementById(sectionId);
+        if (radio.value === 'yes') {
+            section.classList.add('show');
+        } else {
+            section.classList.remove('show');
+        }
+    }
+
+// Optional: Form validation before submission
+    document.getElementById('scoutingForm').addEventListener('submit', function(e) {
+        // Add any custom validation logic here
+        alert('Form submitted! Form will be submitted to Zapier. Thank you!~');
+    });
+</script>
+    
 </html>
