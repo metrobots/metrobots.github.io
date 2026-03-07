@@ -210,7 +210,8 @@
       background-color: rgba(0, 0, 0, 0.2);
     }
  /* End of page formating */
-    
+
+    /* Start of content and container */
     .fullview {
       position: absolute;
       width: 100%;
@@ -639,6 +640,7 @@
 
     .screen>.screen-content>.screen-user>.link:is(:hover, :focus) {
       text-decoration: underline;
+       /* End of content and container */
     }
 
     @media(max-width: 700px) {
@@ -1084,6 +1086,8 @@
         navHeader.classList.add('visible');
       }); 
     }
+
+      /* Start of Chances of different versions of "Welcome" in different languages */
     const welcomeMessages = [
       "Welcome",
       "Welcome",
@@ -1114,7 +1118,9 @@
       "Üdvözöljük",
       "வரவேற்கிறேன்"
     ];
-
+    /* End of Chances of different versions of "Welcome" in different languages */
+    
+/* Shuffled welcome and Metrobots commands */
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
