@@ -588,6 +588,7 @@ function nextSingle(){
   const gp=getGP();
   G.challenge=rnd(G.diff,G.challenge?.name);
   G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+  G.pb={};
   setC(G.challenge,'// DO THIS //');
   snapshotBtns(gp);
   startCTimer();
@@ -596,6 +597,7 @@ function nextSeq(){
   const gp=getGP();
   G.seq=genSeq(G.diff);G.seqIdx=0;G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
   G.challenge=G.seq[0];
+  G.pb={};
   setC(G.challenge,'// SEQUENCE //');renderSeq();
   snapshotBtns(gp);
   startCTimer();
@@ -623,6 +625,7 @@ function handleCorrect(){
       setTimeout(nextSeq,300);
     } else {
       G.challenge=G.seq[G.seqIdx];G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+      G.pb={};
       setC(G.challenge,'// SEQUENCE //');renderSeq();
       snapshotBtns(getGP());
       startCTimer();
