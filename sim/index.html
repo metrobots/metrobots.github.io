@@ -573,10 +573,15 @@ function startGame(){
 }
 
 function snapshotBtns(gp){
-  // record currently held buttons so we don't punish on them at start
+  // record currently held buttons so we don't fire on a button that was already
+  // held when the challenge started. Each entry clears itself on release.
   if(!gp)return;
   G.btnWasPressed={};
-  for(let i=0;i<gp.buttons.length;i++) G.btnWasPressed[i]=bpressed(gp,i);
+  for(let i=0;i<gp.buttons.length;i++){
+    // Only snapshot non-target buttons — never block the target button itself
+    const targetId = G.challenge ? G.challenge.id : -1;
+    if(i !== targetId) G.btnWasPressed[i]=bpressed(gp,i);
+  }
 }
 
 function nextSingle(){
@@ -673,6 +678,8 @@ function checkInput(gp){
     for(let i=0;i<gp.buttons.length;i++){
       const pressed=bpressed(gp,i);
       const wasP=G.pb[i]||false;
+      // Clear snapshot once button is released — next press always fires
+      if(!pressed && G.btnWasPressed[i]) G.btnWasPressed[i]=false;
       const wasSnapshot=G.btnWasPressed[i]||false;
       if(pressed&&!wasP&&!wasSnapshot){
         if(i===c.id) handleCorrect();
