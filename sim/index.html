@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTRL TRAINER</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --panel: #12121a;
+  --border: #2a2a3a;
+  --accent: #00ffcc;
+  --accent2: #ff3366;
+  --accent3: #ffcc00;
+  --accent4: #3399ff;
+  --dim: #3a3a4a;
+  --text: #e0e0f0;
+  --textdim: #666680;
+  --font: 'Press Start 2P', monospace;
+  --mono: 'Share Tech Mono', monospace;
+  --glow:  0 0 8px #00ffcc88, 0 0 20px #00ffcc33;
+  --glow2: 0 0 8px #ff336688, 0 0 20px #ff336633;
+  --glow3: 0 0 8px #ffcc0088, 0 0 20px #ffcc0033;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;display:flex;flex-direction:column;align-items:center;}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:1000;}
+.container{width:100%;max-width:940px;padding:20px 16px 60px;}
+.header{text-align:center;margin-bottom:18px;}
+.header h1{font-size:clamp(14px,4vw,24px);color:var(--accent);text-shadow:var(--glow);letter-spacing:4px;animation:flkr 7s infinite;}
+@keyframes flkr{0%,94%,96%,100%{opacity:1}95%{opacity:0.5}}
+.header-line{height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin-top:10px;}
+
+/* DEBUG */
+.debug-panel{background:#05050d;border:1px solid var(--accent4);border-radius:4px;padding:12px;margin-bottom:14px;font-family:var(--mono);font-size:12px;}
+.debug-title{font-family:var(--font);font-size:7px;color:var(--accent4);letter-spacing:2px;margin-bottom:8px;}
+.debug-status{color:var(--accent2);font-size:12px;margin-bottom:6px;}
+.debug-status.ok{color:var(--accent);}
+.dbg-axes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.axis-item{flex:1;min-width:70px;}
+.axis-label{font-size:10px;color:var(--textdim);margin-bottom:2px;}
+.axis-track{height:7px;background:var(--border);border-radius:4px;position:relative;overflow:hidden;}
+.axis-fill{height:100%;background:var(--dim);position:absolute;left:50%;top:0;border-radius:4px;}
+.axis-val{font-size:10px;color:var(--accent3);margin-top:2px;}
+.dbg-btn-grid{display:flex;flex-wrap:wrap;gap:4px;}
+.dbg-btn{font-family:var(--mono);font-size:10px;padding:3px 7px;border:1px solid var(--dim);border-radius:2px;color:var(--textdim);background:var(--panel);}
+.dbg-btn.on{border-color:var(--accent);color:var(--accent);background:rgba(0,255,204,0.1);}
+
+/* SCREENS */
+.screen{display:none;}.screen.active{display:block;}
+.section-title{font-size:7px;color:var(--textdim);letter-spacing:2px;margin-bottom:8px;}
+.mode-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.mode-btn{font-family:var(--font);font-size:7px;padding:8px 12px;background:var(--panel);border:1px solid var(--dim);color:var(--textdim);cursor:pointer;border-radius:2px;transition:all 0.1s;letter-spacing:1px;}
+.mode-btn:hover{border-color:var(--accent);color:var(--accent);}
+.mode-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(0,255,204,0.08);box-shadow:var(--glow);}
+.start-btn{font-family:var(--font);font-size:10px;padding:14px 28px;background:transparent;border:2px solid var(--accent);color:var(--accent);cursor:pointer;border-radius:2px;letter-spacing:3px;box-shadow:var(--glow);margin-top:12px;transition:all 0.15s;display:block;width:100%;text-align:center;}
+.start-btn:hover{background:rgba(0,255,204,0.12);}
+.start-btn:disabled{opacity:.35;cursor:not-allowed;border-color:var(--dim);color:var(--textdim);box-shadow:none;}
+
+/* SCORE */
+.score-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;}
+.stat-box{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:10px 8px;text-align:center;}
+.stat-label{font-size:6px;color:var(--textdim);letter-spacing:1px;margin-bottom:5px;}
+.stat-value{font-size:clamp(12px,2.5vw,18px);color:var(--accent);text-shadow:var(--glow);}
+
+/* PUNISHMENT FLASH */
+.punish-overlay{position:fixed;inset:0;background:rgba(255,51,102,0);pointer-events:none;z-index:900;transition:background 0.05s;}
+.punish-overlay.flash{background:rgba(255,51,102,0.18);}
+
+/* CHALLENGE BOX */
+.c-box{background:#080810;border:2px solid var(--accent);border-radius:4px;padding:20px;text-align:center;margin-bottom:12px;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:var(--glow),inset 0 0 30px rgba(0,255,204,0.03);transition:border-color .15s,box-shadow .15s;position:relative;}
+.c-box.success{border-color:var(--accent3);box-shadow:var(--glow3);animation:pop .25s ease;}
+.c-box.fail{border-color:var(--accent2);box-shadow:var(--glow2);animation:shk .3s ease;}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+.c-type{font-size:7px;color:var(--textdim);letter-spacing:3px;margin-bottom:8px;}
+.c-icon{font-size:40px;margin-bottom:8px;line-height:1;}
+.c-text{font-size:clamp(9px,2.3vw,14px);color:var(--accent);text-shadow:var(--glow);letter-spacing:2px;line-height:1.6;}
+.c-hint{font-family:var(--mono);font-size:11px;color:var(--textdim);margin-top:6px;}
+.punish-label{position:absolute;top:8px;right:10px;font-size:7px;color:var(--accent2);opacity:0;transition:opacity .3s;}
+.punish-label.show{opacity:1;}
+.hold-wrap{width:180px;height:10px;background:var(--border);border-radius:5px;margin-top:10px;overflow:hidden;}
+.hold-bar{height:100%;width:0%;background:var(--accent3);border-radius:5px;box-shadow:var(--glow3);}
+
+/* TIMER */
+.timer-wrap{height:6px;background:var(--border);border-radius:3px;margin-bottom:12px;overflow:hidden;}
+.timer-bar{height:100%;background:var(--accent);border-radius:3px;width:100%;transition:width .08s linear,background .3s;box-shadow:var(--glow);}
+.timer-bar.warn{background:var(--accent3);}
+.timer-bar.danger{background:var(--accent2);}
+
+/* PENALTY BAR */
+.penalty-wrap{height:4px;background:var(--border);border-radius:2px;margin-bottom:10px;overflow:hidden;}
+.penalty-bar{height:100%;width:0%;background:var(--accent2);border-radius:2px;transition:width .2s;box-shadow:var(--glow2);}
+
+/* SEQUENCE */
+.seq-display{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:10px;}
+.seq-step{font-family:var(--mono);font-size:10px;padding:3px 7px;border:1px solid var(--dim);border-radius:2px;color:var(--textdim);background:var(--panel);}
+.seq-step.done{border-color:var(--accent3);color:var(--accent3);}
+.seq-step.cur{border-color:var(--accent);color:var(--accent);background:rgba(0,255,204,0.1);animation:blink .5s infinite;}
+.seq-step.wrong{border-color:var(--accent2);color:var(--accent2);animation:none;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:620px){.two-col{grid-template-columns:1fr}.score-strip{grid-template-columns:repeat(3,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:14px;}
+.panel-title{font-size:7px;color:var(--textdim);letter-spacing:2px;margin-bottom:10px;border-bottom:1px solid var(--border);padding-bottom:6px;}
+
+/* STICK CANVAS */
+.stick-canvas-wrap{display:flex;gap:12px;justify-content:center;margin-bottom:10px;}
+.stick-wrap{text-align:center;}
+.stick-label{font-size:7px;color:var(--textdim);letter-spacing:1px;margin-bottom:4px;}
+canvas.stick-cv{display:block;margin:0 auto;}
+
+/* TRIGGERS */
+.trig-row{display:flex;gap:8px;margin-bottom:10px;}
+.trig-item{flex:1;}
+.trig-label{font-size:7px;color:var(--textdim);margin-bottom:3px;}
+.trig-track{height:10px;background:var(--border);border-radius:5px;overflow:hidden;}
+.trig-fill{height:100%;width:0%;background:var(--dim);border-radius:5px;transition:width .04s;}
+.trig-fill.on{background:var(--accent);box-shadow:var(--glow);}
+
+/* BTN PILLS */
+.btn-row{display:flex;gap:5px;flex-wrap:wrap;}
+.btn-pill{font-family:var(--mono);font-size:11px;padding:4px 8px;border:1px solid var(--dim);border-radius:2px;color:var(--textdim);background:var(--panel);transition:all .08s;}
+.btn-pill.on{border-color:var(--accent);color:var(--accent);background:rgba(0,255,204,0.12);box-shadow:var(--glow);}
+
+/* LOG */
+.log{font-family:var(--mono);font-size:11px;height:110px;overflow-y:auto;background:#050508;border:1px solid var(--border);border-radius:3px;padding:8px;line-height:1.8;margin-top:8px;}
+.log::-webkit-scrollbar{width:3px;}.log::-webkit-scrollbar-thumb{background:var(--dim);}
+.le{color:var(--textdim);}.le.ok{color:var(--accent);}.le.fail{color:var(--accent2);}.le.warn{color:var(--accent3);}.le.info{color:var(--accent4);}
+.ctrl-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+
+/* RESULTS */
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.res-stat{background:var(--panel);border:1px solid var(--border);padding:12px;border-radius:4px;text-align:center;}
+.res-label{font-size:7px;color:var(--textdim);margin-bottom:6px;letter-spacing:1px;}
+.res-val{font-size:22px;color:var(--accent);text-shadow:var(--glow);}
+.rank-badge{font-size:40px;text-align:center;margin:10px 0;}
+.rank-text{font-size:11px;color:var(--accent3);text-shadow:var(--glow3);text-align:center;margin-bottom:16px;letter-spacing:2px;}
+</style>
+</head>
+<body>
+<div class="punish-overlay" id="punish-overlay"></div>
+<div class="container">
+  <div class="header">
+    <h1>◀ CTRL TRAINER ▶</h1>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- DEBUG -->
+  <div class="debug-panel">
+    <div class="debug-title">// CONTROLLER STATUS //</div>
+    <div class="debug-status" id="dbg-status">SCANNING — press any button on your controller</div>
+    <div id="dbg-detail" style="display:none">
+      <div class="dbg-axes">
+        <div class="axis-item"><div class="axis-label">LS-X</div><div class="axis-track"><div class="axis-fill" id="ax0" style="width:0%"></div></div><div class="axis-val" id="axv0">0.00</div></div>
+        <div class="axis-item"><div class="axis-label">LS-Y</div><div class="axis-track"><div class="axis-fill" id="ax1" style="width:0%"></div></div><div class="axis-val" id="axv1">0.00</div></div>
+        <div class="axis-item"><div class="axis-label">RS-X</div><div class="axis-track"><div class="axis-fill" id="ax2" style="width:0%"></div></div><div class="axis-val" id="axv2">0.00</div></div>
+        <div class="axis-item"><div class="axis-label">RS-Y</div><div class="axis-track"><div class="axis-fill" id="ax3" style="width:0%"></div></div><div class="axis-val" id="axv3">0.00</div></div>
+      </div>
+      <div class="dbg-btn-grid" id="dbg-btn-grid"></div>
+    </div>
+  </div>
+
+  <!-- START -->
+  <div id="start-screen" class="screen active">
+    <div style="margin-bottom:14px;">
+      <div class="section-title">// TRAINING MODE //</div>
+      <div class="mode-strip">
+        <button class="mode-btn active" data-mode="sequence">SEQUENCE</button>
+        <button class="mode-btn" data-mode="timed">TIMED BLITZ</button>
+        <button class="mode-btn" data-mode="one-by-one">ONE BY ONE</button>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="section-title">// DIFFICULTY //</div>
+      <div class="mode-strip">
+        <button class="mode-btn active" data-diff="easy">EASY</button>
+        <button class="mode-btn" data-diff="medium">MEDIUM</button>
+        <button class="mode-btn" data-diff="hard">HARD</button>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <div class="section-title">// PUNISHMENT FOR WRONG INPUT //</div>
+      <div class="mode-strip">
+        <button class="mode-btn active" data-punish="freeze">TIME FREEZE (2s)</button>
+        <button class="mode-btn" data-punish="score">SCORE PENALTY</button>
+        <button class="mode-btn" data-punish="reset">SEQUENCE RESET</button>
+        <button class="mode-btn" data-punish="all">ALL OF THE ABOVE</button>
+      </div>
+    </div>
+    <button class="start-btn" id="start-btn" disabled>WAITING FOR CONTROLLER...</button>
+  </div>
+
+  <!-- GAME -->
+  <div id="game-ui" class="screen">
+    <div class="score-strip">
+      <div class="stat-box"><div class="stat-label">SCORE</div><div class="stat-value" id="s-score">0</div></div>
+      <div class="stat-box"><div class="stat-label">STREAK</div><div class="stat-value" id="s-streak" style="color:var(--accent3)">0</div></div>
+      <div class="stat-box"><div class="stat-label">CORRECT</div><div class="stat-value" id="s-correct" style="color:var(--accent4)">0</div></div>
+      <div class="stat-box"><div class="stat-label">ERRORS</div><div class="stat-value" id="s-errors" style="color:var(--accent2)">0</div></div>
+      <div class="stat-box"><div class="stat-label">PENALTY</div><div class="stat-value" id="s-penalty" style="color:var(--accent2)">0</div></div>
+    </div>
+    <div class="timer-wrap"><div class="timer-bar" id="timer-bar"></div></div>
+    <div class="penalty-wrap"><div class="penalty-bar" id="penalty-bar"></div></div>
+
+    <div class="c-box" id="c-box">
+      <div class="punish-label" id="punish-label">MISINPUT!</div>
+      <div class="c-type" id="c-type">READY</div>
+      <div class="c-icon" id="c-icon">🎮</div>
+      <div class="c-text" id="c-text">STARTING...</div>
+      <div id="c-extra"></div>
+      <div class="c-hint" id="c-hint"></div>
+      <div class="seq-display" id="seq-disp" style="display:none"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">// LIVE INPUT //</div>
+        <div class="stick-canvas-wrap">
+          <div class="stick-wrap">
+            <div class="stick-label">L STICK</div>
+            <canvas class="stick-cv" id="cv-ls" width="100" height="100"></canvas>
+          </div>
+          <div class="stick-wrap">
+            <div class="stick-label">R STICK</div>
+            <canvas class="stick-cv" id="cv-rs" width="100" height="100"></canvas>
+          </div>
+        </div>
+        <div class="trig-row">
+          <div class="trig-item"><div class="trig-label">LT</div><div class="trig-track"><div class="trig-fill" id="lt-f"></div></div></div>
+          <div class="trig-item"><div class="trig-label">RT</div><div class="trig-track"><div class="trig-fill" id="rt-f"></div></div></div>
+        </div>
+        <div class="btn-row" id="live-btns"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">// LOG //</div>
+        <div class="log" id="log"></div>
+        <div class="ctrl-row">
+          <button class="mode-btn" id="pause-btn">⏸ PAUSE</button>
+          <button class="mode-btn" id="quit-btn">✕ QUIT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-screen" class="screen">
+    <div class="rank-badge" id="r-badge">🏆</div>
+    <div class="rank-text" id="r-text">COMPLETE</div>
+    <div class="result-grid">
+      <div class="res-stat"><div class="res-label">FINAL SCORE</div><div class="res-val" id="r-score">0</div></div>
+      <div class="res-stat"><div class="res-label">ACCURACY</div><div class="res-val" id="r-acc" style="color:var(--accent3)">0%</div></div>
+      <div class="res-stat"><div class="res-label">BEST STREAK</div><div class="res-val" id="r-streak" style="color:var(--accent4)">0</div></div>
+      <div class="res-stat"><div class="res-label">TOTAL PENALTY</div><div class="res-val" id="r-penalty" style="color:var(--accent2)">0</div></div>
+    </div>
+    <button class="start-btn" id="again-btn">▶ PLAY AGAIN</button>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+// ── SCREENS ───────────────────────────────────────────────
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+
+// ── GAMEPAD ───────────────────────────────────────────────
+function getGP(){try{const p=navigator.getGamepads();for(let i=0;i<p.length;i++)if(p[i]&&p[i].connected)return p[i];}catch(e){}return null;}
+function bval(gp,i){const b=gp.buttons[i];return b?(typeof b==='object'?b.value:b):0;}
+function bpressed(gp,i){const b=gp.buttons[i];return b?(typeof b==='object'?b.pressed:b>0.5):false;}
+
+// ── DEBUG BUILD ───────────────────────────────────────────
+let dbgBuilt=false,liveBtnsBuilt=false;
+const BNAMES=['A','B','X','Y','LB','RB','LT','RT','SEL','STA','LS','RS','↑','↓','←','→'];
+const BCOLORS=['#00cc44','#ff3333','#3399ff','#ffcc00','#cc88ff','#cc88ff','#ff9933','#ff9933','#888','#888','#aaa','#aaa'];
+
+function buildDebug(gp){
+  if(dbgBuilt)return; dbgBuilt=true;
+  const g=$('dbg-btn-grid'); g.innerHTML='';
+  for(let i=0;i<gp.buttons.length;i++){const d=document.createElement('div');d.className='dbg-btn';d.id='db-'+i;d.textContent=BNAMES[i]||'B'+i;g.appendChild(d);}
+}
+function buildLiveBtns(gp){
+  if(liveBtnsBuilt)return; liveBtnsBuilt=true;
+  const r=$('live-btns'); r.innerHTML='';
+  for(let i=0;i<Math.min(gp.buttons.length,16);i++){const s=document.createElement('span');s.className='btn-pill';s.id='lbtn-'+i;s.textContent=BNAMES[i]||'B'+i;if(BCOLORS[i])s.style.color=BCOLORS[i];r.appendChild(s);}
+}
+
+function updateDebug(gp){
+  const st=$('dbg-status'),det=$('dbg-detail');
+  if(!gp){st.textContent='NO CONTROLLER — plug in and press a button';st.className='debug-status';det.style.display='none';return false;}
+  st.textContent='✓ '+gp.id.substring(0,55); st.className='debug-status ok'; det.style.display='block';
+  buildDebug(gp); buildLiveBtns(gp);
+  for(let i=0;i<4;i++){const v=gp.axes[i]||0,f=$('ax'+i),vv=$('axv'+i);if(f){const pct=Math.abs(v)*50;f.style.width=pct+'%';f.style.left=(v<0?(50-pct):50)+'%';f.style.background=Math.abs(v)>0.1?'var(--accent)':'var(--dim)';}if(vv)vv.textContent=v.toFixed(2);}
+  for(let i=0;i<gp.buttons.length;i++){const on=bpressed(gp,i)||bval(gp,i)>0.5;const d=$('db-'+i);if(d)d.className='dbg-btn'+(on?' on':'');const l=$('lbtn-'+i);if(l)l.className='btn-pill'+(on?' on':'');}
+  const lt=bval(gp,6),rt=bval(gp,7);
+  const ltf=$('lt-f'),rtf=$('rt-f');
+  if(ltf){ltf.style.width=(lt*100)+'%';ltf.className='trig-fill'+(lt>0.1?' on':'');}
+  if(rtf){rtf.style.width=(rt*100)+'%';rtf.className='trig-fill'+(rt>0.1?' on':'');}
+  return true;
+}
+
+// ── STICK CANVAS RENDERER ─────────────────────────────────
+// Draws the joystick zone, target arc/zone, and current dot
+// arcTarget: null | {angle, spread, minR, maxR}  (all in radians/0-1)
+function drawStick(cvId, x, y, arcTarget, isActive) {
+  const cv=$(cvId); if(!cv) return;
+  const ctx=cv.getContext('2d');
+  const W=cv.width, H=cv.height, cx=W/2, cy=H/2, maxR=W/2-4;
+  ctx.clearRect(0,0,W,H);
+
+  // outer ring
+  ctx.beginPath(); ctx.arc(cx,cy,maxR,0,Math.PI*2);
+  ctx.strokeStyle=isActive?'#00ffcc':'#2a2a3a'; ctx.lineWidth=isActive?2:1.5; ctx.stroke();
+
+  // dead zone ring
+  ctx.beginPath(); ctx.arc(cx,cy,maxR*0.15,0,Math.PI*2);
+  ctx.strokeStyle='#2a2a3a'; ctx.lineWidth=1; ctx.stroke();
+
+  // crosshair lines
+  ctx.strokeStyle='#1a1a2a'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(cx,4); ctx.lineTo(cx,H-4); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(4,cy); ctx.lineTo(W-4,cy); ctx.stroke();
+
+  // target arc zone
+  if(arcTarget) {
+    const {angle, spread, minR, maxR: tMaxR} = arcTarget;
+    const r0=maxR*minR, r1=maxR*tMaxR;
+    const a0=angle-spread/2, a1=angle+spread/2;
+
+    // filled arc sector
+    ctx.beginPath();
+    ctx.arc(cx,cy,r1,a0,a1);
+    ctx.arc(cx,cy,r0,a1,a0,true);
+    ctx.closePath();
+    ctx.fillStyle='rgba(0,255,204,0.18)'; ctx.fill();
+    ctx.strokeStyle='#00ffcc'; ctx.lineWidth=1.5; ctx.stroke();
+
+    // angle arrow guide
+    const midA=angle;
+    const arrowR=r1+8;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(midA)*r0*0.5, cy+Math.sin(midA)*r0*0.5);
+    ctx.lineTo(cx+Math.cos(midA)*arrowR, cy+Math.sin(midA)*arrowR);
+    ctx.strokeStyle='rgba(0,255,204,0.5)'; ctx.lineWidth=1; ctx.stroke();
+  }
+
+  // stick dot
+  const dotX=cx+x*maxR, dotY=cy+y*maxR;
+  const mag=Math.hypot(x,y);
+  // trail
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(dotX,dotY);
+  ctx.strokeStyle=mag>0.1?'rgba(0,255,204,0.2)':'rgba(255,255,255,0.05)'; ctx.lineWidth=1; ctx.stroke();
+  // dot
+  ctx.beginPath(); ctx.arc(dotX,dotY,5,0,Math.PI*2);
+  ctx.fillStyle=mag>0.1?'#00ffcc':'#3a3a4a'; ctx.fill();
+  if(mag>0.1){ctx.strokeStyle='rgba(0,255,204,0.5)';ctx.lineWidth=3;ctx.stroke();}
+}
+
+// ── CHALLENGES ────────────────────────────────────────────
+// type: btn | trig | stick-dir | stick-arc | hold
+// stick-arc: push stick into a specific angular zone at a specific depth
+
+function mkArc(stick,angleDeg,spreadDeg,minR,maxR,name,icon){
+  const a=angleDeg*(Math.PI/180), s=spreadDeg*(Math.PI/180);
+  return {type:'stick-arc',stick,angle:a,spread:s,minR,maxR,name,icon,color:'#00ffcc',
+    dx:Math.cos(a),dy:Math.sin(a)};
+}
+
+const POOL_BASE=[
+  {type:'btn',id:0,name:'PRESS A',icon:'🟢',color:'#00cc44'},
+  {type:'btn',id:1,name:'PRESS B',icon:'🔴',color:'#ff3333'},
+  {type:'btn',id:2,name:'PRESS X',icon:'🔵',color:'#3399ff'},
+  {type:'btn',id:3,name:'PRESS Y',icon:'🟡',color:'#ffcc00'},
+  {type:'btn',id:4,name:'PRESS LB',icon:'◀◀',color:'#cc88ff'},
+  {type:'btn',id:5,name:'PRESS RB',icon:'▶▶',color:'#cc88ff'},
+  {type:'trig',id:6,name:'PULL LT',icon:'↙',color:'#ff9933'},
+  {type:'trig',id:7,name:'PULL RT',icon:'↘',color:'#ff9933'},
+  // Cardinal arcs on left stick
+  mkArc('left', -90,  60, 0.55, 1.0, 'L-STICK UP',    '⬆'),
+  mkArc('left',  90,  60, 0.55, 1.0, 'L-STICK DOWN',  '⬇'),
+  mkArc('left', 180,  60, 0.55, 1.0, 'L-STICK LEFT',  '⬅'),
+  mkArc('left',   0,  60, 0.55, 1.0, 'L-STICK RIGHT', '➡'),
+];
+
+const POOL_EXTRA=[
+  // Cardinal arcs on right stick
+  mkArc('right', -90,  60, 0.55, 1.0, 'R-STICK UP',    '⬆'),
+  mkArc('right',  90,  60, 0.55, 1.0, 'R-STICK DOWN',  '⬇'),
+  mkArc('right', 180,  60, 0.55, 1.0, 'R-STICK LEFT',  '⬅'),
+  mkArc('right',   0,  60, 0.55, 1.0, 'R-STICK RIGHT', '➡'),
+  // Diagonal arcs
+  mkArc('left', -45,  50, 0.55, 1.0, 'L-STICK UP-RIGHT',  '↗'),
+  mkArc('left', -135, 50, 0.55, 1.0, 'L-STICK UP-LEFT',   '↖'),
+  mkArc('left',  45,  50, 0.55, 1.0, 'L-STICK DOWN-RIGHT','↘'),
+  mkArc('left', 135,  50, 0.55, 1.0, 'L-STICK DOWN-LEFT', '↙'),
+  // Partial push (medium depth arc)
+  mkArc('left', -90,  70, 0.3, 0.65, 'L-STICK HALF UP',   '⬆'),
+  mkArc('left',   0,  70, 0.3, 0.65, 'L-STICK HALF RIGHT','➡'),
+  // Hold challenges
+  {type:'hold',id:6,dur:1200,name:'HOLD LT 1 SEC',icon:'◤',color:'#ff9933'},
+  {type:'hold',id:7,dur:1200,name:'HOLD RT 1 SEC',icon:'◥',color:'#ff9933'},
+  {type:'hold',id:0,dur:900,name:'HOLD A 1 SEC',icon:'🟢',color:'#00cc44'},
+  {type:'hold',id:3,dur:900,name:'HOLD Y 1 SEC',icon:'🟡',color:'#ffcc00'},
+];
+
+const POOL_HARD_EXTRA=[
+  // Tight arcs (smaller spread)
+  mkArc('left', -90,  35, 0.7, 1.0, 'L-STICK PRECISE UP',    '⬆'),
+  mkArc('left',   0,  35, 0.7, 1.0, 'L-STICK PRECISE RIGHT', '➡'),
+  mkArc('right', -45, 35, 0.7, 1.0, 'R-STICK PRECISE ↗',    '↗'),
+  mkArc('right', 135, 35, 0.7, 1.0, 'R-STICK PRECISE ↙',    '↙'),
+];
+
+function getPool(diff){
+  if(diff==='easy') return POOL_BASE;
+  if(diff==='medium') return [...POOL_BASE,...POOL_EXTRA];
+  return [...POOL_BASE,...POOL_EXTRA,...POOL_HARD_EXTRA];
+}
+function rnd(diff,excl){const p=getPool(diff).filter(c=>c.name!==excl);return p[Math.floor(Math.random()*p.length)];}
+function genSeq(diff){const len={easy:3,medium:5,hard:7}[diff]||4;const s=[];for(let i=0;i<len;i++)s.push(rnd(diff,s.length?s[s.length-1].name:''));return s;}
+
+// ── GAME STATE ────────────────────────────────────────────
+const G={
+  mode:'sequence',diff:'easy',punish:'freeze',
+  screen:'start',
+  score:0,streak:0,best:0,correct:0,errors:0,totalPenalty:0,
+  challenge:null,seq:[],seqIdx:0,
+  timerStart:0,timerLimit:5000,timerIv:null,
+  timedLeft:30,timedIv:null,
+  holdStart:null,holdDone:false,
+  frozen:false,freezeUntil:0,
+  paused:false,
+  pb:{},pa:[0,0,0,0],
+  // arc state
+  arcEntered:false, // true once stick entered the arc zone this challenge
+  lastArcState:false,
+  // misinput guard: track which buttons were already pressed when challenge started
+  btnWasPressed:{},
+};
+
+// ── PUNISHMENT ────────────────────────────────────────────
+function doPunish(reason) {
+  G.errors++;
+  $('s-errors').textContent=G.errors;
+  const p=G.punish;
+  let msgs=[];
+
+  if(p==='freeze'||p==='all'){
+    G.frozen=true; G.freezeUntil=Date.now()+2000;
+    msgs.push('FROZEN 2s!');
+  }
+  if(p==='score'||p==='all'){
+    const penalty={easy:15,medium:30,hard:50}[G.diff]||20;
+    G.score=Math.max(0,G.score-penalty);
+    G.totalPenalty+=penalty;
+    msgs.push('-'+penalty+' PTS');
+    $('s-score').textContent=G.score;
+    $('s-penalty').textContent=G.totalPenalty;
+    // flash penalty bar
+    const bar=$('penalty-bar');
+    bar.style.width='100%';
+    setTimeout(()=>bar.style.width='0%',600);
+  }
+  if(p==='reset'||p==='all'){
+    if(G.mode==='sequence'&&G.seqIdx>0){
+      msgs.push('SEQ RESET!');
+    }
+  }
+
+  G.streak=0;
+  $('s-streak').textContent=G.streak;
+
+  // Visual punishment
+  const overlay=$('punish-overlay');
+  overlay.classList.add('flash');
+  setTimeout(()=>overlay.classList.remove('flash'),200);
+
+  const pl=$('punish-label');
+  pl.textContent=msgs.join(' | ');
+  pl.classList.add('show');
+  setTimeout(()=>pl.classList.remove('show'),1200);
+
+  flashFail();
+  addLog('✗ MISINPUT: '+reason+'  '+msgs.join(' | '),'fail');
+
+  // shake score
+  const sc=$('s-score');
+  sc.style.color='var(--accent2)';
+  setTimeout(()=>sc.style.color='var(--accent)',500);
+}
+
+// ── DISPLAY ───────────────────────────────────────────────
+function setC(c,label){
+  $('c-box').classList.remove('success','fail');
+  $('c-type').textContent=label||c.type;
+  $('c-icon').textContent=c.icon; $('c-icon').style.color=c.color;
+  $('c-text').textContent=c.name; $('c-text').style.color=c.color;
+  $('c-hint').textContent=getHint(c);
+  $('c-extra').innerHTML='';
+  $('seq-disp').style.display='none';
+  if(c.type==='hold') $('c-extra').innerHTML='<div class="hold-wrap"><div class="hold-bar" id="hold-bar"></div></div>';
+}
+function getHint(c){
+  if(c.type==='btn') return 'Press '+c.name.replace('PRESS ','')+'  —  other buttons = MISINPUT';
+  if(c.type==='trig') return 'Pull trigger  —  wrong trigger = MISINPUT';
+  if(c.type==='stick-arc') return 'Push '+c.name.split(' ')[0].toLowerCase()+' stick into the glowing arc zone';
+  if(c.type==='hold') return 'Hold for '+(c.dur/1000).toFixed(1)+'s  —  release early = MISINPUT';
+  return '';
+}
+function renderSeq(){
+  const d=$('seq-disp'); d.style.display='flex'; d.innerHTML='';
+  G.seq.forEach((c,i)=>{
+    const s=document.createElement('span');
+    s.className='seq-step'+(i<G.seqIdx?' done':i===G.seqIdx?' cur':'');
+    s.textContent=c.icon+' '+c.name; d.appendChild(s);
+  });
+}
+function flashOk(){const b=$('c-box');b.classList.remove('fail');b.classList.add('success');setTimeout(()=>b.classList.remove('success'),300);}
+function flashFail(){const b=$('c-box');b.classList.remove('success');b.classList.add('fail');setTimeout(()=>b.classList.remove('fail'),350);}
+function updateStats(){$('s-score').textContent=G.score;$('s-streak').textContent=G.streak;$('s-correct').textContent=G.correct;$('s-errors').textContent=G.errors;}
+
+function addLog(msg,cls=''){
+  const el=$('log'); if(!el)return;
+  const d=document.createElement('div');d.className='le'+(cls?' '+cls:'');d.textContent='> '+msg;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+  while(el.children.length>60)el.removeChild(el.firstChild);
+}
+
+// ── TIMERS ────────────────────────────────────────────────
+function tlimit(){return{easy:7000,medium:5000,hard:3500}[G.diff]||5000;}
+function startCTimer(){
+  clearInterval(G.timerIv); G.timerStart=Date.now();
+  G.timerLimit=G.mode==='sequence'?tlimit()*1.4:tlimit();
+  if(G.mode==='timed')return;
+  G.timerIv=setInterval(()=>{
+    if(G.paused||G.screen!=='game')return;
+    if(G.frozen)return; // timer pauses during freeze
+    const pct=Math.max(0,1-(Date.now()-G.timerStart)/G.timerLimit);
+    const bar=$('timer-bar');
+    bar.style.width=(pct*100)+'%';
+    bar.className='timer-bar'+(pct<0.25?' danger':pct<0.55?' warn':'');
+    if(pct<=0) onTimeout();
+  },60);
+}
+function startTimed(){
+  clearInterval(G.timedIv);
+  G.timedLeft={easy:40,medium:30,hard:20}[G.diff]||30;
+  const total=G.timedLeft;
+  G.timedIv=setInterval(()=>{
+    if(G.paused||G.frozen)return;
+    G.timedLeft-=0.06;
+    const pct=G.timedLeft/total;
+    const bar=$('timer-bar');
+    bar.style.width=(pct*100)+'%';
+    bar.className='timer-bar'+(pct<0.2?' danger':pct<0.5?' warn':'');
+    if(G.timedLeft<=0) endGame();
+  },60);
+}
+
+// ── GAME FLOW ─────────────────────────────────────────────
+function startGame(){
+  G.score=0;G.streak=0;G.best=0;G.correct=0;G.errors=0;G.totalPenalty=0;
+  G.paused=false;G.frozen=false;G.pb={};G.pa=[0,0,0,0];G.arcEntered=false;
+  $('s-penalty').textContent='0';
+  $('penalty-bar').style.width='0%';
+  updateStats(); showScreen('game-ui'); G.screen='game';
+  if(G.mode==='timed'){startTimed();nextSingle();}
+  else if(G.mode==='one-by-one') nextSingle();
+  else nextSeq();
+  addLog('Training started — '+G.mode.toUpperCase()+'/'+G.diff.toUpperCase()+'/PUNISH:'+G.punish.toUpperCase(),'info');
+}
+
+function snapshotBtns(gp){
+  // record currently held buttons so we don't punish on them at start
+  if(!gp)return;
+  G.btnWasPressed={};
+  for(let i=0;i<gp.buttons.length;i++) G.btnWasPressed[i]=bpressed(gp,i);
+}
+
+function nextSingle(){
+  const gp=getGP();
+  G.challenge=rnd(G.diff,G.challenge?.name);
+  G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+  setC(G.challenge,'// DO THIS //');
+  snapshotBtns(gp);
+  startCTimer();
+}
+function nextSeq(){
+  const gp=getGP();
+  G.seq=genSeq(G.diff);G.seqIdx=0;G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+  G.challenge=G.seq[0];
+  setC(G.challenge,'// SEQUENCE //');renderSeq();
+  snapshotBtns(gp);
+  startCTimer();
+}
+
+function onSuccess(){
+  const pts={easy:10,medium:20,hard:35}[G.diff]||10;
+  G.score+=pts;G.streak++;G.correct++;if(G.streak>G.best)G.best=G.streak;
+  updateStats();flashOk();
+  addLog('✓ '+G.challenge.name+'  +'+pts,'ok');
+}
+function onTimeout(){
+  addLog('⏱ TIME UP: '+(G.challenge?.name||''),'warn');
+  G.streak=0;$('s-streak').textContent=G.streak;
+  flashFail();
+  if(G.mode==='sequence') nextSeq(); else nextSingle();
+}
+
+function handleCorrect(){
+  if(G.mode==='sequence'){
+    onSuccess(); G.seqIdx++;
+    if(G.seqIdx>=G.seq.length){
+      const b={easy:15,medium:30,hard:50}[G.diff]||15;
+      G.score+=b;updateStats();addLog('★ SEQUENCE DONE! +'+b,'ok');
+      setTimeout(nextSeq,300);
+    } else {
+      G.challenge=G.seq[G.seqIdx];G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+      setC(G.challenge,'// SEQUENCE //');renderSeq();
+      snapshotBtns(getGP());
+      startCTimer();
+    }
+  } else {onSuccess();setTimeout(nextSingle,200);}
+}
+
+function handleMisinput(reason){
+  doPunish(reason);
+  if((G.punish==='reset'||G.punish==='all')&&G.mode==='sequence'){
+    setTimeout(nextSeq,500);
+  }
+  // refresh timer start so freeze doesn't eat challenge time unfairly
+  G.timerStart=Date.now()+((G.punish==='freeze'||G.punish==='all')?2000:0);
+}
+
+function endGame(){
+  clearInterval(G.timerIv);clearInterval(G.timedIv);G.screen='results';
+  showScreen('results-screen');
+  const tot=G.correct+G.errors,acc=tot?Math.round(G.correct/tot*100):0;
+  $('r-score').textContent=G.score;$('r-acc').textContent=acc+'%';
+  $('r-streak').textContent=G.best;$('r-penalty').textContent=G.totalPenalty;
+  const ranks=[[90,'🏆','S RANK — PERFECT CONTROL'],[70,'🥇','A RANK — EXCELLENT'],[50,'🥈','B RANK — SOLID'],[30,'🥉','C RANK — KEEP GOING'],[0,'💀','F RANK — NEEDS WORK']];
+  const r=ranks.find(([t])=>acc>=t);
+  $('r-badge').textContent=r[1];$('r-text').textContent=r[2];
+}
+
+// ── INPUT CHECK ───────────────────────────────────────────
+function inArc(x, y, target) {
+  const mag=Math.hypot(x,y);
+  if(mag<target.minR||mag>target.maxR) return false;
+  const angle=Math.atan2(y,x);
+  let diff=angle-target.angle;
+  while(diff>Math.PI) diff-=Math.PI*2;
+  while(diff<-Math.PI) diff+=Math.PI*2;
+  return Math.abs(diff)<=target.spread/2;
+}
+
+function checkInput(gp){
+  if(!gp||G.screen!=='game'||G.paused)return;
+
+  // unfreeze check
+  if(G.frozen){
+    if(Date.now()>=G.freezeUntil) G.frozen=false;
+    else return;
+  }
+
+  const c=G.challenge; if(!c) return;
+  const axes=gp.axes;
+
+  // ── BUTTON challenge ──
+  if(c.type==='btn'){
+    for(let i=0;i<gp.buttons.length;i++){
+      const pressed=bpressed(gp,i);
+      const wasP=G.pb[i]||false;
+      const wasSnapshot=G.btnWasPressed[i]||false;
+      if(pressed&&!wasP&&!wasSnapshot){
+        if(i===c.id) handleCorrect();
+        else if([0,1,2,3,4,5,12,13,14,15].includes(i)) handleMisinput('Pressed '+(BNAMES[i]||'B'+i)+' instead of '+(BNAMES[c.id]||'B'+c.id));
+      }
+    }
+  }
+
+  // ── TRIGGER challenge ──
+  else if(c.type==='trig'){
+    const v=bval(gp,c.id);
+    const prev=G.pb['t'+c.id]||0;
+    if(v>0.65&&prev<=0.65) handleCorrect();
+    G.pb['t'+c.id]=v;
+    // wrong trigger
+    const otherId=c.id===6?7:6;
+    const ov=bval(gp,otherId);
+    const oprev=G.pb['t'+otherId]||0;
+    if(ov>0.65&&oprev<=0.65) handleMisinput('Pulled '+(c.id===6?'RT':'LT')+' instead of '+(c.id===6?'LT':'RT'));
+    G.pb['t'+otherId]=ov;
+  }
+
+  // ── STICK ARC challenge ──
+  else if(c.type==='stick-arc'){
+    const xi=c.stick==='left'?0:2, yi=c.stick==='left'?1:3;
+    const x=axes[xi]||0, y=axes[yi]||0;
+    const inside=inArc(x,y,c);
+
+    // Entered arc = success
+    if(inside&&!G.lastArcState){
+      G.arcEntered=true;
+      handleCorrect();
+    }
+
+    // Misinput: pushed hard in clearly wrong direction (> 0.7 magnitude but NOT near target)
+    const mag=Math.hypot(x,y);
+    const prevMag=Math.hypot(G.pa[xi]||0,G.pa[yi]||0);
+    if(mag>0.7&&prevMag<=0.4&&!inside){
+      // check it's not near the arc (avoid edge punishes)
+      const angle=Math.atan2(y,x);
+      let diff=angle-c.angle;
+      while(diff>Math.PI) diff-=Math.PI*2;
+      while(diff<-Math.PI) diff+=Math.PI*2;
+      if(Math.abs(diff)>c.spread*1.3){
+        handleMisinput('Wrong stick direction');
+      }
+    }
+
+    G.lastArcState=inside;
+  }
+
+  // ── HOLD challenge ──
+  else if(c.type==='hold'){
+    const held=c.id<=3?bpressed(gp,c.id):bval(gp,c.id)>0.5;
+    const bar=$('hold-bar');
+    if(held){
+      if(!G.holdStart) G.holdStart=Date.now();
+      const pct=Math.min(1,(Date.now()-G.holdStart)/c.dur);
+      if(bar) bar.style.width=(pct*100)+'%';
+      if(pct>=1&&!G.holdDone){G.holdDone=true;handleCorrect();}
+    } else {
+      if(G.holdStart&&!G.holdDone){
+        // released early = misinput
+        if((Date.now()-G.holdStart)>200){
+          handleMisinput('Released '+c.name.replace('HOLD ','').replace(' 1 SEC','')+' too early');
+        }
+        G.holdStart=null;
+        if(bar) bar.style.width='0%';
+      }
+    }
+  }
+
+  // save prev
+  for(let i=0;i<gp.buttons.length;i++) G.pb[i]=bpressed(gp,i);
+  for(let i=0;i<Math.min(axes.length,4);i++) G.pa[i]=axes[i]||0;
+}
+
+// ── STICK CANVAS UPDATE ───────────────────────────────────
+function updateStickCanvases(gp){
+  const c=G.challenge;
+  const lx=gp?(gp.axes[0]||0):0, ly=gp?(gp.axes[1]||0):0;
+  const rx=gp?(gp.axes[2]||0):0, ry=gp?(gp.axes[3]||0):0;
+  const lActive=Math.hypot(lx,ly)>0.1, rActive=Math.hypot(rx,ry)>0.1;
+
+  let lArc=null, rArc=null;
+  if(c&&c.type==='stick-arc'){
+    if(c.stick==='left') lArc=c; else rArc=c;
+  }
+
+  drawStick('cv-ls', lx, ly, lArc, lActive);
+  drawStick('cv-rs', rx, ry, rArc, rActive);
+}
+
+// ── MAIN LOOP ─────────────────────────────────────────────
+let prevConnected=false;
+function loop(){
+  const gp=getGP();
+  const connected=updateDebug(gp);
+
+  const sb=$('start-btn');
+  if(connected&&!prevConnected){ sb.disabled=false; sb.textContent='▶ START TRAINING'; prevConnected=true; }
+  else if(!connected&&prevConnected){ sb.disabled=true; sb.textContent='WAITING FOR CONTROLLER...'; prevConnected=false; }
+
+  if(G.screen==='game'){
+    checkInput(gp);
+    updateStickCanvases(gp);
+    // show freeze indicator
+    if(G.frozen){
+      const bar=$('timer-bar');
+      bar.style.background='var(--accent2)';
+      bar.style.opacity='0.6';
+    } else {
+      $('timer-bar').style.opacity='1';
+    }
+  } else {
+    // still draw sticks on start screen from debug
+    if(gp) updateStickCanvases(gp);
+  }
+
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// ── UI EVENTS ─────────────────────────────────────────────
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-mode]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); G.mode=b.dataset.mode;
+}));
+document.querySelectorAll('[data-diff]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-diff]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); G.diff=b.dataset.diff;
+}));
+document.querySelectorAll('[data-punish]').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('[data-punish]').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); G.punish=b.dataset.punish;
+}));
+$('start-btn').addEventListener('click',()=>{if(!$('start-btn').disabled) startGame();});
+$('pause-btn').addEventListener('click',()=>{G.paused=!G.paused;$('pause-btn').textContent=G.paused?'▶ RESUME':'⏸ PAUSE';});
+$('quit-btn').addEventListener('click',endGame);
+$('again-btn').addEventListener('click',()=>{showScreen('start-screen');G.screen='start';});
+</script>
+</body>
+</html>
