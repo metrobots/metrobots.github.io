@@ -172,6 +172,7 @@ canvas.stick-cv{display:block;margin:0 auto;}
         <button class="mode-btn active" data-mode="sequence">SEQUENCE</button>
         <button class="mode-btn" data-mode="timed">TIMED BLITZ</button>
         <button class="mode-btn" data-mode="one-by-one">ONE BY ONE</button>
+        <button class="mode-btn" data-mode="joystick" style="border-color:#ff88cc;color:#ff88cc;">🕹 JOYSTICK ONLY</button>
       </div>
     </div>
     <div style="margin-bottom:14px;">
@@ -302,9 +303,9 @@ function updateDebug(gp){
 }
 
 // ── STICK CANVAS RENDERER ─────────────────────────────────
-// Draws the joystick zone, target arc/zone, and current dot
-// arcTarget: null | {angle, spread, minR, maxR}  (all in radians/0-1)
-function drawStick(cvId, x, y, arcTarget, isActive) {
+// arcTarget: null | arc object
+// motionTarget: null | {waypoints, currentWp, stick}
+function drawStick(cvId, x, y, arcTarget, motionTarget, isActive) {
   const cv=$(cvId); if(!cv) return;
   const ctx=cv.getContext('2d');
   const W=cv.width, H=cv.height, cx=W/2, cy=H/2, maxR=W/2-4;
@@ -316,53 +317,226 @@ function drawStick(cvId, x, y, arcTarget, isActive) {
 
   // dead zone ring
   ctx.beginPath(); ctx.arc(cx,cy,maxR*0.15,0,Math.PI*2);
-  ctx.strokeStyle='#2a2a3a'; ctx.lineWidth=1; ctx.stroke();
+  ctx.strokeStyle='#1e1e2e'; ctx.lineWidth=1; ctx.stroke();
 
-  // crosshair lines
+  // crosshair
   ctx.strokeStyle='#1a1a2a'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(cx,4); ctx.lineTo(cx,H-4); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(4,cy); ctx.lineTo(W-4,cy); ctx.stroke();
 
-  // target arc zone
+  // ── ARC TARGET ──
   if(arcTarget) {
-    const {angle, spread, minR, maxR: tMaxR} = arcTarget;
-    const r0=maxR*minR, r1=maxR*tMaxR;
+    const {angle, spread, minR: mnR, maxR: mxR} = arcTarget;
+    const r0=maxR*mnR, r1=maxR*mxR;
     const a0=angle-spread/2, a1=angle+spread/2;
-
-    // filled arc sector
     ctx.beginPath();
     ctx.arc(cx,cy,r1,a0,a1);
     ctx.arc(cx,cy,r0,a1,a0,true);
     ctx.closePath();
-    ctx.fillStyle='rgba(0,255,204,0.18)'; ctx.fill();
+    ctx.fillStyle='rgba(0,255,204,0.15)'; ctx.fill();
     ctx.strokeStyle='#00ffcc'; ctx.lineWidth=1.5; ctx.stroke();
-
-    // angle arrow guide
-    const midA=angle;
-    const arrowR=r1+8;
+    // guide arrow
     ctx.beginPath();
-    ctx.moveTo(cx+Math.cos(midA)*r0*0.5, cy+Math.sin(midA)*r0*0.5);
-    ctx.lineTo(cx+Math.cos(midA)*arrowR, cy+Math.sin(midA)*arrowR);
-    ctx.strokeStyle='rgba(0,255,204,0.5)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.moveTo(cx+Math.cos(angle)*r0*0.4, cy+Math.sin(angle)*r0*0.4);
+    ctx.lineTo(cx+Math.cos(angle)*(r1+8), cy+Math.sin(angle)*(r1+8));
+    ctx.strokeStyle='rgba(0,255,204,0.4)'; ctx.lineWidth=1; ctx.stroke();
   }
 
-  // stick dot
+  // ── MOTION PATH ──
+  if(motionTarget) {
+    const wps = motionTarget.waypoints;
+    const cur = motionTarget.currentWp;
+    const mid = maxR * 0.75; // draw path at 75% radius
+
+    // draw connecting lines between waypoint dots
+    ctx.beginPath();
+    for(let i=0;i<wps.length;i++){
+      const wx=cx+Math.cos(wps[i].angle)*mid;
+      const wy=cy+Math.sin(wps[i].angle)*mid;
+      if(i===0) ctx.moveTo(wx,wy); else ctx.lineTo(wx,wy);
+    }
+    ctx.strokeStyle='rgba(255,136,204,0.2)'; ctx.lineWidth=1; ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
+
+    // draw curved arc between consecutive waypoints
+    for(let i=0;i<wps.length-1;i++){
+      const a0=wps[i].angle, a1=wps[i+1].angle;
+      let diff=a1-a0;
+      while(diff>Math.PI) diff-=Math.PI*2;
+      while(diff<-Math.PI) diff+=Math.PI*2;
+      const done=i<cur, isCur=i===cur;
+      ctx.beginPath();
+      ctx.arc(cx,cy,mid,a0,a0+diff,diff<0);
+      ctx.strokeStyle=done?'rgba(255,204,0,0.5)':isCur?'rgba(255,136,204,0.8)':'rgba(255,136,204,0.2)';
+      ctx.lineWidth=done?1.5:isCur?2:1;
+      ctx.stroke();
+    }
+
+    // draw waypoint dots
+    for(let i=0;i<wps.length;i++){
+      const wx=cx+Math.cos(wps[i].angle)*mid;
+      const wy=cy+Math.sin(wps[i].angle)*mid;
+      const done=i<cur, isCur=i===cur;
+
+      // outer glow ring for current
+      if(isCur){
+        ctx.beginPath(); ctx.arc(wx,wy,11,0,Math.PI*2);
+        ctx.strokeStyle='rgba(255,136,204,0.3)'; ctx.lineWidth=2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(wx,wy,8,0,Math.PI*2);
+        ctx.strokeStyle='rgba(255,136,204,0.6)'; ctx.lineWidth=1.5; ctx.stroke();
+      }
+      // target arc sector for current waypoint
+      if(isCur){
+        const wp=wps[i];
+        const r0=maxR*(wp.minR||0.45), r1=maxR*(wp.maxR||1.0);
+        const sa=wp.angle-wp.spread/2, ea=wp.angle+wp.spread/2;
+        ctx.beginPath();
+        ctx.arc(cx,cy,r1,sa,ea); ctx.arc(cx,cy,r0,ea,sa,true);
+        ctx.closePath();
+        ctx.fillStyle='rgba(255,136,204,0.15)'; ctx.fill();
+        ctx.strokeStyle='rgba(255,136,204,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
+      }
+
+      // dot
+      ctx.beginPath(); ctx.arc(wx,wy,done?3:isCur?5:3.5,0,Math.PI*2);
+      ctx.fillStyle=done?'#ffcc00':isCur?'#ff88cc':'rgba(255,136,204,0.3)';
+      ctx.fill();
+      if(!done){ctx.strokeStyle=isCur?'#ff88cc':'rgba(255,136,204,0.4)';ctx.lineWidth=1;ctx.stroke();}
+
+      // step number
+      if(!done){
+        ctx.fillStyle=isCur?'#ff88cc':'rgba(255,136,204,0.4)';
+        ctx.font=`${isCur?9:7}px monospace`;
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        const labelR=mid+(isCur?20:14);
+        ctx.fillText(i+1, cx+Math.cos(wps[i].angle)*labelR, cy+Math.sin(wps[i].angle)*labelR);
+      }
+    }
+  }
+
+  // ── STICK DOT + TRAIL ──
   const dotX=cx+x*maxR, dotY=cy+y*maxR;
   const mag=Math.hypot(x,y);
-  // trail
   ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(dotX,dotY);
-  ctx.strokeStyle=mag>0.1?'rgba(0,255,204,0.2)':'rgba(255,255,255,0.05)'; ctx.lineWidth=1; ctx.stroke();
-  // dot
+  ctx.strokeStyle=mag>0.1?'rgba(0,255,204,0.2)':'rgba(255,255,255,0.04)'; ctx.lineWidth=1; ctx.stroke();
   ctx.beginPath(); ctx.arc(dotX,dotY,5,0,Math.PI*2);
   ctx.fillStyle=mag>0.1?'#00ffcc':'#3a3a4a'; ctx.fill();
-  if(mag>0.1){ctx.strokeStyle='rgba(0,255,204,0.5)';ctx.lineWidth=3;ctx.stroke();}
+  if(mag>0.1){ctx.strokeStyle='rgba(0,255,204,0.4)';ctx.lineWidth=3;ctx.stroke();}
 }
+
 
 // ── CHALLENGES ────────────────────────────────────────────
 // type: btn | trig | stick-dir | stick-arc | hold
 // stick-arc: push stick into a specific angular zone at a specific depth
 
-function mkArc(stick,angleDeg,spreadDeg,minR,maxR,name,icon){
+// ── MOTION CHALLENGES ─────────────────────────────────────
+// type: stick-motion — sequence of arc waypoints to hit in order
+// waypoints: array of {angle (deg), minR, maxR, spread (deg)}
+// stick: 'left' | 'right'
+
+function mkMotion(stick, name, icon, color, waypoints, timeLimitMs) {
+  return {
+    type: 'stick-motion',
+    stick, name, icon, color,
+    timeLimitMs: timeLimitMs || 4000,
+    waypoints: waypoints.map(w => ({
+      angle: w.a * (Math.PI/180),
+      spread: (w.s||55) * (Math.PI/180),
+      minR: w.minR||0.45,
+      maxR: w.maxR||1.0,
+    }))
+  };
+}
+
+// Each waypoint: {a: angleDeg, s: spreadDeg, minR, maxR}
+const MOTION_POOL_EASY = [
+  mkMotion('left', 'QC FORWARD', '↘', '#ff88cc', [
+    {a:0},       // right
+    {a:45},      // down-right
+    {a:90},      // down
+  ], 3500),
+  mkMotion('left', 'QC BACK', '↙', '#ff88cc', [
+    {a:180},     // left
+    {a:135},     // down-left
+    {a:90},      // down
+  ], 3500),
+  mkMotion('left', 'FLICK UP-DOWN', '⬆⬇', '#ffcc00', [
+    {a:-90},     // up
+    {a:90},      // down
+  ], 3000),
+  mkMotion('left', 'FLICK LEFT-RIGHT', '⬅➡', '#ffcc00', [
+    {a:180},     // left
+    {a:0},       // right
+  ], 3000),
+  mkMotion('right', 'R-STICK QC FWD', '↘', '#ff88cc', [
+    {a:0},{a:45},{a:90},
+  ], 3500),
+  mkMotion('right', 'R-STICK FLICK ↑↓', '⬆⬇', '#ffcc00', [
+    {a:-90},{a:90},
+  ], 3000),
+];
+
+const MOTION_POOL_MEDIUM = [
+  mkMotion('left', 'HALF CIRCLE FWD', '🔄', '#00ffcc', [
+    {a:0},{a:45},{a:90},{a:135},{a:180},
+  ], 4500),
+  mkMotion('left', 'HALF CIRCLE BACK', '🔄', '#00ffcc', [
+    {a:180},{a:135},{a:90},{a:45},{a:0},
+  ], 4500),
+  mkMotion('left', 'QC UP-RIGHT', '↗', '#ff88cc', [
+    {a:-180},{a:-135},{a:-90},
+  ], 3500),
+  mkMotion('left', 'DIAGONAL ZIGZAG', '↙↗', '#ff9933', [
+    {a:-45},{a:135},{a:-45},
+  ], 4000),
+  mkMotion('left', 'CROSS PATTERN', '✛', '#3399ff', [
+    {a:-90},{a:0},{a:90},{a:180},
+  ], 5000),
+  mkMotion('right', 'R-STICK HALF CIR', '🔄', '#00ffcc', [
+    {a:0},{a:45},{a:90},{a:135},{a:180},
+  ], 4500),
+  mkMotion('left', 'Z-MOTION', 'Z', '#ff88cc', [
+    {a:-90},{a:0},{a:180},{a:90},
+  ], 5000),
+];
+
+const MOTION_POOL_HARD = [
+  mkMotion('left', 'FULL ROTATION CW', '🔁', '#ff3366', [
+    {a:0},{a:90},{a:180},{a:-90},{a:0},
+  ], 5000),
+  mkMotion('left', 'FULL ROTATION CCW', '🔁', '#ff3366', [
+    {a:0},{a:-90},{a:180},{a:90},{a:0},
+  ], 5000),
+  mkMotion('left', 'DOUBLE QC FWD', '⏩', '#ffcc00', [
+    {a:0},{a:45},{a:90},{a:0},{a:45},{a:90},
+  ], 6000),
+  mkMotion('left', 'FIGURE 8', '8', '#ff88cc', [
+    {a:0},{a:-90},{a:180},{a:90},{a:0},{a:90},{a:180},{a:-90},{a:0},
+  ], 8000),
+  mkMotion('left', 'DP MOTION', '⚡', '#ff3366', [
+    {a:0},{a:-90},{a:45},
+  ], 3500),
+  mkMotion('left', 'SUPERFLIP', '🌀', '#ff88cc', [
+    {a:-90},{a:0},{a:90},{a:180},{a:-90},
+  ], 6000),
+  mkMotion('right', 'R FULL ROTATION', '🔁', '#ff3366', [
+    {a:0},{a:90},{a:180},{a:-90},{a:0},
+  ], 5000),
+  mkMotion('left', 'TIGER KNEE', '🐯', '#ff9933', [
+    {a:90},{a:45},{a:0},{a:-45},{a:-90},
+  ], 4500),
+];
+
+function getMotionPool(diff) {
+  if (diff==='easy') return MOTION_POOL_EASY;
+  if (diff==='medium') return [...MOTION_POOL_EASY, ...MOTION_POOL_MEDIUM];
+  return [...MOTION_POOL_EASY, ...MOTION_POOL_MEDIUM, ...MOTION_POOL_HARD];
+}
+function rndMotion(diff, excl) {
+  const p = getMotionPool(diff).filter(c=>c.name!==excl);
+  return p[Math.floor(Math.random()*p.length)];
+}
+
+
   const a=angleDeg*(Math.PI/180), s=spreadDeg*(Math.PI/180);
   return {type:'stick-arc',stick,angle:a,spread:s,minR,maxR,name,icon,color:'#00ffcc',
     dx:Math.cos(a),dy:Math.sin(a)};
@@ -433,11 +607,13 @@ const G={
   frozen:false,freezeUntil:0,
   paused:false,
   pb:{},pa:[0,0,0,0],
-  // arc state
-  arcEntered:false, // true once stick entered the arc zone this challenge
+  arcEntered:false,
   lastArcState:false,
-  // misinput guard: track which buttons were already pressed when challenge started
   btnWasPressed:{},
+  // motion state
+  motionWp:0,          // current waypoint index
+  motionWpHit:false,   // guard: did we leave the wp before checking next
+  motionTimer:null,
 };
 
 // ── PUNISHMENT ────────────────────────────────────────────
@@ -506,6 +682,7 @@ function getHint(c){
   if(c.type==='btn') return 'Press '+c.name.replace('PRESS ','')+'  —  other buttons = MISINPUT';
   if(c.type==='trig') return 'Pull trigger  —  wrong trigger = MISINPUT';
   if(c.type==='stick-arc') return 'Push '+c.name.split(' ')[0].toLowerCase()+' stick into the glowing arc zone';
+  if(c.type==='stick-motion') return 'Hit each numbered zone in order — '+c.waypoints.length+' steps';
   if(c.type==='hold') return 'Hold for '+(c.dur/1000).toFixed(1)+'s  —  release early = MISINPUT';
   return '';
 }
@@ -562,14 +739,15 @@ function startTimed(){
 // ── GAME FLOW ─────────────────────────────────────────────
 function startGame(){
   G.score=0;G.streak=0;G.best=0;G.correct=0;G.errors=0;G.totalPenalty=0;
-  G.paused=false;G.frozen=false;G.pb={};G.pa=[0,0,0,0];G.arcEntered=false;
+  G.paused=false;G.frozen=false;G.pb={};G.pa=[0,0,0,0];G.arcEntered=false;G.motionWp=0;G.motionWpHit=false;
   $('s-penalty').textContent='0';
   $('penalty-bar').style.width='0%';
   updateStats(); showScreen('game-ui'); G.screen='game';
-  if(G.mode==='timed'){startTimed();nextSingle();}
+  if(G.mode==='joystick') nextMotion();
+  else if(G.mode==='timed'){startTimed();nextSingle();}
   else if(G.mode==='one-by-one') nextSingle();
   else nextSeq();
-  addLog('Training started — '+G.mode.toUpperCase()+'/'+G.diff.toUpperCase()+'/PUNISH:'+G.punish.toUpperCase(),'info');
+  addLog('Training started — '+G.mode.toUpperCase()+'/'+G.diff.toUpperCase(),'info');
 }
 
 function snapshotBtns(gp){
@@ -587,7 +765,7 @@ function snapshotBtns(gp){
 function nextSingle(){
   const gp=getGP();
   G.challenge=rnd(G.diff,G.challenge?.name);
-  G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+  G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;G.motionWp=0;G.motionWpHit=false;
   G.pb={};
   setC(G.challenge,'// DO THIS //');
   snapshotBtns(gp);
@@ -595,12 +773,40 @@ function nextSingle(){
 }
 function nextSeq(){
   const gp=getGP();
-  G.seq=genSeq(G.diff);G.seqIdx=0;G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
+  G.seq=genSeq(G.diff);G.seqIdx=0;G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;G.motionWp=0;G.motionWpHit=false;
   G.challenge=G.seq[0];
   G.pb={};
   setC(G.challenge,'// SEQUENCE //');renderSeq();
   snapshotBtns(gp);
   startCTimer();
+}
+function nextMotion(){
+  clearInterval(G.motionTimer);
+  G.challenge=rndMotion(G.diff, G.challenge?.name);
+  G.motionWp=0; G.motionWpHit=false;
+  G.pb={};G.pa=[0,0,0,0];
+  setC(G.challenge,'// STICK MOTION //');
+  // motion has its own time limit
+  const lim=G.challenge.timeLimitMs||5000;
+  G.timerStart=Date.now(); G.timerLimit=lim;
+  clearInterval(G.timerIv);
+  G.timerIv=setInterval(()=>{
+    if(G.paused||G.screen!=='game'||G.frozen)return;
+    const pct=Math.max(0,1-(Date.now()-G.timerStart)/G.timerLimit);
+    const bar=$('timer-bar');
+    bar.style.width=(pct*100)+'%';
+    bar.className='timer-bar'+(pct<0.25?' danger':pct<0.55?' warn':'');
+    if(pct<=0) onMotionTimeout();
+  },60);
+  addLog('► '+G.challenge.name+' — hit '+G.challenge.waypoints.length+' zones in order','info');
+}
+function onMotionTimeout(){
+  clearInterval(G.timerIv);
+  G.streak=0;$('s-streak').textContent=G.streak;
+  flashFail();
+  addLog('⏱ MOTION TIMEOUT: step '+(G.motionWp+1)+'/'+G.challenge.waypoints.length,'warn');
+  doPunish('Motion timed out at step '+(G.motionWp+1));
+  setTimeout(nextMotion, 400);
 }
 
 function onSuccess(){
@@ -617,6 +823,11 @@ function onTimeout(){
 }
 
 function handleCorrect(){
+  if(G.mode==='joystick'){
+    onSuccess();
+    setTimeout(nextMotion,300);
+    return;
+  }
   if(G.mode==='sequence'){
     onSuccess(); G.seqIdx++;
     if(G.seqIdx>=G.seq.length){
@@ -734,7 +945,31 @@ function checkInput(gp){
     G.lastArcState=inside;
   }
 
-  // ── HOLD challenge ──
+  // ── STICK MOTION challenge ──
+  else if(c.type==='stick-motion'){
+    const xi=c.stick==='left'?0:2, yi=c.stick==='left'?1:3;
+    const x=axes[xi]||0, y=axes[yi]||0;
+    const wp=c.waypoints[G.motionWp];
+    const inside=inArc(x,y,wp);
+    const mag=Math.hypot(x,y);
+
+    if(inside && !G.motionWpHit){
+      G.motionWpHit=true;
+      // advance to next waypoint
+      G.motionWp++;
+      if(G.motionWp>=c.waypoints.length){
+        // completed!
+        handleCorrect();
+      } else {
+        addLog('  ✓ step '+(G.motionWp)+'/'+c.waypoints.length,'ok');
+      }
+    } else if(!inside && G.motionWpHit){
+      // left the zone, allow hitting next
+      G.motionWpHit=false;
+    }
+  }
+
+
   else if(c.type==='hold'){
     const held=c.id<=3?bpressed(gp,c.id):bval(gp,c.id)>0.5;
     const bar=$('hold-bar');
@@ -767,13 +1002,19 @@ function updateStickCanvases(gp){
   const rx=gp?(gp.axes[2]||0):0, ry=gp?(gp.axes[3]||0):0;
   const lActive=Math.hypot(lx,ly)>0.1, rActive=Math.hypot(rx,ry)>0.1;
 
-  let lArc=null, rArc=null;
-  if(c&&c.type==='stick-arc'){
-    if(c.stick==='left') lArc=c; else rArc=c;
+  let lArc=null, rArc=null, lMotion=null, rMotion=null;
+  if(c){
+    if(c.type==='stick-arc'){
+      if(c.stick==='left') lArc=c; else rArc=c;
+    }
+    if(c.type==='stick-motion'){
+      const mctx={waypoints:c.waypoints, currentWp:G.motionWp, stick:c.stick};
+      if(c.stick==='left') lMotion=mctx; else rMotion=mctx;
+    }
   }
 
-  drawStick('cv-ls', lx, ly, lArc, lActive);
-  drawStick('cv-rs', rx, ry, rArc, rActive);
+  drawStick('cv-ls', lx, ly, lArc, lMotion, lActive);
+  drawStick('cv-rs', rx, ry, rArc, rMotion, rActive);
 }
 
 // ── MAIN LOOP ─────────────────────────────────────────────
@@ -789,6 +1030,12 @@ function loop(){
   if(G.screen==='game'){
     checkInput(gp);
     updateStickCanvases(gp);
+    // live motion step counter
+    if(G.challenge&&G.challenge.type==='stick-motion'){
+      const total=G.challenge.waypoints.length;
+      const done=G.motionWp;
+      $('c-hint').textContent='STEP '+(done+1)+' / '+total+'  —  hit the pink zone';
+    }
     // show freeze indicator
     if(G.frozen){
       const bar=$('timer-bar');
@@ -798,7 +1045,6 @@ function loop(){
       $('timer-bar').style.opacity='1';
     }
   } else {
-    // still draw sticks on start screen from debug
     if(gp) updateStickCanvases(gp);
   }
 
