@@ -183,15 +183,6 @@ canvas.stick-cv{display:block;margin:0 auto;}
         <button class="mode-btn" data-diff="hard">HARD</button>
       </div>
     </div>
-    <div style="margin-bottom:14px;">
-      <div class="section-title">// PUNISHMENT FOR WRONG INPUT //</div>
-      <div class="mode-strip">
-        <button class="mode-btn active" data-punish="freeze">TIME FREEZE (2s)</button>
-        <button class="mode-btn" data-punish="score">SCORE PENALTY</button>
-        <button class="mode-btn" data-punish="reset">SEQUENCE RESET</button>
-        <button class="mode-btn" data-punish="all">ALL OF THE ABOVE</button>
-      </div>
-    </div>
     <button class="start-btn" id="start-btn" disabled>WAITING FOR CONTROLLER...</button>
   </div>
 
@@ -202,7 +193,7 @@ canvas.stick-cv{display:block;margin:0 auto;}
       <div class="stat-box"><div class="stat-label">STREAK</div><div class="stat-value" id="s-streak" style="color:var(--accent3)">0</div></div>
       <div class="stat-box"><div class="stat-label">CORRECT</div><div class="stat-value" id="s-correct" style="color:var(--accent4)">0</div></div>
       <div class="stat-box"><div class="stat-label">ERRORS</div><div class="stat-value" id="s-errors" style="color:var(--accent2)">0</div></div>
-      <div class="stat-box"><div class="stat-label">PENALTY</div><div class="stat-value" id="s-penalty" style="color:var(--accent2)">0</div></div>
+      <div class="stat-box"><div class="stat-label">DELAY HIT</div><div class="stat-value" id="s-penalty" style="color:var(--accent2)">0</div></div>
     </div>
     <div class="timer-wrap"><div class="timer-bar" id="timer-bar"></div></div>
     <div class="penalty-wrap"><div class="penalty-bar" id="penalty-bar"></div></div>
@@ -346,7 +337,15 @@ function drawStick(cvId, x, y, arcTarget, motionTarget, isActive) {
   if(motionTarget) {
     const wps = motionTarget.waypoints;
     const cur = motionTarget.currentWp;
-    const mid = maxR * 0.75; // draw path at 75% radius
+    const isDone = motionTarget.done || cur >= wps.length;
+    const mid = maxR * 0.75;
+
+    // if this side is fully done, show a green ring and skip path drawing
+    if(isDone){
+      ctx.beginPath(); ctx.arc(cx,cy,maxR-2,0,Math.PI*2);
+      ctx.strokeStyle='rgba(0,255,100,0.7)'; ctx.lineWidth=3; ctx.stroke();
+      ctx.fillStyle='rgba(0,255,100,0.06)'; ctx.fill();
+    } else {
 
     // draw connecting lines between waypoint dots
     ctx.beginPath();
@@ -411,6 +410,7 @@ function drawStick(cvId, x, y, arcTarget, motionTarget, isActive) {
         ctx.fillText(i+1, cx+Math.cos(wps[i].angle)*labelR, cy+Math.sin(wps[i].angle)*labelR);
       }
     }
+    } // end else (not done)
   }
 
   // ── STICK DOT + TRAIL ──
@@ -448,82 +448,106 @@ function mkMotion(stick, name, icon, color, waypoints, timeLimitMs) {
 }
 
 // Each waypoint: {a: angleDeg, s: spreadDeg, minR, maxR}
+// mkMotion: single-stick multi-waypoint motion
+// mkDual:   both sticks must complete their sequences (tracked independently, both must finish)
+
+function mkDual(name, icon, color, leftWPs, rightWPs, timeLimitMs) {
+  return {
+    type: 'stick-dual',
+    name, icon, color,
+    timeLimitMs: timeLimitMs || 5000,
+    left:  leftWPs.map(w=>({ angle:w.a*(Math.PI/180), spread:(w.s||55)*(Math.PI/180), minR:w.minR||0.45, maxR:w.maxR||1.0 })),
+    right: rightWPs.map(w=>({ angle:w.a*(Math.PI/180), spread:(w.s||55)*(Math.PI/180), minR:w.minR||0.45, maxR:w.maxR||1.0 })),
+  };
+}
+
 const MOTION_POOL_EASY = [
-  mkMotion('left', 'QC FORWARD', '↘', '#ff88cc', [
-    {a:0},       // right
-    {a:45},      // down-right
-    {a:90},      // down
-  ], 3500),
-  mkMotion('left', 'QC BACK', '↙', '#ff88cc', [
-    {a:180},     // left
-    {a:135},     // down-left
-    {a:90},      // down
-  ], 3500),
-  mkMotion('left', 'FLICK UP-DOWN', '⬆⬇', '#ffcc00', [
-    {a:-90},     // up
-    {a:90},      // down
-  ], 3000),
-  mkMotion('left', 'FLICK LEFT-RIGHT', '⬅➡', '#ffcc00', [
-    {a:180},     // left
-    {a:0},       // right
-  ], 3000),
-  mkMotion('right', 'R-STICK QC FWD', '↘', '#ff88cc', [
-    {a:0},{a:45},{a:90},
-  ], 3500),
-  mkMotion('right', 'R-STICK FLICK ↑↓', '⬆⬇', '#ffcc00', [
-    {a:-90},{a:90},
-  ], 3000),
+  mkMotion('left',  'L: QC FORWARD',    '↘', '#ff88cc', [{a:0},{a:45},{a:90}], 3500),
+  mkMotion('left',  'L: QC BACK',       '↙', '#ff88cc', [{a:180},{a:135},{a:90}], 3500),
+  mkMotion('left',  'L: FLICK ↑↓',      '↕', '#ffcc00', [{a:-90},{a:90}], 2800),
+  mkMotion('left',  'L: FLICK ←→',      '↔', '#ffcc00', [{a:180},{a:0}], 2800),
+  mkMotion('left',  'L: FLICK ↗↙',      '↗', '#ff9933', [{a:-45},{a:135}], 2800),
+  mkMotion('left',  'L: FLICK ↘↖',      '↘', '#ff9933', [{a:45},{a:-135}], 2800),
+  mkMotion('right', 'R: QC FORWARD',    '↘', '#ff88cc', [{a:0},{a:45},{a:90}], 3500),
+  mkMotion('right', 'R: FLICK ↑↓',      '↕', '#ffcc00', [{a:-90},{a:90}], 2800),
+  mkMotion('right', 'R: FLICK ←→',      '↔', '#ffcc00', [{a:180},{a:0}], 2800),
+  mkMotion('left',  'L: UP → RIGHT',    '↱', '#00ffcc', [{a:-90},{a:0}], 3000),
+  mkMotion('left',  'L: DOWN → LEFT',   '↲', '#00ffcc', [{a:90},{a:180}], 3000),
 ];
 
 const MOTION_POOL_MEDIUM = [
-  mkMotion('left', 'HALF CIRCLE FWD', '🔄', '#00ffcc', [
-    {a:0},{a:45},{a:90},{a:135},{a:180},
-  ], 4500),
-  mkMotion('left', 'HALF CIRCLE BACK', '🔄', '#00ffcc', [
-    {a:180},{a:135},{a:90},{a:45},{a:0},
-  ], 4500),
-  mkMotion('left', 'QC UP-RIGHT', '↗', '#ff88cc', [
-    {a:-180},{a:-135},{a:-90},
-  ], 3500),
-  mkMotion('left', 'DIAGONAL ZIGZAG', '↙↗', '#ff9933', [
-    {a:-45},{a:135},{a:-45},
-  ], 4000),
-  mkMotion('left', 'CROSS PATTERN', '✛', '#3399ff', [
-    {a:-90},{a:0},{a:90},{a:180},
-  ], 5000),
-  mkMotion('right', 'R-STICK HALF CIR', '🔄', '#00ffcc', [
-    {a:0},{a:45},{a:90},{a:135},{a:180},
-  ], 4500),
-  mkMotion('left', 'Z-MOTION', 'Z', '#ff88cc', [
-    {a:-90},{a:0},{a:180},{a:90},
-  ], 5000),
+  mkMotion('left',  'L: HALF CIR CW',   '◐', '#00ffcc', [{a:0},{a:45},{a:90},{a:135},{a:180}], 4500),
+  mkMotion('left',  'L: HALF CIR CCW',  '◑', '#00ffcc', [{a:180},{a:135},{a:90},{a:45},{a:0}], 4500),
+  mkMotion('left',  'L: HALF CIR UP',   '◓', '#00ffcc', [{a:0},{a:-45},{a:-90},{a:-135},{a:180}], 4500),
+  mkMotion('right', 'R: HALF CIR CW',   '◐', '#ff88cc', [{a:0},{a:45},{a:90},{a:135},{a:180}], 4500),
+  mkMotion('right', 'R: HALF CIR CCW',  '◑', '#ff88cc', [{a:180},{a:135},{a:90},{a:45},{a:0}], 4500),
+  mkMotion('left',  'L: Z-MOTION',      'Z', '#ff88cc', [{a:-90},{a:0},{a:180},{a:90}], 5000),
+  mkMotion('left',  'L: S-MOTION',      'S', '#ff9933', [{a:0},{a:90},{a:180},{a:-90}], 5000),
+  mkMotion('left',  'L: CROSS ↑→↓←',   '✛', '#3399ff', [{a:-90},{a:0},{a:90},{a:180}], 5000),
+  mkMotion('left',  'L: CROSS ←↑→↓',   '✛', '#3399ff', [{a:180},{a:-90},{a:0},{a:90}], 5000),
+  mkMotion('left',  'L: ZIGZAG ↗↙↗',   '〰', '#ff9933', [{a:-45},{a:135},{a:-45}], 4000),
+  mkMotion('left',  'L: SPIRAL IN',     '🌀', '#00ffcc', [{a:0,minR:0.8},{a:90,minR:0.8},{a:180,minR:0.5},{a:-90,minR:0.5},{a:0,minR:0.2,maxR:0.5}], 6000),
+  mkMotion('right', 'R: Z-MOTION',      'Z', '#ff88cc', [{a:-90},{a:0},{a:180},{a:90}], 5000),
+  mkMotion('left',  'L: DP MOTION',     '⚡', '#ff3366', [{a:0},{a:-90},{a:45}], 3500),
+  mkMotion('left',  'L: REVERSE DP',    '⚡', '#ff3366', [{a:180},{a:-90},{a:135}], 3500),
+  // dual sticks - easy dual
+  mkDual('BOTH: FLICK ↑↓', '↕↕', '#ffcc00',
+    [{a:-90},{a:90}],
+    [{a:-90},{a:90}], 4000),
+  mkDual('BOTH: FLICK ←→', '↔↔', '#ffcc00',
+    [{a:180},{a:0}],
+    [{a:180},{a:0}], 4000),
+  mkDual('L:↑ R:↓ SPLIT', '⇅', '#ff88cc',
+    [{a:-90}],
+    [{a:90}], 3000),
+  mkDual('L:← R:→ SPLIT', '⇄', '#ff88cc',
+    [{a:180}],
+    [{a:0}], 3000),
 ];
 
 const MOTION_POOL_HARD = [
-  mkMotion('left', 'FULL ROTATION CW', '🔁', '#ff3366', [
-    {a:0},{a:90},{a:180},{a:-90},{a:0},
-  ], 5000),
-  mkMotion('left', 'FULL ROTATION CCW', '🔁', '#ff3366', [
-    {a:0},{a:-90},{a:180},{a:90},{a:0},
-  ], 5000),
-  mkMotion('left', 'DOUBLE QC FWD', '⏩', '#ffcc00', [
-    {a:0},{a:45},{a:90},{a:0},{a:45},{a:90},
-  ], 6000),
-  mkMotion('left', 'FIGURE 8', '8', '#ff88cc', [
-    {a:0},{a:-90},{a:180},{a:90},{a:0},{a:90},{a:180},{a:-90},{a:0},
-  ], 8000),
-  mkMotion('left', 'DP MOTION', '⚡', '#ff3366', [
-    {a:0},{a:-90},{a:45},
-  ], 3500),
-  mkMotion('left', 'SUPERFLIP', '🌀', '#ff88cc', [
-    {a:-90},{a:0},{a:90},{a:180},{a:-90},
-  ], 6000),
-  mkMotion('right', 'R FULL ROTATION', '🔁', '#ff3366', [
-    {a:0},{a:90},{a:180},{a:-90},{a:0},
-  ], 5000),
-  mkMotion('left', 'TIGER KNEE', '🐯', '#ff9933', [
-    {a:90},{a:45},{a:0},{a:-45},{a:-90},
-  ], 4500),
+  mkMotion('left',  'L: FULL CIR CW',   '🔁', '#ff3366', [{a:0},{a:90},{a:180},{a:-90},{a:0}], 5000),
+  mkMotion('left',  'L: FULL CIR CCW',  '🔁', '#ff3366', [{a:0},{a:-90},{a:180},{a:90},{a:0}], 5000),
+  mkMotion('right', 'R: FULL CIR CW',   '🔁', '#ff3366', [{a:0},{a:90},{a:180},{a:-90},{a:0}], 5000),
+  mkMotion('left',  'L: DBL QC FWD',    '⏩', '#ffcc00', [{a:0},{a:45},{a:90},{a:0},{a:45},{a:90}], 6000),
+  mkMotion('left',  'L: DBL QC BACK',   '⏪', '#ffcc00', [{a:180},{a:135},{a:90},{a:180},{a:135},{a:90}], 6000),
+  mkMotion('left',  'L: FIGURE 8',      '∞', '#ff88cc', [{a:0},{a:-90},{a:180},{a:90},{a:0},{a:90},{a:180},{a:-90},{a:0}], 8000),
+  mkMotion('left',  'L: STAR ✦',        '✦', '#ffcc00', [{a:-90},{a:54},{a:-162},{a:18},{a:-126},{a:-90}], 7000),
+  mkMotion('left',  'L: SUPERFLIP',     '🌀', '#ff88cc', [{a:-90},{a:0},{a:90},{a:180},{a:-90}], 6000),
+  mkMotion('left',  'L: TIGER KNEE',    '🐯', '#ff9933', [{a:90},{a:45},{a:0},{a:-45},{a:-90}], 4500),
+  mkMotion('left',  'L: PRETZEL',       '🥨', '#ff9933', [{a:0},{a:-90},{a:180},{a:45},{a:-135},{a:90}], 7000),
+  mkMotion('right', 'R: FIGURE 8',      '∞', '#ff88cc', [{a:0},{a:-90},{a:180},{a:90},{a:0},{a:90},{a:180},{a:-90},{a:0}], 8000),
+  // dual sticks medium difficulty
+  mkDual('BOTH: QC FORWARD', '↘↘', '#ff88cc',
+    [{a:0},{a:45},{a:90}],
+    [{a:0},{a:45},{a:90}], 5000),
+  mkDual('L:QC FWD R:QC BACK', '↘↙', '#ff88cc',
+    [{a:0},{a:45},{a:90}],
+    [{a:180},{a:135},{a:90}], 5500),
+  mkDual('MIRROR HALF CIR', '◐◑', '#00ffcc',
+    [{a:0},{a:45},{a:90},{a:135},{a:180}],
+    [{a:180},{a:135},{a:90},{a:45},{a:0}], 6000),
+  mkDual('BOTH: Z-MOTION', 'ZZ', '#ff88cc',
+    [{a:-90},{a:0},{a:180},{a:90}],
+    [{a:-90},{a:0},{a:180},{a:90}], 6500),
+  mkDual('L:CROSS R:FLICK', '✛↕', '#3399ff',
+    [{a:-90},{a:0},{a:90},{a:180}],
+    [{a:-90},{a:90}], 6000),
+  mkDual('WINDMILL CW/CCW', '🌀', '#ff3366',
+    [{a:0},{a:90},{a:180},{a:-90},{a:0}],
+    [{a:0},{a:-90},{a:180},{a:90},{a:0}], 7000),
+  mkDual('L:↗↙ R:↘↖ X', '✕', '#ff3366',
+    [{a:-45},{a:135}],
+    [{a:45},{a:-135}], 4000),
+  mkDual('BOTH FULL CIR CW', '🔁🔁', '#ff3366',
+    [{a:0},{a:90},{a:180},{a:-90},{a:0}],
+    [{a:0},{a:90},{a:180},{a:-90},{a:0}], 7000),
+  mkDual('L:FULL CIR R:FLICK', '🔁↕', '#ff9933',
+    [{a:0},{a:90},{a:180},{a:-90},{a:0}],
+    [{a:-90},{a:90}], 6000),
+  mkDual('CHAOS: L:FIG8 R:QC', '∞↘', '#ff3366',
+    [{a:0},{a:-90},{a:180},{a:90},{a:0},{a:90},{a:180},{a:-90},{a:0}],
+    [{a:0},{a:45},{a:90}], 9000),
 ];
 
 function getMotionPool(diff) {
@@ -537,6 +561,8 @@ function rndMotion(diff, excl) {
 }
 
 
+
+function mkArc(stick,angleDeg,spreadDeg,minR,maxR,name,icon){
   const a=angleDeg*(Math.PI/180), s=spreadDeg*(Math.PI/180);
   return {type:'stick-arc',stick,angle:a,spread:s,minR,maxR,name,icon,color:'#00ffcc',
     dx:Math.cos(a),dy:Math.sin(a)};
@@ -611,60 +637,39 @@ const G={
   lastArcState:false,
   btnWasPressed:{},
   // motion state
-  motionWp:0,          // current waypoint index
+  motionWp:0,          // current waypoint index (single stick)
   motionWpHit:false,   // guard: did we leave the wp before checking next
   motionTimer:null,
+  // dual stick state
+  dualWp:{left:0, right:0},
+  dualWpHit:{left:false, right:false},
+  dualDone:{left:false, right:false},
 };
 
 // ── PUNISHMENT ────────────────────────────────────────────
 function doPunish(reason) {
   G.errors++;
   $('s-errors').textContent=G.errors;
-  const p=G.punish;
-  let msgs=[];
-
-  if(p==='freeze'||p==='all'){
-    G.frozen=true; G.freezeUntil=Date.now()+2000;
-    msgs.push('FROZEN 2s!');
-  }
-  if(p==='score'||p==='all'){
-    const penalty={easy:15,medium:30,hard:50}[G.diff]||20;
-    G.score=Math.max(0,G.score-penalty);
-    G.totalPenalty+=penalty;
-    msgs.push('-'+penalty+' PTS');
-    $('s-score').textContent=G.score;
-    $('s-penalty').textContent=G.totalPenalty;
-    // flash penalty bar
-    const bar=$('penalty-bar');
-    bar.style.width='100%';
-    setTimeout(()=>bar.style.width='0%',600);
-  }
-  if(p==='reset'||p==='all'){
-    if(G.mode==='sequence'&&G.seqIdx>0){
-      msgs.push('SEQ RESET!');
-    }
-  }
-
   G.streak=0;
   $('s-streak').textContent=G.streak;
 
-  // Visual punishment
+  // 1.5s input freeze
+  G.frozen=true; G.freezeUntil=Date.now()+1500;
+  G.timerStart+=1500; // don't count freeze time against the challenge timer
+
+  // red screen flash
   const overlay=$('punish-overlay');
   overlay.classList.add('flash');
   setTimeout(()=>overlay.classList.remove('flash'),200);
 
+  // label on challenge box
   const pl=$('punish-label');
-  pl.textContent=msgs.join(' | ');
+  pl.textContent='MISINPUT — 1.5s DELAY';
   pl.classList.add('show');
-  setTimeout(()=>pl.classList.remove('show'),1200);
+  setTimeout(()=>pl.classList.remove('show'),1400);
 
   flashFail();
-  addLog('✗ MISINPUT: '+reason+'  '+msgs.join(' | '),'fail');
-
-  // shake score
-  const sc=$('s-score');
-  sc.style.color='var(--accent2)';
-  setTimeout(()=>sc.style.color='var(--accent)',500);
+  addLog('✗ MISINPUT: '+reason,'fail');
 }
 
 // ── DISPLAY ───────────────────────────────────────────────
@@ -683,6 +688,7 @@ function getHint(c){
   if(c.type==='trig') return 'Pull trigger  —  wrong trigger = MISINPUT';
   if(c.type==='stick-arc') return 'Push '+c.name.split(' ')[0].toLowerCase()+' stick into the glowing arc zone';
   if(c.type==='stick-motion') return 'Hit each numbered zone in order — '+c.waypoints.length+' steps';
+  if(c.type==='stick-dual') return 'Both sticks! L:'+c.left.length+' steps  R:'+c.right.length+' steps — complete both';
   if(c.type==='hold') return 'Hold for '+(c.dur/1000).toFixed(1)+'s  —  release early = MISINPUT';
   return '';
 }
@@ -740,6 +746,7 @@ function startTimed(){
 function startGame(){
   G.score=0;G.streak=0;G.best=0;G.correct=0;G.errors=0;G.totalPenalty=0;
   G.paused=false;G.frozen=false;G.pb={};G.pa=[0,0,0,0];G.arcEntered=false;G.motionWp=0;G.motionWpHit=false;
+  G.dualWp={left:0,right:0};G.dualWpHit={left:false,right:false};G.dualDone={left:false,right:false};
   $('s-penalty').textContent='0';
   $('penalty-bar').style.width='0%';
   updateStats(); showScreen('game-ui'); G.screen='game';
@@ -766,6 +773,7 @@ function nextSingle(){
   const gp=getGP();
   G.challenge=rnd(G.diff,G.challenge?.name);
   G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;G.motionWp=0;G.motionWpHit=false;
+  G.dualWp={left:0,right:0};G.dualWpHit={left:false,right:false};G.dualDone={left:false,right:false};
   G.pb={};
   setC(G.challenge,'// DO THIS //');
   snapshotBtns(gp);
@@ -774,6 +782,7 @@ function nextSingle(){
 function nextSeq(){
   const gp=getGP();
   G.seq=genSeq(G.diff);G.seqIdx=0;G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;G.motionWp=0;G.motionWpHit=false;
+  G.dualWp={left:0,right:0};G.dualWpHit={left:false,right:false};G.dualDone={left:false,right:false};
   G.challenge=G.seq[0];
   G.pb={};
   setC(G.challenge,'// SEQUENCE //');renderSeq();
@@ -784,6 +793,7 @@ function nextMotion(){
   clearInterval(G.motionTimer);
   G.challenge=rndMotion(G.diff, G.challenge?.name);
   G.motionWp=0; G.motionWpHit=false;
+  G.dualWp={left:0,right:0}; G.dualWpHit={left:false,right:false}; G.dualDone={left:false,right:false};
   G.pb={};G.pa=[0,0,0,0];
   setC(G.challenge,'// STICK MOTION //');
   // motion has its own time limit
@@ -825,6 +835,7 @@ function onTimeout(){
 function handleCorrect(){
   if(G.mode==='joystick'){
     onSuccess();
+    G.challenge=null;
     setTimeout(nextMotion,300);
     return;
   }
@@ -833,6 +844,7 @@ function handleCorrect(){
     if(G.seqIdx>=G.seq.length){
       const b={easy:15,medium:30,hard:50}[G.diff]||15;
       G.score+=b;updateStats();addLog('★ SEQUENCE DONE! +'+b,'ok');
+      G.challenge=null;
       setTimeout(nextSeq,300);
     } else {
       G.challenge=G.seq[G.seqIdx];G.holdStart=null;G.holdDone=false;G.arcEntered=false;G.lastArcState=false;
@@ -841,16 +853,15 @@ function handleCorrect(){
       snapshotBtns(getGP());
       startCTimer();
     }
-  } else {onSuccess();setTimeout(nextSingle,200);}
+  } else {
+    onSuccess();
+    G.challenge=null;
+    setTimeout(nextSingle,200);
+  }
 }
 
 function handleMisinput(reason){
   doPunish(reason);
-  if((G.punish==='reset'||G.punish==='all')&&G.mode==='sequence'){
-    setTimeout(nextSeq,500);
-  }
-  // refresh timer start so freeze doesn't eat challenge time unfairly
-  G.timerStart=Date.now()+((G.punish==='freeze'||G.punish==='all')?2000:0);
 }
 
 function endGame(){
@@ -969,7 +980,34 @@ function checkInput(gp){
     }
   }
 
+  // ── STICK DUAL challenge ──
+  else if(c.type==='stick-dual'){
+    // track each stick independently
+    ['left','right'].forEach(side => {
+      if(G.dualDone[side]) return;
+      const xi=side==='left'?0:2, yi=side==='left'?1:3;
+      const x=axes[xi]||0, y=axes[yi]||0;
+      const wps=c[side];
+      const wpIdx=G.dualWp[side];
+      if(wpIdx>=wps.length){ G.dualDone[side]=true; return; }
+      const inside=inArc(x,y,wps[wpIdx]);
+      if(inside && !G.dualWpHit[side]){
+        G.dualWpHit[side]=true;
+        G.dualWp[side]++;
+        if(G.dualWp[side]>=wps.length){
+          G.dualDone[side]=true;
+          addLog('  ✓ '+side+' stick done!','ok');
+        } else {
+          addLog('  ✓ '+side+' step '+G.dualWp[side]+'/'+wps.length,'ok');
+        }
+      } else if(!inside && G.dualWpHit[side]){
+        G.dualWpHit[side]=false;
+      }
+    });
+    if(G.dualDone.left && G.dualDone.right) handleCorrect();
+  }
 
+  // ── HOLD challenge ──
   else if(c.type==='hold'){
     const held=c.id<=3?bpressed(gp,c.id):bval(gp,c.id)>0.5;
     const bar=$('hold-bar');
@@ -1011,6 +1049,10 @@ function updateStickCanvases(gp){
       const mctx={waypoints:c.waypoints, currentWp:G.motionWp, stick:c.stick};
       if(c.stick==='left') lMotion=mctx; else rMotion=mctx;
     }
+    if(c.type==='stick-dual'){
+      lMotion={waypoints:c.left,  currentWp:G.dualWp.left,  done:G.dualDone.left};
+      rMotion={waypoints:c.right, currentWp:G.dualWp.right, done:G.dualDone.right};
+    }
   }
 
   drawStick('cv-ls', lx, ly, lArc, lMotion, lActive);
@@ -1033,8 +1075,13 @@ function loop(){
     // live motion step counter
     if(G.challenge&&G.challenge.type==='stick-motion'){
       const total=G.challenge.waypoints.length;
-      const done=G.motionWp;
-      $('c-hint').textContent='STEP '+(done+1)+' / '+total+'  —  hit the pink zone';
+      $('c-hint').textContent='STEP '+(G.motionWp+1)+' / '+total+'  —  hit the pink zone';
+    }
+    if(G.challenge&&G.challenge.type==='stick-dual'){
+      const ll=G.challenge.left.length, rl=G.challenge.right.length;
+      const ld=G.dualDone.left, rd=G.dualDone.right;
+      $('c-hint').textContent=
+        'L: '+(ld?'DONE':G.dualWp.left+1+'/'+ll)+'  |  R: '+(rd?'DONE':G.dualWp.right+1+'/'+rl);
     }
     // show freeze indicator
     if(G.frozen){
@@ -1060,10 +1107,6 @@ document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',(
 document.querySelectorAll('[data-diff]').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('[data-diff]').forEach(x=>x.classList.remove('active'));
   b.classList.add('active'); G.diff=b.dataset.diff;
-}));
-document.querySelectorAll('[data-punish]').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('[data-punish]').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); G.punish=b.dataset.punish;
 }));
 $('start-btn').addEventListener('click',()=>{if(!$('start-btn').disabled) startGame();});
 $('pause-btn').addEventListener('click',()=>{G.paused=!G.paused;$('pause-btn').textContent=G.paused?'▶ RESUME':'⏸ PAUSE';});
